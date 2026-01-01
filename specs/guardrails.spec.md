@@ -1,6 +1,6 @@
 ---
 id: guardrails
-version: 0.0.1
+version: 0.0.2
 ---
 
 # Guardrails Specification
@@ -38,6 +38,10 @@ Optional fields MAY include:
 - `elevation_gain`
 - `time_of_day`
 - `weather`
+- `name`
+- `description`
+- `tags`
+- `gear`
 
 If required fields are missing:
 - The activity MUST be rejected
@@ -45,7 +49,7 @@ If required fields are missing:
 
 ### 1.2 Value Constraints
 
-Input values MUST satisfy the following constraints:
+Input values MUST satisfy the following constraints when present:
 
 - `distance > 0`
 - `avg_hr ∈ [40, 220]`
@@ -57,12 +61,14 @@ Values outside allowed ranges MUST be:
 - normalized
 - or replaced with `unknown`
 
+Absence of optional fields MUST NOT be treated as an error.
+
 ### 1.3 Semantic Validation
 
 Inputs MUST be semantically consistent.
 
 Examples of invalid combinations:
-- Running pace faster than human limits
+- Running pace faster than realistic human limits
 - Cycling cadence outside realistic bounds
 - Elevation gain inconsistent with activity type
 
@@ -70,17 +76,82 @@ If semantic validation fails:
 - Prefer graceful degradation
 - Avoid hard failure when possible
 
-## 2. Prompt Guardrails
+## 2. User-Provided Text Guardrails
 
-### 2.1 Allowed Content
+### 2.1 Supported Text Sources
+
+The system MAY ingest user-provided text from:
+- `activity.name`
+- `activity.description`
+- `activity.tags`
+- `activity.gear`
+
+These fields MUST be treated as untrusted input.
+
+### 2.2 Text Usage Rules
+
+User-provided text:
+- MUST NOT be copied verbatim into prompts
+- MUST be processed through signal extraction
+- MUST comply with all prompt and content guardrails
+
+Only normalized semantic signals MAY influence prompt generation.
+
+### 2.3 Brand Names
+
+Brand names MAY be used in prompts under the following constraints:
+
+- Brands MUST originate from:
+  - gear metadata
+  - activity name or description
+- Brands MUST NOT be inferred or hallucinated
+- Brand usage MUST be contextual (e.g. equipment reference)
+- Excessive brand emphasis MUST be avoided
+
+Brand names MUST still comply with all other content guardrails.
+
+## 3. Tag Guardrails
+
+### 3.1 Supported Tag Types
+
+The system MAY process built-in Strava tags, including but not limited to:
+- `long run`
+- `recovery`
+- `race`
+- `commute`
+- `with kid`
+- `easy`
+- `workout`
+
+Tags MAY be represented as:
+- structured fields
+- normalized enums
+- keywords extracted from metadata
+
+### 3.2 Tag Handling Rules
+
+- Tags MUST be normalized before use
+- Tags MUST influence mood, intensity, or scene
+- Tags MUST NOT be rendered as literal text in images
+- Conflicting tags SHOULD be resolved deterministically
+
+Examples:
+- `recovery` → calm mood, low intensity
+- `with kid` → playful or warm atmosphere
+- `long run` → endurance-oriented scene
+
+## 4. Prompt Guardrails
+
+### 4.1 Allowed Content
 
 Prompts MAY include:
 - Generic human figures
-- Nature, gym, home, and other abstract environments
+- Nature, gym, home, urban, and abstract environments
 - Emotional tone (e.g. calm, intense, focused)
 - Artistic and stylistic descriptors
+- Contextual brand references (when allowed)
 
-### 2.2 Forbidden Content
+### 4.2 Forbidden Content
 
 Prompts MUST NOT include:
 - Real persons or identifiable individuals
@@ -93,14 +164,14 @@ If forbidden content is detected:
 - It MUST be removed or replaced
 - Generation MUST NOT proceed without sanitization
 
-### 2.3 Prompt Size Limits
+### 4.3 Prompt Size Limits
 
 - Maximum prompt length: 400 characters
 - Prompts exceeding this limit MUST be truncated or simplified
 
-## 3. Style Guardrails
+## 5. Style Guardrails
 
-### 3.1 Allowed Styles
+### 5.1 Allowed Styles
 
 Only the following visual styles and their variations are allowed:
 - `cartoon`
@@ -108,20 +179,20 @@ Only the following visual styles and their variations are allowed:
 - `abstract`
 - `illustrated`
 
-### 3.2 Forbidden Styles
+### 5.2 Forbidden Styles
 
 The system MUST NOT generate:
 - Photorealistic images
 - Hyper-detailed or ultra-realistic art
 - Faces with high realism
 
-### 3.3 Consistency
+### 5.3 Consistency
 
 For the same activity classification:
 - Style selection SHOULD be deterministic
 - Random variation MUST stay within allowed style boundaries
 
-## 4. Image Output Guardrails
+## 6. Image Output Guardrails
 
 Generated images MUST satisfy:
 - Aspect ratio: 1:1 or 16:9
@@ -134,14 +205,14 @@ If output validation fails:
 - A retry MAY be attempted
 - OR a fallback MUST be used
 
-## 5. Retry and Fallback Strategy
+## 7. Retry and Fallback Strategy
 
-### 5.1 Retry Limits
+### 7.1 Retry Limits
 
 - Maximum retries per image generation: 2
 - Each retry MUST simplify the prompt
 
-### 5.2 Fallback Behavior
+### 7.2 Fallback Behavior
 
 If all retries fail:
 - Switch to `minimal` or `abstract` style
@@ -153,7 +224,7 @@ The system MUST never return:
 - Corrupted files
 - Empty responses
 
-## 6. Failure Handling
+## 8. Failure Handling
 
 Failures MUST be:
 - Logged with reason and context
@@ -164,13 +235,13 @@ User-facing behavior MUST:
 - Avoid exposing internal errors
 - Always produce a valid outcome
 
-## 7. Determinism and Predictability
+## 9. Determinism and Predictability
 
 Given identical inputs:
 - Classification and style decisions SHOULD be identical
 - Randomness MUST be bounded and controlled
 
-## 8. Guardrails as Contract
+## 10. Guardrails as Contract
 
 - Guardrails are part of the public system contract
 - Any change to this file is a behavioral change
