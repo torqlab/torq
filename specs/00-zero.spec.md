@@ -1,8 +1,10 @@
 ---
 id: zero
 version: 0.0.1
+level: 0
 status: canonical
 scope: all system specifications
+dependencies: N/A
 ---
 
 # Zero Specification
