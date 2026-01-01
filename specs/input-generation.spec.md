@@ -1,6 +1,6 @@
 ---
 id: prompt-generation
-version: 0.0.1
+version: 0.0.2
 ---
 
 # Prompt Generation Specification
@@ -11,10 +11,10 @@ This document defines how textual prompts for image generation
 are constructed from activity data.
 
 Prompt generation is a deterministic, rule-based process that:
-- Transforms structured activity input into a visual description
+- Transforms structured activity input into visual descriptions
+- Extracts semantic signals from user-provided text
 - Enforces global guardrails
 - Produces predictable and safe prompts for AI image models
-- Considers activity title, description, and attached media
 
 This specification defines behavior, not implementation.
 
@@ -48,6 +48,10 @@ If required fields are missing:
 
 The following fields MAY be used if present:
 
+- `name`
+- `description`
+- `tags`
+- `gear`
 - `avg_hr`
 - `distance`
 - `pace`
@@ -56,23 +60,58 @@ The following fields MAY be used if present:
 - `weather`
 - `duration`
 
-Missing optional fields MUST NOT cause failure.
+Absence of optional fields MUST NOT cause failure.
+
+## User-Provided Text Handling
+
+### Supported Text Sources
+
+User-provided text MAY originate from:
+- `activity.name`
+- `activity.description`
+- `activity.tags`
+- `activity.gear`
+
+These fields MUST be treated as untrusted input.
+
+### Text Processing Rules
+
+User-provided text:
+- MUST NOT be copied verbatim into prompts
+- MUST be processed through semantic signal extraction
+- MUST comply with all guardrails
+
+Only normalized signals MAY influence:
+- mood
+- intensity
+- environment
+- scene composition
+- contextual details
+
+## Brand Usage
+
+Brand names MAY be used under the following rules:
+
+- Brands MUST originate from gear, name, or description
+- Brands MUST NOT be inferred or hallucinated
+- Brand references MUST be contextual
+- Excessive brand emphasis MUST be avoided
 
 ## Output
 
 Prompt generation MUST return the following structure:
 
-```yaml
-prompt:
-  text: string
-  style: string
-  mood: string
-  scene: string
+```yml
+    prompt:
+      text: string
+      style: string
+      mood: string
+      scene: string
 ```
 
-- `text` MUST be a single plain-text prompt
-- `style` MUST match allowed styles
-- `mood` and `scene` MUST be descriptive and generic
+- text MUST be a single plain-text prompt
+- style MUST match allowed styles
+- mood and scene MUST be descriptive and generic
 
 ## Prompt Structure
 
@@ -81,16 +120,16 @@ Generated prompt text MUST follow this logical structure:
 1. Main subject
 2. Activity context
 3. Environment / scene
-4. Mood / emotion
+4. Mood / emotional tone
 5. Artistic style
 
-Example (logical structure, not literal output):
+Example (logical structure):
 
 ```text
-A lone runner during an intense uphill run,
-mountain trail environment,
-focused and determined mood,
-cartoon illustration style
+    A trail runner during a steady outdoor run,
+    forest trail environment with gentle hills,
+    focused and calm mood,
+    cartoon illustration style
 ```
 
 ## Activity Classification Rules
@@ -104,57 +143,83 @@ cartoon illustration style
 | Trail Run     | trail runner        |
 | Walk          | walker              |
 | Hike          | hiker               |
-
+| Yoga          | person practicing yoga |
 
 ### By Intensity
 
 Intensity SHOULD be classified as:
 
-- Low: easy, relaxed, calm, soft
+- Low: easy, relaxed, calm
 - Medium: steady, focused
-- High: intense, demanding, powerful, strong, exhausting
+- High: intense, demanding, exhausting
 
-Intensity MAY be derived from:
+Derived from:
 - heart rate
 - pace
 - elevation gain
 - duration
+- semantic cues from tags or description
 
-IF intensity cannot be determined:
-- Default to `medium`
+Default: medium
 
 ### By Elevation
 
-- `elevation_gain > 300` → mountainous or hilly scene
-- `elevation_gain ≤ 300` → flat or rolling terrain
-- Missing data → neutral outdoor landscape
+- `elevation_gain > 300` → mountainous or hilly
+- `elevation_gain ≤ 300` → flat or rolling
+- missing → neutral outdoor
 
 ### By Time of Day
 
-If `time_of_day` is available:
-- morning → soft natural light
+- morning → soft light
 - day → neutral daylight
 - evening → warm light
-- night → dark, low light, maybe with moon and/or stars in the sky, calm or dramatic atmosphere
+- night → dark, calm or dramatic
 
-IF unknown:
-- Use neutral daylight
+Unknown → neutral daylight
+
+## Tag Processing
+
+### Supported Tags
+
+Examples:
+- `long run`
+- `recovery`
+- `race`
+- `commute`
+- `with kid`
+- `easy`
+- `workout`
+
+### Tag Influence Rules
+
+Tags MAY influence:
+- mood
+- intensity
+- atmosphere
+
+Tags MUST NOT:
+- appear as literal text
+- introduce forbidden content
+
+Examples:
+- `recovery` → calm, low intensity
+- `with kid` → playful atmosphere
+- `long run` → endurance-oriented scene
 
 ## Style Selection
 
-Style MUST be selected from allowed styles:
-
+Allowed styles:
 - `cartoon`
 - `minimal`
 - `abstract`
 - `illustrated`
 
 Rules:
-- Default style: `cartoon`
-- High intensity MAY bias toward `illustrated`
-- Fallback style: `minimal`
+- Default: `cartoon`
+- High intensity → may bias illustrated
+- Fallback: `minimal`
 
-Style selection MUST be deterministic.
+Selection MUST be deterministic.
 
 ## Mood Selection
 
@@ -163,72 +228,62 @@ Mood descriptors MUST be:
 - emotional
 - non-narrative
 
-Allowed examples:
-- calm
-- focused
-- intense
-- peaceful
-- determined
-- thoughtful
-
-Mood MUST NOT include:
-- named real persons
-- violent or aggressive language
+Examples:
+- `calm`
+- `focused`
+- `intense`
+- `peaceful`
+- `determined`
 
 ## Prompt Constraints
 
-Generated prompts MUST comply with all of the following:
-
-- No real or identifiable persons
-- No text or typography instructions
-- No political, military, or sexual content
-- Maximum length: 400 characters
+Generated prompts MUST:
+- avoid real persons
+- avoid text or typography
+- avoid political, military, sexual content
+- be ≤ 400 characters
 
 ## Determinism
 
-Given identical inputs:
-- Prompt text SHOULD be identical
-- Style, mood, and scene MUST be identical
-
-Randomness:
-- MUST NOT affect semantic meaning
-- MUST stay within allowed variation boundaries
+Identical inputs MUST produce identical:
+- prompt text
+- style
+- mood
+- scene
 
 ## Validation
 
-Before returning, the prompt MUST be validated for:
-
-- Length constraints
-- Forbidden content
-- Allowed style usage
+Before return:
+- validate length
+- validate forbidden content
+- validate style
+- validate brand usage
 
 If validation fails:
-- Prompt MUST be sanitized
-- Or regenerated with stricter constraints
+- sanitize or regenerate
 
 ## Failure Behavior
 
-Prompt generation MUST NOT fail silently.
-
-If generation cannot produce a valid prompt:
-- Use a predefined safe fallback prompt
-- Style MUST be set to `minimal`
-- Mood MUST be set to `calm`
+If a valid prompt cannot be produced:
+- use a safe fallback
+- style = `minimal`
+- mood = `calm`
 
 Fallback example:
 
 ```text
-A simple abstract illustration inspired by outdoor endurance activity,
-minimal style, calm atmosphere
+    A simple abstract illustration inspired by an outdoor endurance activity,
+    minimal style, calm atmosphere
 ```
 
 ## Versioning
 
 Any change to:
-- classification rules
+- signal extraction
+- classification logic
 - prompt structure
-- style selection
+- style or mood selection
 
-MUST result in a version update of this specification.
+MUST bump the version.
 
-Prompt generation behavior MUST always match the current spec version.
+Prompt generation MUST always match the current spec version.
