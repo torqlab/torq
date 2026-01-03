@@ -1,5 +1,5 @@
 ---
-id: spec-validator-checklist
+id: specification-validator-checklist
 version: 0.0.1
 level: 0
 status: canonical
