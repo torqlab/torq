@@ -1,6 +1,6 @@
 ---
 id: specification-validator-checklist
-version: 0.0.1
+version: 1.0.0
 level: 0
 status: canonical
 dependencies:
@@ -248,7 +248,122 @@ Breaking changes **MUST** be documented.
 
 Failure → **CONDITIONALLY VALID**
 
-## 8. Final Validation Result
+## 8. Cross-Spec Compatibility Checks
+
+These checks validate a specification **in the context of all other existing specifications**.
+
+Cross-spec checks are **mandatory**.
+Failure of any check in this section → **INVALID**.
+
+### 8.1 Dependency Closure Check
+
+A specification **MUST** satisfy full dependency closure:
+
+- All declared dependencies **MUST** exist
+- All transitive dependencies **MUST** be resolvable
+- No dependency chain **MUST** exceed defined level ordering
+
+Failure → **INVALID**
+
+### 8.2 Cross-Level Rule Conflict Check
+
+A specification **MUST NOT**:
+
+- Contradict any rule from a higher-level specification
+- Weaken a higher-level **MUST** into **SHOULD** or **MAY**
+- Introduce exceptions not explicitly allowed upstream
+
+Conflict resolution rules:
+
+1. Higher level always wins
+2. Canonical beats non-canonical
+3. Newer version beats older version (same level only)
+
+Unresolvable conflict → **INVALID**
+
+### 8.3 Rule Shadowing Check
+
+A specification **MUST NOT**:
+
+- Redefine an existing rule under a different name
+- Introduce semantically equivalent rules already owned elsewhere
+
+Semantic duplication is treated as duplication.
+
+Failure → **INVALID**
+
+### 8.4 Behavioral Overlap Check
+
+If multiple specs affect the same behavior:
+
+- Ownership **MUST** be explicit
+- One spec **MUST** be authoritative
+- Others **MUST** reference, not redefine
+
+Implicit overlap → **INVALID**
+
+### 8.5 Constraint Tightening Rules
+
+Lower-level specifications **MAY**:
+
+- Add stricter constraints
+- Narrow allowed values
+- Reduce degrees of freedom
+
+Lower-level specifications **MUST NOT**:
+
+- Relax higher-level constraints
+- Introduce alternative behaviors
+
+Violation → **INVALID**
+
+### 8.6 Global Determinism Check
+
+Combined application of all specs **MUST** result in:
+
+- Deterministic outcomes for identical inputs
+- No conflicting randomness sources
+- No order-dependent interpretation
+
+Non-determinism introduced by combination → **INVALID**
+
+### 8.7 Version Compatibility Check
+
+A specification update **MUST**:
+
+- Declare compatibility expectations
+- Identify affected dependent specs
+- Explicitly state breaking changes
+
+Undeclared breaking change → **INVALID**
+
+### 8.8 Orphan Rule Check
+
+Rules **MUST NOT** exist that:
+
+- Are not referenced by any valid execution path
+- Cannot be applied due to higher-level constraints
+
+Orphan rules → **CONDITIONALLY VALID**
+
+### 8.9 Canonical Alignment Check
+
+If multiple specs define overlapping domains:
+
+- Exactly one **canonical** spec **MUST** exist
+- All others **MUST** defer to it
+
+Multiple canonicals → **INVALID**
+
+### 8.10 Cross-Spec Validation Result
+
+If **all** checks in this section pass → **VALID**
+
+If **any** mandatory check fails → **INVALID**
+
+Incompatible specifications **MUST NOT** be merged, deployed, or referenced.
+
+## 9. Final Validation Result
 
 A specification is:
 
