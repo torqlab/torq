@@ -52,7 +52,6 @@ Validation rules:
   - regular
   - draft
   - deprecated
-- scope **MUST** be explicitly stated
 - dependencies **MUST** be explicit or N/A
 
 Failure of any rule → **INVALID**
