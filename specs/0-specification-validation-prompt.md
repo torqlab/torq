@@ -16,8 +16,6 @@ This specification defines **prompt structure and validation contract**, not imp
 
 In case of conflict, the **Zero Specification** and **Specification Validator Checklist** take precedence.
 
----
-
 ## 1. Purpose
 
 The purpose of this specification is to:
@@ -29,8 +27,6 @@ The purpose of this specification is to:
 
 This prompt **MUST** be used whenever AI is involved in validating specifications.
 
----
-
 ## 2. Scope
 
 This prompt applies to:
@@ -39,8 +35,6 @@ This prompt applies to:
 - All specification levels
 - Single-spec and cross-spec validation
 - Local, CI, and automated review environments
-
----
 
 ## 3. Validation Input Contract
 
@@ -54,94 +48,6 @@ The validator **MUST** be provided with:
 All inputs **MUST** be treated as authoritative sources.
 
 Missing inputs → **INVALID VALIDATION**
-
----
-
-## 4. Canonical Validation Prompt
-
-The following prompt **MUST** be used verbatim or as a strict template.
-
-### 4.1 System Instruction
-
-```text
-You are a formal specification validator.
-
-You MUST validate the provided specification strictly against:
-- The Zero Specification
-- The Specification Validator Checklist
-
-You MUST NOT invent rules.
-You MUST NOT infer intent.
-You MUST NOT assume correctness.
-
-You MUST only report violations based on explicit rules.
-
-Your output MUST be deterministic.
-```
-
-Добре. Нижче повністю виводжу спеку 0-specification-validation-prompt.spec.md у чистій Markdown‑розмітці, щоб її можна було напряму копіювати в GitHub.
-
-⸻
-
-
----
-id: specification-validation-prompt
-version: 1.0.0
-level: 0
-status: canonical
-dependencies:
-  - 0-0-zero.spec.md
-  - 0-1-specification-validator-checklist.spec.md
----
-
-# Specification Validation Prompt Specification
-
-This specification defines the **canonical validation prompt** used by automated systems (including CI pipelines and AI validators) to validate specifications against the **Specification Validator Checklist**.
-
-This specification defines **prompt structure and validation contract**, not implementation.
-
-In case of conflict, the **Zero Specification** and **Specification Validator Checklist** take precedence.
-
----
-
-## 1. Purpose
-
-The purpose of this specification is to:
-
-- Provide a **deterministic, repeatable validation prompt**
-- Ensure **uniform validation behavior** across tools and pipelines
-- Enable **AI-based validation** of specifications in CI (e.g. GitHub Actions)
-- Guarantee that validation results are **mechanical and auditable**
-
-This prompt **MUST** be used whenever AI is involved in validating specifications.
-
----
-
-## 2. Scope
-
-This prompt applies to:
-
-- All `.spec.md` files
-- All specification levels
-- Single-spec and cross-spec validation
-- Local, CI, and automated review environments
-
----
-
-## 3. Validation Input Contract
-
-The validator **MUST** be provided with:
-
-1. The **target specification** to validate
-2. The **full set of all existing specifications**
-3. The **Specification Validator Checklist**
-4. The **Zero Specification**
-
-All inputs **MUST** be treated as authoritative sources.
-
-Missing inputs → **INVALID VALIDATION**
-
----
 
 ## 4. Canonical Validation Prompt
 
@@ -211,9 +117,9 @@ You MUST NOT propose fixes unless explicitly asked.
 ```
 
 Rules:
-	•	Output MUST be valid JSON
-	•	Empty violations array MUST be present if none
-	•	Result MUST match checklist semantics
+- Output MUST be valid JSON
+- Empty violations array MUST be present if none
+- Result MUST match checklist semantics
 
 ## 5. Determinism Requirements
 
@@ -261,16 +167,16 @@ The validator MUST return:
 ## 8. Authority
 
 This specification:
-	•	Is canonical for validation prompts
-	•	Is subordinate only to the Zero Specification
-	•	MUST be referenced by all AI-based validation pipelines
+- Is canonical for validation prompts
+- Is subordinate only to the Zero Specification
+- MUST be referenced by all AI-based validation pipelines
 
-Summary
+## Summary
 
 This specification ensures that:
-	•	Specification validation is formal
-	•	AI behavior is bounded and deterministic
-	•	CI validation is repeatable and auditable
-	•	Specifications cannot silently drift or conflict
+- Specification validation is formal
+- AI behavior is bounded and deterministic
+- CI validation is repeatable and auditable
+- Specifications cannot silently drift or conflict
 
 All AI-based validators MUST comply with this prompt.
