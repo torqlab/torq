@@ -60,13 +60,12 @@ Failure of any rule → **INVALID**
 
 File name **MUST** follow:
 
-`<level>-<number>-<name>.spec.md`
+`<level>-<name>.spec.md`
 
 Rules:
 
 - level in filename **MUST** match front matter level
 - filename **MUST** be stable across versions
-- number **MUST** be numeric and sortable
 
 Failure → **INVALID**
 
