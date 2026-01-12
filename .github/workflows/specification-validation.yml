@@ -41,6 +41,7 @@ jobs:
 
       - name: Run specification validation
         run: |
+          touch .specification-validation/result.json
           node tools/validate-specifications/index.js > .specification-validation/result.json
 
       - name: Parse validation result
