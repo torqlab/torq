@@ -1,5 +1,5 @@
 ---
-id: 3-specification-validation-pipeline-behavior
+id: 2-specification-validation-pipeline-behavior
 version: 1.0.0
 level: 2
 status: canonical
