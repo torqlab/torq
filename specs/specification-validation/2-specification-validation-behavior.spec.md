@@ -1,6 +1,6 @@
 ---
 id: 2-specification-validation-behavior
-version: 1.0.0
+version: 1.0.1
 level: 2
 status: regular
 dependencies:
@@ -39,9 +39,10 @@ The validation process covers the following domains:
 - Semantic validation
 - Cross-spec validation
 
-Each domain applies the rules defined in:
-- Zero Specification
-- Specification Validation Pipeline (Meta)
+Each domain **MUST** apply the rules defined in the authoritative specifications:
+- `0-zero.spec.md` (for specification system rules)
+- `0-specification-validation-meta.spec.md` (for validation checklist)
+- `1-specification-validation-guardrails.spec.md` (for AI behavior constraints)
 
 The order of execution is NOT defined at this level.
 
@@ -54,57 +55,29 @@ You are a formal specification validation engine.
 
 Your task is to validate a **COMPLETE SET** of specifications as a single system.
 
-You **MUST** comply with:
-- The Zero Specification
-- The Specification Validation Pipeline (Meta)
-- The Specification Validation Pipeline (Guardrails)
+You **MUST** comply with the following authoritative specifications:
+- The Zero Specification (0-zero.spec.md)
+- The Specification Validation (Meta) Specification (0-specification-validation-meta.spec.md)
+- The Specification Validation (Guardrails) Specification (1-specification-validation-guardrails.spec.md)
 
-You **MUST** treat all specifications as authoritative, static text.
-You **MUST NOT** assume intent.
-You **MUST NOT** invent rules.
-You **MUST NOT** infer missing behavior.
-You **MUST NOT** suggest fixes or improvements.
+Apply all rules and constraints defined in those specifications.
 
 You **MUST** validate:
 - Each specification individually
 - The combined behavior of all specifications together
 
-You **MUST** apply:
-- All General Checks
-- All Level-Specific Checks
-- All Cross-Spec Compatibility Checks
-
-You **MUST** detect:
-- Rule violations
-- Cross-level conflicts
-- Rule shadowing
-- Duplication
-- Constraint violations
-- Non-determinism introduced by combination
+You **MUST** apply the validation checklist from 0-specification-validation-meta.spec.md:
+- All General Checks (Section 1)
+- All Level-Specific Checks (Section 2)
+- All Cross-Spec Compatibility Checks (Section 4)
 
 You **MUST** produce deterministic output.
 Identical inputs **MUST** result in identical output.
 
 You **MUST** output **ONLY** valid JSON. No prose. No markdown. No explanations.
-
-Validation context:
-- Specification Validation Pipeline (Meta): 0-specification-validation-pipeline-meta
-- Specification Validation Pipeline (Guardrails): 1-specification-validation-pipeline-guardrails
 ```
 
 ### 4.2 User Prompt
-
-Validate the provided specifications.
-
-You **MUST**:
-- Apply all checklist sections
-- Perform cross-spec validation
-- Detect conflicts and duplication
-
-You **MUST NOT**:
-- Suggest fixes
-- Propose implementations
-- Infer missing intent
 
 ```text
 Validate the following complete specification set.
@@ -114,8 +87,8 @@ There is **NO** target specification.
 All specifications **MUST** be validated together as a system.
 
 Instructions:
-- Validate every specification against the meta checklist
-- Validate every specification against level rules
+- Apply the validation checklist from 0-specification-validation-meta.spec.md
+- Apply the AI constraints from 1-specification-validation-guardrails.spec.md
 - Validate cross-spec interactions and conflicts
 - Determine a single global validation result
 
@@ -199,4 +172,4 @@ This specification is the sole owner of:
 
 No other specification may redefine this pipeline behavior.
 
-Note: Execution order and orchestration are owned by Level 3 (3-specification-validation-orchestration).
+Note: Execution order and orchestration are owned by Level 3 (3-specification-validation-orchestration.spec.md).
