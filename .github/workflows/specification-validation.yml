@@ -1,55 +1,38 @@
 name: Specification Validation
+description: Validates all specification files for following the rules and checks their compatibility.
 
 on:
   pull_request:
     paths:
-      - "**/*.spec.md"
+      - "specs/**/*.spec.md"
+      - "tools/validate-specifications/**"
   push:
     branches:
       - main
     paths:
-      - "**/*.spec.md"
+      - "specs/**/*.spec.md"
+      - "tools/validate-specifications/**"
 
 jobs:
   validate-specifications:
     name: Validate Specifications
-    runs-on: self-hosted # EPAM DIAL requires EPAM VPN.
+    runs-on: self-hosted
 
     permissions:
       contents: read
 
+    env:
+      DIAL_KEY: ${{ secrets.DIAL_KEY }}
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Collect specification files
-        id: collect
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Run specification validation
         run: |
-          mkdir -p .specification-validation/input
-          find . -name "*.spec.md" -print > .specification-validation/input/spec-list.txt
-
-      - name: Prepare validation bundle
-        run: |
-          mkdir -p .specification-validation/bundle
-          cp $(cat .specification-validation/input/spec-list.txt) .specification-validation/bundle/
-
-      - name: Run AI specification validation
-        run: node ./tools/validate-specifications.js
-        env:
-          DIAL_KEY: ${{ secrets.DIAL_KEY }}
-
-      - name: Check validation result
-        run: |
-          RESULT=$(jq -r '.result' .specification-validation/result.json)
-          echo "Validation result: $RESULT"
-
-          if [ "$RESULT" = "INVALID" ]; then
-            echo "❌ Specification validation failed"
-            jq '.' .specification-validation/result.json
-            exit 1
-          fi
-
-          if [ "$RESULT" = "CONDITIONALLY_VALID" ]; then
-            echo "⚠️ Specification validation conditionally valid"
-            jq '.' .specificationvalidation/result.json
-          fi
+          node tools/validate-specifications/index.js
