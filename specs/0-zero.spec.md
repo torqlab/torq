@@ -88,7 +88,7 @@ Define global, cross‑cutting constraints that apply to the entire system.
 - _Level 1_ specifications **MUST NOT** describe implementation details.
 - _Level 2+_ specifications **MUST** explicitly declare dependency on at least one _Level 1_ specification in their front matter.
 
-### _Level 2_ — Domain Specifications
+### _Level 2_ — Domain Specifications (Behavior, Implementation)
 
 #### Purpose
 
