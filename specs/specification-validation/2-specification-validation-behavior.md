@@ -2,7 +2,7 @@
 id: 2-specification-validation-behavior
 version: 1.0.0
 level: 2
-status: canonical
+status: regular
 dependencies:
   - 0-zero.spec.md
   - 0-specification-validation-meta.spec.md

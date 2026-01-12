@@ -1,8 +1,8 @@
 ---
 id: 0-specification-validation-meta
-version: 1.0.2
+version: 1.0.4
 level: 0
-status: canonical
+status: regular
 dependencies:
   - 0-zero.spec.md
 ---
@@ -16,7 +16,7 @@ This specification is authoritative for the validation of all specifications. It
 The checklist is **normative**.
 A specification is considered **invalid** if any mandatory check fails.
 
-This document defines **validation rules**, not implementation.
+This document defines **validation procedures**, not the specification system itself (which is defined in `0-zero.spec.md`).
 
 ## How to Use This Checklist
 
@@ -32,342 +32,222 @@ For every specification file:
 
 ## 1. General Checks (All Levels)
 
-These checks apply to **every specification**, regardless of level.
+These checks validate compliance with rules defined in `0-zero.spec.md`.
 
 ### 1.1 Front Matter Validation
 
-The specification **MUST** contain front matter with:
+Verify the specification contains all required front matter fields as defined in `0-zero.spec.md`:
 
-- `id`
-- `version`
-- `level`
-- `status`
-- `dependencies`
-
-Validation rules:
-
-- `id` **MUST** be unique across all specs and follow this pattern: `<level>-<name>`
-- `version` **MUST** follow semantic versioning: `<major>.<minor>.<patch>`
-- `level` **MUST** be an integer
-- `status` **MUST** be one of:
-  - canonical
-  - regular
-  - draft
-  - deprecated
-- dependencies **MUST** be explicit or N/A
+- Check for presence of `id`, `version`, `level`, `status`, `dependencies`
+- Validate `id` uniqueness and pattern compliance
+- Validate `version` follows semantic versioning
+- Validate `level` is an integer
+- Validate `status` is an allowed value
+- Validate dependencies are explicit or 'none'
 
 Failure of any rule → **INVALID**
 
 ### 1.2 File Naming Validation
 
-File name **MUST** follow:
+Verify file name follows the convention defined in `0-zero.spec.md`:
 
-`<level>-<name>.spec.md`
-
-Rules:
-
-- level in filename **MUST** match front matter level
-- filename **MUST** be stable across versions
+- Check level in filename matches front matter level
+- Check filename stability across versions
 
 Failure → **INVALID**
 
 ### 1.3 Dependency Validation
 
-Dependencies **MUST** satisfy:
+Verify dependencies satisfy rules from `0-zero.spec.md`:
 
-- Only lower-level or same-level dependencies allowed
-- No circular dependencies
-- All dependencies **MUST** exist
-- Dependency filenames **MUST** be exact
+- Check only lower-level or same-level dependencies
+- Check no circular dependencies
+- Check all dependencies exist
+- Check dependency filenames are exact
 
 Failure → **INVALID**
 
 ### 1.4 Rule Language Validation
 
-The specification **MUST**:
+Verify the specification:
 
-- Use RFC 2119 keywords **MUST**, **MUST NOT**, **MAY**, **SHOULD**, etc. explicitly
-- Avoid ambiguous language
-- Avoid implementation terms
+- Uses RFC 2119 keywords correctly
+- Avoids ambiguous language
+- Avoids implementation terms where inappropriate
 
 Failure → **CONDITIONALLY VALID**
 
 ### 1.5 Duplication Check
 
-The specification **MUST NOT**:
+Verify the specification does not:
 
 - Duplicate rules owned by another level
 - Rephrase higher-level rules as new ones
 
 Failure → **INVALID**
 
-## 2. _Level 0_ — Zero Specification Checklist
+## 2. Level-Specific Content Validation
 
-### 2.1 Allowed Content
+### 2.1 _Level 0_ Content Validation
 
-A _Level 0_ spec **MAY** define:
+Verify _Level 0_ specifications comply with constraints from `0-zero.spec.md`:
 
-- Specification hierarchy
-- Rule ownership rules
-- Dependency rules
-- Versioning policy
-- Validation criteria
-
-### 2.2 Forbidden Content
-
-A _Level 0_ specification **MUST NOT**:
-
-- Define domain behavior
-- Define runtime logic
-- Define safety or content constraints themselves
-- Reference implementation details
-
-A _Level 0_ specification **MAY**:
-
-- Define **meta-rules** for validating safety or content constraints defined in lower-level specifications
+- Check content is limited to meta-specification concerns
+- Check no domain behavior is defined
+- Check no runtime logic is defined
+- Check no implementation details are referenced
 
 Failure → **INVALID**
 
-### 2.3 Authority Check
+### 2.2 _Level 1_ Content Validation
 
-Zero Spec **MUST**:
+Verify _Level 1_ specifications comply with constraints from `0-zero.spec.md`:
 
-- Explicitly define conflict resolution order
-- Declare itself as the highest authority
-
-Failure → **INVALID**
-
-## 3. _Level 1_ — Global Guardrails Checklist
-
-### 3.1 Allowed Content
-
-A _Level 1_ spec **MAY** define:
-
-- Global safety constraints
-- Content and style boundaries
-- Determinism rules
-- Retry and fallback limits
-- Input sanitization rules
-
-### 3.2 Forbidden Content
-
-A _Level 1_ spec **MUST NOT**:
-
-- Define domain-specific logic
-- Define transformation algorithms
-- Define orchestration or sequencing
-- Reference UI or infrastructure
+- Check content is limited to global guardrails
+- Check no domain-specific logic is defined
+- Check no orchestration is defined
+- Check no UI/infrastructure references
 
 Failure → **INVALID**
 
-### 3.3 Downward Restriction Check
+### 2.3 _Level 2_ Content Validation
 
-_Level 1_ rules MUST:
+Verify _Level 2_ specifications:
 
-- Restrict lower levels
-- Never depend on lower-level behavior
-
-Failure → **INVALID**
-
-## 4. _Level 2_ — Domain Specification Checklist
-
-### 4.1 Allowed Content
-
-A _Level 2_ spec **MAY** define:
-
-- Domain inputs and outputs
-- Classification rules
-- Transformation rules
-- Validation logic
-
-### 4.2 Required References
-
-A _Level 2_ spec **MUST**:
-
-- Explicitly reference Guardrails
+- Reference appropriate _Level 1_ guardrails
 - Comply with all _Level 1_ constraints
+- Do not redefine guardrails
+- Do not define orchestration logic
 
 Failure → **INVALID**
 
-### 4.3 Forbidden Content
+### 2.4 _Level 3_ Content Validation
 
-A _Level 2_ spec **MUST NOT**:
+Verify _Level 3_ specifications:
 
-- Redefine guardrails
-- Define orchestration logic
-- Define infrastructure behavior
-
-Failure → **INVALID**
-
-## 5. _Level 3_ — Integration Specification Checklist
-
-### 5.1 Allowed Content
-
-A _Level 3_ spec MAY define:
-
-- Data flow between domains
-- Ordering rules
-- Failure propagation rules
-- Interface contracts
-
-### 5.2 Forbidden Content
-
-A _Level 3_ spec MUST NOT:
-
-- Redefine domain logic
-- Define safety or content rules
-- Introduce new domain constraints
+- Define only integration concerns
+- Do not redefine domain logic
+- Do not introduce new domain constraints
 
 Failure → **INVALID**
 
-## 6. _Level 4_ — Implementation Notes Checklist
+### 2.5 _Level 4_ Content Validation
 
-### 6.1 Allowed Content
+Verify _Level 4_ specifications:
 
-A _Level 4_ spec MAY include:
-
-- Examples
-- Clarifications
-- Rationale
-
-### 6.2 Forbidden Content
-
-A _Level 4_ spec **MUST NOT**:
-
-- Introduce new rules
-- Contradict higher-level specs
-- Be referenced as normative dependency
+- Contain only non-normative content
+- Do not introduce new rules
+- Do not contradict higher-level specs
 
 Failure → **INVALID**
 
-## 7. Versioning Validation
+## 3. Versioning Validation
 
-For any spec change:
+Verify version changes follow rules from `0-zero.spec.md`:
 
-- Structural change → version bump REQUIRED
-- Behavioral change → version bump REQUIRED
-- Clarification only → version bump OPTIONAL
-
-Breaking changes **MUST** be documented.
+- Structural changes have version bump
+- Behavioral changes have version bump
+- Breaking changes are documented
 
 Failure → **CONDITIONALLY VALID**
 
-## 8. Cross-Spec Compatibility Checks
+## 4. Cross-Spec Compatibility Checks
 
-These checks validate a specification **in the context of all other existing specifications**.
+These checks validate a specification in context of all other specifications.
 
-Cross-spec checks are **mandatory**.
-Failure of any check in this section → **INVALID**.
+### 4.1 Dependency Closure Check
 
-### 8.1 Dependency Closure Check
+Verify:
 
-A specification **MUST** satisfy full dependency closure:
-
-- All declared dependencies **MUST** exist
-- All transitive dependencies **MUST** be resolvable
-- No dependency chain **MUST** exceed defined level ordering
+- All declared dependencies exist
+- All transitive dependencies are resolvable
+- No dependency chain violates level ordering
 
 Failure → **INVALID**
 
-### 8.2 Cross-Level Rule Conflict Check
+### 4.2 Cross-Level Rule Conflict Check
 
-A specification **MUST NOT**:
+Verify the specification does not:
 
-- Contradict any rule from a higher-level specification
-- Weaken a higher-level **MUST** into **SHOULD** or **MAY**
-- Introduce exceptions not explicitly allowed upstream
-
-Conflict resolution rules:
-
-1. Higher level always wins
-2. Canonical beats non-canonical
-3. Newer version beats older version (same level only)
-
-Unresolvable conflict → **INVALID**
-
-### 8.3 Rule Shadowing Check
-
-A specification **MUST NOT**:
-
-- Redefine an existing rule under a different name
-- Introduce semantically equivalent rules already owned elsewhere
-
-Semantic duplication is treated as duplication.
+- Contradict higher-level rules
+- Weaken higher-level requirements
+- Introduce unauthorized exceptions
 
 Failure → **INVALID**
 
-### 8.4 Behavioral Overlap Check
+### 4.3 Rule Shadowing Check
 
-If multiple specs affect the same behavior:
+Verify the specification does not:
 
-- Ownership **MUST** be explicit
-- One spec **MUST** be authoritative
-- Others **MUST** reference, not redefine
+- Redefine existing rules under different names
+- Introduce semantically equivalent rules
 
-Implicit overlap → **INVALID**
+Failure → **INVALID**
 
-### 8.5 Constraint Tightening Rules
+### 4.4 Behavioral Overlap Check
 
-Lower-level specifications **MAY**:
+For specs affecting the same behavior, verify:
 
-- Add stricter constraints
-- Narrow allowed values
-- Reduce degrees of freedom
+- Ownership is explicit
+- One spec is authoritative
+- Others reference, not redefine
 
-Lower-level specifications **MUST NOT**:
+Failure → **INVALID**
 
-- Relax higher-level constraints
-- Introduce alternative behaviors
+### 4.5 Constraint Tightening Rules
 
-Violation → **INVALID**
+Verify lower-level specifications:
 
-### 8.6 Global Determinism Check
+- Only add stricter constraints
+- Do not relax higher-level constraints
+- Do not introduce alternative behaviors
 
-Combined application of all specs **MUST** result in:
+Failure → **INVALID**
 
-- Deterministic outcomes for identical inputs
+### 4.6 Global Determinism Check
+
+Verify combined application results in:
+
+- Deterministic outcomes
 - No conflicting randomness sources
 - No order-dependent interpretation
 
-Non-determinism introduced by combination → **INVALID**
+Failure → **INVALID**
 
-### 8.7 Version Compatibility Check
+### 4.7 Version Compatibility Check
 
-A specification update **MUST**:
+Verify specification updates:
 
-- Declare compatibility expectations in the project’s `/CHANGELOG.md` if it makes sense
-- Identify affected dependent specs and state them in the project’s `/CHANGELOG.md`
-- Explicitly state breaking changes in the project’s `/CHANGELOG.md`
+- Declare compatibility expectations where appropriate
+- Identify affected dependent specs
+- Explicitly state breaking changes
 
-Undeclared breaking change → **INVALID**
+Failure → **INVALID**
 
-### 8.8 Orphan Rule Check
+### 4.8 Orphan Rule Check
 
-Rules **MUST NOT** exist that:
+Verify no rules exist that:
 
-- Are not referenced by any valid execution path
-- Cannot be applied due to higher-level constraints
+- Are not referenced by any execution path
+- Cannot be applied due to constraints
 
-Orphan rules → **CONDITIONALLY VALID**
+Failure → **CONDITIONALLY VALID**
 
-### 8.9 Canonical Alignment Check
+### 4.9 Canonical Alignment Check
 
-If multiple specs define overlapping domains:
+For overlapping domains, verify:
 
-- Exactly one **canonical** spec **MUST** exist
-- All others **MUST** defer to it
+- Exactly one canonical spec exists
+- All others defer to it
 
-Multiple canonicals → **INVALID**
+Failure → **INVALID**
 
-### 8.10 Cross-Spec Validation Result
+### 4.10 Cross-Spec Validation Result
 
-If **all** checks in this section pass → **VALID**
+If all checks pass → **VALID**
+If any mandatory check fails → **INVALID**
 
-If **any** mandatory check fails → **INVALID**
-
-Incompatible specifications **MUST NOT** be merged, deployed, or referenced.
-
-## 9. Final Validation Result
+## 5. Final Validation Result
 
 A specification is:
 
@@ -379,13 +259,13 @@ Invalid specifications **MUST NOT** be used.
 
 ## Summary
 
-This checklist provides a **formal, repeatable validation mechanism** for all specifications.
+This checklist provides a **formal validation mechanism** for all specifications against the rules defined in `0-zero.spec.md`.
 
 Its goals are to:
 
-- Enforce Zero Specification authority
-- Prevent rule duplication
+- Verify compliance with Zero Specification
+- Detect rule duplication
 - Preserve determinism
-- Make a specification review mechanical and objective
+- Make specification review mechanical and objective
 
-All current and future specifications **MUST** pass this checklist.
+All specifications **MUST** pass this checklist to be considered valid.

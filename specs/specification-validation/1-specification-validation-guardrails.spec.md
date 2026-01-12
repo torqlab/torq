@@ -2,7 +2,7 @@
 id: 1-specification-validation-guardrails
 version: 1.0.0
 level: 1
-status: canonical
+status: regular
 dependencies:
   - 0-zero.spec.md
   - 0-specification-validation-meta.spec.md

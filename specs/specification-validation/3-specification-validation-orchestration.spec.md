@@ -2,7 +2,7 @@
 id: 3-specification-validation-orchestration
 version: 1.0.3
 level: 3
-status: canonical
+status: regular
 dependencies:
   - 0-zero.spec.md
   - 0-specification-validation-meta.spec.md
