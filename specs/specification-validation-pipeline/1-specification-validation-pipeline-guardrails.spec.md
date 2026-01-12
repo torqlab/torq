@@ -1,5 +1,5 @@
 ---
-id: specification-validation-pipeline-guardrails
+id: 1-specification-validation-pipeline-guardrails
 version: 1.0.0
 level: 1
 status: canonical
@@ -20,7 +20,6 @@ It defines **constraints**, not pipelines or implementations.
 ## 1. Purpose
 
 This specification ensures that AI-based validation is:
-
 - Deterministic
 - Rule-bound
 - Non-inferential
