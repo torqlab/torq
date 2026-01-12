@@ -64,7 +64,7 @@ jobs:
             echo "| Metric | Value |"
             echo "|-------|-------|"
             echo "| Result | **${{ steps.validation.outputs.result }}** |"
-            echo "| Invalid violations | ${{ steps.validation.outputs.invalid_count }} |"
+            echo "| Critical violations | ${{ steps.validation.outputs.invalid_count }} |"
             echo "| Conditional violations | ${{ steps.validation.outputs.conditional_count }} |"
             echo ""
           } >> "$GITHUB_STEP_SUMMARY"
