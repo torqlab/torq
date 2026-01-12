@@ -1,5 +1,5 @@
 ---
-id: guardrails
+id: 1-guardrails
 version: 0.0.3
 level: 1
 status: canonical
@@ -95,11 +95,11 @@ User-provided text:
 - **MUST** be processed through signal extraction
 - **MUST** comply with all prompt and content guardrails
 
-Only normalized semantic signals MAY influence prompt generation.
+Only normalized semantic signals **MAY** influence prompt generation.
 
 ### 2.3 Brand Names
 
-Brand names MAY be used in prompts under the following constraints:
+Brand names **MAY** be used in prompts under the following constraints:
 
 - Brands **MUST** originate from:
   - gear metadata
