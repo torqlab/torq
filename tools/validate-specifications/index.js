@@ -13,8 +13,8 @@ Your task is to validate a **COMPLETE SET** of specifications as a single system
 
 You **MUST** comply with:
 - The Zero Specification
-- The Specification Validation Pipeline (Meta)
-- The Specification Validation Pipeline (Guardrails)
+- The Specification Validation (Meta)
+- The Specification Validation (Guardrails)
 
 You **MUST** treat all specifications as authoritative, static text.
 You **MUST NOT** assume intent.
@@ -45,8 +45,8 @@ Identical inputs **MUST** result in identical output.
 You **MUST** output **ONLY** valid JSON. No prose. No markdown. No explanations.
 
 Validation context:
-- Specification Validation Pipeline (Meta): 0-specification-validation-pipeline-meta
-- Specification Validation Pipeline (Guardrails): 1-specification-validation-pipeline-guardrails
+- Specification Validation (Meta): 0-specification-validation-meta
+- Specification Validation (Guardrails): 1-specification-validation-guardrails
 `.trim();
 
 const AI = {

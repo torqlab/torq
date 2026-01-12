@@ -1,14 +1,14 @@
 ---
-id: 1-specification-validation-pipeline-guardrails
+id: 1-specification-validation-guardrails
 version: 1.0.0
 level: 1
 status: canonical
 dependencies:
   - 0-zero.spec.md
-  - 0-specification-validation-pipeline-meta.spec.md
+  - 0-specification-validation-meta.spec.md
 ---
 
-# Specification Validation Pipeline (Guardrails) Specification
+# Specification Validation (Guardrails) Specification
 
 This specification defines **global, mandatory guardrails** for all AI-based specification validation.
 

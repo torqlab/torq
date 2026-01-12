@@ -1,5 +1,5 @@
 ---
-id: 0-specification-validation-pipeline-meta
+id: 0-specification-validation-meta
 version: 1.0.0
 level: 0
 status: canonical
@@ -7,7 +7,7 @@ dependencies:
   - 0-zero.spec.md
 ---
 
-# Specification Validation Pipeline (Meta) Specification
+# Specification Validation (Meta) Specification
 
 This document defines a **formal, deterministic checklist** for validating any system specification against the Zero Specification.
 

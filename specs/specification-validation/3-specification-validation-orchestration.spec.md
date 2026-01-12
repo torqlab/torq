@@ -1,19 +1,18 @@
 ---
-id: 3-specification-validation-pipeline-orchestration
+id: 3-specification-validation-orchestration
 version: 1.0.0
 level: 3
 status: canonical
 dependencies:
   - 0-zero.spec.md
-  - 0-specification-validation-pipeline-meta.spec.md
-  - 1-specification-validation-pipeline-guardrails.spec.md
-  - 2-specification-validation-pipeline-behavior.spec.md
+  - 0-specification-validation-meta.spec.md
+  - 1-specification-validation-guardrails.spec.md
+  - 2-specification-validation-behavior.spec.md
 ---
 
-# Specification Validation Pipeline (Orchestration) Specification
+# Specification Validation (Orchestration) Specification
 
-This specification defines the **orchestration and execution order**
-of the Specification Validation Pipeline.
+This specification defines the **orchestration and execution order** of the Specification Validation.
 
 This is a **Level 3 integration specification**.
 
