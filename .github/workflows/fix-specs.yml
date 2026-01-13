@@ -2,16 +2,7 @@ name: Fix Specs
 
 on:
   pull_request:
-    paths:
-      - "specs/**/*.spec.md"
-      - "packages/validate-specs/**"
-      - ".github/workflows/validate-specs.yml"
   push:
-    branches: [ main ]
-    paths:
-      - "specs/**/*.spec.md"
-      - "packages/validate-specs/**"
-      - ".github/workflows/validate-specs.yml"
 
 jobs:
   fix-specs:
