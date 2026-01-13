@@ -52,7 +52,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
           branch: agent/fix-specs-${{ github.run_id }}
           title: "Agent: Fix Specs"
           body: |
