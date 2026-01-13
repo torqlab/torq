@@ -18,6 +18,10 @@ jobs:
     name: Validate Specs
     runs-on: self-hosted
 
+    outputs:
+      validation-status: ${{ steps.validation.outputs.result }}
+      validation-summary-json: ${{ steps.expose-validation-summary-json.outputs.validation_summary_json }}
+
     permissions:
       contents: read
 
@@ -53,6 +57,13 @@ jobs:
           mkdir -p .specs-validation
           touch .specs-validation/result.json
           bun run validate-specs > .specs-validation/result.json
+
+      - name: Expose validation result JSON
+        id: expose-validation-summary-json
+        run: |
+          echo "validation_summary_json<<EOF" >> $GITHUB_OUTPUT
+          cat .specs-validation/result.json >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Parse validation result
         id: validation
@@ -91,14 +102,17 @@ jobs:
             "| \(.spec_id // "global") | \(.rule) | **\(.severity)** | \(.description) |"
           ' .specs-validation/result.json >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Initiate spec fix pipeline on failed validation
-        # if: steps.validation.outputs.result == 'INVALID'
-        uses: mrbalov/pace/.github/workflows/fix-specs.yml@main
-        with:
-          summary: $GITHUB_STEP_SUMMARY
-
       - name: Fail pipeline on failed validation
         if: steps.validation.outputs.result == 'INVALID'
         run: |
           echo "❌ Specs validation failed"
           exit 1
+
+  fix-specs:
+    needs: validate-specs
+    if: needs.validate-specs.outputs.validation-status == 'INVALID'
+    uses: ./.github/workflows/fix-specs.yml
+    secrets: inherit
+    with:
+      summary: ${{ needs.validate-specs.outputs.validation-summary-json }}
+  
