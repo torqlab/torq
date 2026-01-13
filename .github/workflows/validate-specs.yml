@@ -104,6 +104,7 @@ jobs:
           ' .specs-validation/result.json >> "$GITHUB_STEP_SUMMARY"
 
   fix-specs:
+    name: Fix Specs
     needs: validate-specs
     if: needs.validate-specs.outputs.validation-status == 'INVALID'
     uses: ./.github/workflows/fix-specs.yml
@@ -115,6 +116,7 @@ jobs:
       summary: ${{ needs.validate-specs.outputs.validation-summary-json }}
 
   finally:
+    name: Finalize Specs Validation
     needs: [validate-specs, fix-specs]
     runs-on: self-hosted
 
