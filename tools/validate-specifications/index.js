@@ -50,7 +50,7 @@ Validation context:
 `.trim();
 
 const AI = {
-  MODEL: 'gpt-5-mini-2025-08-07',
+  MODEL: 'gpt-5-nano-2025-08-07',
   API_VERSION: '2024-12-01-preview',
   API_KEY: process.env.DIAL_KEY,
   TEMPERATURE: 1,
