@@ -1,15 +1,5 @@
-# strava-activity-image-generator
+# PACE (Strava Activity Image Generator)
 
-To install dependencies:
+**PACE** (**P**ersonal **A**ctivity **C**anvas **E**ngine) is an AI-powered [Strava](https://www.strava.com/) activity image generator that automatically turns your workouts into visually compelling images. It analyzes activity data and context to create shareable, expressive visuals for each Strava activity, helping athletes present their performance and stories in a more engaging and personalized way.
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run dist/index.js
-```
-
-This project was created using `bun init` in bun v1.3.6. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+![One athele is running. Another athele is riding a road bicycle. Minimalistic style with dark colour tones.](./banner.webp)

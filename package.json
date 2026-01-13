@@ -1,10 +1,10 @@
 {
-  "name": "strava-activity-image-generator",
+  "name": "pace",
   "version": "1.0.0",
   "description": "Generates AI images based on Strava activity data.",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/mrbalov/strava-activity-image-generator#readme",
+  "homepage": "https://github.com/mrbalov/pace#readme",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrbalov/strava-activity-image-generator.git"
+    "url": "git+https://github.com/mrbalov/pace.git"
   },
   "keywords": [
     "strava",
@@ -26,7 +26,7 @@
     "url": "https://balov.dev"
   },
   "bugs": {
-    "url": "https://github.com/mrbalov/strava-activity-image-generator/issues"
+    "url": "https://github.com/mrbalov/pace/issues"
   },
   "engines": {
     "node": "24.x"

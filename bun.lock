@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "strava-activity-image-generator",
+      "name": "pace",
       "devDependencies": {
         "@types/bun": "^1.3.5",
         "bun": "^1.3.6",

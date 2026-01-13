@@ -1,5 +1,5 @@
 {
-  "name": "@strava-activity-image-generator/validate-specs",
+  "name": "@pace/validate-specs",
   "private": true,
   "type": "module",
   "scripts": {
