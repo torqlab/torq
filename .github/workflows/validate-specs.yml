@@ -60,7 +60,7 @@ jobs:
           touch .specs-validation/result.json
           bun run validate-specs > .specs-validation/result.json
 
-      - name: Expose validation result JSON
+      - name: Expose validation result JSON (as base64)
         id: expose-validation-summary-json
         run: |
           SUMMARY_B64=$(base64 < .specs-validation/result.json | tr -d '\n')
