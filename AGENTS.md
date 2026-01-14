@@ -28,11 +28,9 @@ These guardrails apply to the whole system. Code that violates these guardrails 
 
 The complete guardrails specification is maintained in OpenSpec format:
 
-- **[Input Guardrails](openspec/specs/input-guardrails/spec.md)**: Activity data validation, user-provided text processing, and tag handling
-- **[Prompt Guardrails](openspec/specs/prompt-guardrails/spec.md)**: Image generation prompt content rules and size limits
-- **[Image Guardrails](openspec/specs/image-guardrails/spec.md)**: Image style, output characteristics, retry/fallback strategies, failure handling, and determinism
-
-For detailed requirements and scenarios, refer to the specifications in `openspec/specs/`.
+- **[Input Guardrails](openspec/specs/guardrails-input/spec.md)**: Activity data validation, user-provided text processing, and tag handling
+- **[Image Generation Prompt Guardrails](openspec/specs/guardrails-image-generation-prompt/spec.md)**: Image generation prompt content rules and size limits
+- **[Image Guardrails](openspec/specs/guardrails-image/spec.md)**: Image style, output characteristics, retry/fallback strategies, failure handling, and determinism
 
 ## System Architecture
 
