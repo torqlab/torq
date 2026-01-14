@@ -133,6 +133,6 @@ These guardrails apply to the whole system. Code that violates these guardrails 
 
 The complete guardrails specification is availablehere:
 
-- **[Input Guardrails](openspec/specs/guardrails-input/spec.md)**: Activity data validation, user-provided text processing, tag handling, and so on
+- **[Activity Data Guardrails](openspec/specs/guardrails-activity-data/spec.md)**: Activity data validation, user-provided text processing, tag handling, and so on
 - **[Image Generation Prompt Guardrails](openspec/specs/guardrails-image-generation-prompt/spec.md)**: Image generation prompt content rules and limits
 - **[Image Generation Guardrails](openspec/specs/guardrails-image-generation/spec.md)**: Image style, output characteristics, retry/fallback strategies, failure handling, and determinism
