@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "validate-specs:openspec": "openspec validate --strict --no-interactive",
-    "validate-specs:ai": "bun run --cwd packages/validate-specs go -- --rootDir $(pwd)"
+    "validate-specs:ai": "bun --filter @pace/validate-specs run validate-specs:ai -- --rootDir $(pwd)"
   },
   "repository": {
     "type": "git",
