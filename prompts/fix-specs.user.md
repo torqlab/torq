@@ -17,9 +17,7 @@ Rules you **MUST** follow:
 - Preserve existing structure, headings, and ordering whenever possible
 
 You **MUST**:
-- Fix semantic versioning issues exactly according to SemVer (MAJOR.MINOR.PATCH)
-- Fix invalid status values strictly according to spec level rules
-- Fix front matter that doesn't comply with validation rules
+- Strictly follow the OpenSpec rules
 - Address recommendations from the provided validation summary strictly
 - Keep the existing manner/style of building specifications
 - Ensure all changes are minimal, mechanical, and justified by a violation
@@ -33,12 +31,12 @@ Input you will receive:
 1. The validation summary
 
 Expected output:
-- Direct file edits that resolve all **INVALID** and **CONDITIONALLY_VALID** violations
+- Direct file edits that resolve all violations
 - No additional output, no explanations, no markdown
 - If a violation cannot be resolved mechanically, **STOP** and report failure
 
 Begin by:
 1. Parsing the validation summary
-2. Mapping each violation to a concrete file and rule
+2. Mapping each violation to a concrete spec and rule
 3. Applying minimal fixes
 4. Re-validating mentally that the fix resolves the violation
