@@ -1,4 +1,4 @@
-# Input Guardrails
+# Activity Data Guardrails
 
 Guardrails for validating activity input data, user-provided text, and tags.
 

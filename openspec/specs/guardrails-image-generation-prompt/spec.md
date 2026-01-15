@@ -1,4 +1,4 @@
-# Prompt Guardrails
+# Image Generation Prompt Guardrails
 
 Guardrails for image generation prompt content, size limits, and safety validation.
 
