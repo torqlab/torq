@@ -10,8 +10,12 @@ Instructions:
 
 If **ANY** mandatory check fails → result **MUST** be **INVALID**.
 
+Notes:
+- Each specification chunk is preceded by a `PATH:` header that shows the absolute path to the spec file. When recording a violation for a specific document, set `spec_id` to exactly that path (e.g., `openspec/specs/test-invalid-spec/spec.md`). If the violation applies globally, use `null`.
+
 Return a **SINGLE** validation result using this contract:
 
+```json
 {
   "result": "VALID | INVALID",
   "violations": [
@@ -23,8 +27,7 @@ Return a **SINGLE** validation result using this contract:
   ],
   "notes": []
 }
+```
 
 Now validate the following specifications:
 
-Notes:
-- Each specification chunk is preceded by a `PATH:` header that shows the absolute path to the spec file. When recording a violation for a specific document, set `spec_id` to exactly that path (e.g., `openspec/specs/test-invalid-spec/spec.md`). If the violation applies globally, use `null`.
