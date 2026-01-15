@@ -11,7 +11,7 @@ Define guardrails for image style, output characteristics, retry/fallback strate
 Only the following visual styles and their variations SHALL be allowed: `cartoon`, `minimal`, `abstract`, and `illustrated`.
 
 #### Scenario: Cartoon style selection
-- **GIVE** an activity requiring image generation
+- **GIVEN** an activity requiring image generation
 - **WHEN** selecting an image style
 - **THEN** `cartoon` style MAY be selected
 
