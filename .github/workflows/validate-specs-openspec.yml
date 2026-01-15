@@ -98,17 +98,18 @@ jobs:
           SUMMARY_B64=$(base64 < .specs-validation/openspec/result.json | tr -d '\n')
           echo "validation_summary_json=$SUMMARY_B64" >> "$GITHUB_OUTPUT"
 
-      - name: Fail pipeline on validation failure
+      - name: Report validation failure
         if: steps.parse-result.outputs.success == 'false'
+        continue-on-error: true
         run: |
           echo "❌ OpenSpec validation failed! Please review the validation summary above and address the issues."
-          echo "🤖 You can trigger the AI fix by approving the 'Fix Specs (OpenSpec)' job below."
+          echo "🤖 You can trigger the AI fix by approving the 'Fix Specs Approval (OpenSpec)' job below."
           exit 1
 
   fix-specs-approval:
     name: Fix Specs Approval (OpenSpec)
     needs: validate-specs-openspec
-    if: needs.validate-specs-openspec.outputs.validation-status == 'false'
+    if: always() && needs.validate-specs-openspec.outputs.validation-status == 'false'
     runs-on: ubuntu-latest
     environment:
       name: fix-specs-approval
@@ -119,7 +120,7 @@ jobs:
   fix-specs:
     name: Fix Specs (OpenSpec)
     needs: [validate-specs-openspec, fix-specs-approval]
-    if: needs.validate-specs-openspec.outputs.validation-status == 'false'
+    if: always() && needs.validate-specs-openspec.outputs.validation-status == 'false' && needs.fix-specs-approval.result == 'success'
     uses: ./.github/workflows/fix-specs.yml
     secrets: inherit
     permissions:
