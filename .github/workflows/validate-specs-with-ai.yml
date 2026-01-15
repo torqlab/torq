@@ -192,10 +192,21 @@ jobs:
             "| \(.spec_id // "global") | \(.rule // "unknown") | \(.description // "No description") |"
           ' .specs-validation/ai/result.json >> "$GITHUB_STEP_SUMMARY"
 
+  fix-specs-with-ai-approval:
+    name: Fix Specs with AI Approval
+    needs: validate-specs-with-ai
+    if: always() && needs.validate-specs-with-ai.outputs.validation-status == 'INVALID'
+    runs-on: ubuntu-latest
+    environment:
+      name: fix-specs-with-ai-approval
+    steps:
+      - name: Approval granted
+        run: echo "Approval granted for fixing AI validation issues with AI"
+
   fix-specs-with-ai:
     name: Fix Specs with AI
-    needs: validate-specs-with-ai
-    if: needs.validate-specs-with-ai.outputs.validation-status == 'INVALID'
+    needs: [validate-specs-with-ai, fix-specs-with-ai-approval]
+    if: always() && needs.validate-specs-with-ai.outputs.validation-status == 'INVALID' && needs.fix-specs-with-ai-approval.result == 'success'
     uses: ./.github/workflows/fix-specs-with-ai.yml
     secrets: inherit
     permissions:
