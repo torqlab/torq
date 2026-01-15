@@ -36,6 +36,9 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - **Import Style**: ES modules with explicit extensions where needed
 - **Async/Await**: Preferred over callbacks and raw promises
 - **Function Organization**: Each function should have its own dedicated folder with the function file and an `index.ts` that exports the function as `export { default } from './function-name';`. This pattern applies to all functions across the codebase.
+- **Variable Definitions:** Prefer using `const` instead of `let`. Choose `let` only when `const` cannot be used reliably.
+- **Imperative Constructions:** Try to avoid imperative code constructions like `for (...) {...}`, `while (...) {...}`, and others. Functional alternatives like `.map(...)`, `.forEach(...)`, `.reduce(...)`, and others MUST be preferred.
+- **Conditional Constructions:** Avoid early-return pattern. Always use explicit `if...else if...else` conditional constructions.
 
 ### Architectual Patterns
 - **Service-Oriented Architecture**: Modular services with clear boundaries
