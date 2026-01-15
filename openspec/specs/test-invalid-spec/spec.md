@@ -2,7 +2,7 @@
 
 ## Requirements Blah-Blah-Blah!
 
-### Requirement: Missing Scenario
+### R
 This requirement has no scenarios, which violates OpenSpec format.
 
 ### Requirement: Invalid Scenario Format Foo Broken
