@@ -8,7 +8,7 @@ Define guardrails for image generation prompt content, size limits, and safety v
 
 ### Requirement: Allowed Prompt Content
 
-Prompts MAY include generic human figures, nature/gym/home/urban/abstract environments, emotional tone (e.g., calm, intense, focused), artistic and stylistic descriptors, and contextual brand references (when allowed by input guardrails).
+Prompts SHALL be restricted to the allowed content categories. Prompts MAY include generic human figures, nature/gym/home/urban/abstract environments, emotional tone (e.g., calm, intense, focused), artistic and stylistic descriptors, and contextual brand references (when allowed by input guardrails).
 
 #### Scenario: Prompt with generic human figures
 - **GIVEN** an activity requiring human representation

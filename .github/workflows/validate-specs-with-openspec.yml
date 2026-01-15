@@ -1,4 +1,4 @@
-name: Validate Specs (OpenSpec)
+name: Validate Specs with OpenSpec
 
 on:
   push:
@@ -6,11 +6,11 @@ on:
     paths:
       - "openspec/**"
       - "packages/validate-specs/validate-specs-with-openspec/**"
-      - ".github/workflows/validate-specs-openspec.yml"
+      - ".github/workflows/validate-specs-with-openspec.yml"
 
 jobs:
-  validate-specs-openspec:
-    name: Validate Specs (OpenSpec)
+  validate-specs-with-openspec:
+    name: Validate Specs with OpenSpec (Static Validation)
     runs-on: ubuntu-latest
 
     outputs:
@@ -106,25 +106,25 @@ jobs:
           echo "🤖 You can trigger the AI fix by approving the 'Fix Specs Approval (OpenSpec)' job below."
           exit 1
 
-  fix-specs-approval:
-    name: Fix Specs Approval (OpenSpec)
-    needs: validate-specs-openspec
-    if: always() && needs.validate-specs-openspec.outputs.validation-status == 'false'
+  fix-specs-with-ai-approval:
+    name: Fix Specs with AI Approval
+    needs: validate-specs-with-openspec
+    if: always() && needs.validate-specs-with-openspec.outputs.validation-status == 'false'
     runs-on: ubuntu-latest
     environment:
-      name: fix-specs-approval
+      name: fix-specs-with-ai-approval
     steps:
       - name: Approval granted
-        run: echo "Approval granted for fixing OpenSpec validation issues"
+        run: echo "Approval granted for fixing OpenSpec validation issues with AI"
 
-  fix-specs:
-    name: Fix Specs (OpenSpec)
-    needs: [validate-specs-openspec, fix-specs-approval]
-    if: always() && needs.validate-specs-openspec.outputs.validation-status == 'false' && needs.fix-specs-approval.result == 'success'
-    uses: ./.github/workflows/fix-specs.yml
+  fix-specs-with-ai:
+    name: Fix Specs with AI
+    needs: [validate-specs-with-openspec, fix-specs-with-ai-approval]
+    if: always() && needs.validate-specs-with-openspec.outputs.validation-status == 'false' && needs.fix-specs-with-ai-approval.result == 'success'
+    uses: ./.github/workflows/fix-specs-with-ai.yml
     secrets: inherit
     permissions:
       contents: write
       pull-requests: write
     with:
-      summary: ${{ needs.validate-specs-openspec.outputs.validation-summary-json }}
+      summary: ${{ needs.validate-specs-with-openspec.outputs.validation-summary-json }}

@@ -1,4 +1,4 @@
-name: Validate Specs
+name: Validate Specs with AI
 
 on:
   push:
@@ -10,8 +10,8 @@ on:
       - ".github/workflows/fix-specs.yml"
 
 jobs:
-  validate-specs:
-    name: Validate Specs
+  validate-specs-with-ai:
+    name: Validate Specs with AI
     runs-on: self-hosted
 
     outputs:
@@ -97,26 +97,26 @@ jobs:
             "| \(.spec_id // "global") | \(.rule) | **\(.severity)** | \(.description) |"
           ' .specs-validation/result.json >> "$GITHUB_STEP_SUMMARY"
 
-  fix-specs:
-    name: Fix Specs
-    needs: validate-specs
-    if: needs.validate-specs.outputs.validation-status == 'INVALID'
-    uses: ./.github/workflows/fix-specs.yml
+  fix-specs-with-ai:
+    name: Fix Specs with AI
+    needs: validate-specs-with-ai
+    if: needs.validate-specs-with-ai.outputs.validation-status == 'INVALID'
+    uses: ./.github/workflows/fix-specs-with-ai.yml
     secrets: inherit
     permissions:
       contents: write
       pull-requests: write
     with:
-      summary: ${{ needs.validate-specs.outputs.validation-summary-json }}
+      summary: ${{ needs.validate-specs-with-ai.outputs.validation-summary-json }}
 
   finally:
-    name: Finalize Specs Validation
-    needs: [validate-specs, fix-specs]
+    name: Finalize AI-Driven Specs Validation
+    needs: [validate-specs-with-ai, fix-specs-with-ai]
     runs-on: self-hosted
 
     steps:
       - name: Fail pipeline on failed validation
-        if: needs.validate-specs.outputs.validation-status == 'INVALID'
+        if: needs.validate-specs-with-ai.outputs.validation-status == 'INVALID'
         run: |
           echo "❌ Specs validation failed! Please review the validation summary above and address the issues."
           echo "🤖 Or realy on the agent which already tries to fix the issues."

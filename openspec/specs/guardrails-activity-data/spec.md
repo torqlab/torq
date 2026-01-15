@@ -157,7 +157,7 @@ Brand names MAY be used in prompts under the following constraints: brands SHALL
 
 ### Requirement: Supported Tag Types
 
-The system MAY process built-in Strava tags, including but not limited to `long run`, `recovery`, `race`, `commute`, `with kid`, `easy`, and `workout`. Tags MAY be represented as structured fields, normalized enums, or keywords extracted from metadata.
+The system MAY process built-in Strava tags, including but not limited to `long run`, `recovery`, `race`, `commute`, `with kid`, `easy`, and `workout`. Tags SHALL be supported in one of the following representations: structured fields, normalized enums, or keywords extracted from metadata.
 
 #### Scenario: Processing Strava tags
 - **GIVEN** an activity with built-in Strava tags

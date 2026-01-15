@@ -1,4 +1,4 @@
-name: Fix Specs
+name: Fix Specs with AI
 
 on:
   workflow_call:
@@ -8,8 +8,8 @@ on:
         type: string
 
 jobs:
-  fix-specs:
-    name: Fix Specs
+  fix-specs-with-ai:
+    name: Fix Specs with AI
     runs-on: self-hosted
 
     permissions:
