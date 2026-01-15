@@ -149,15 +149,15 @@ describe('validate-specs-with-ai', () => {
     } as Output));
 
     // Use mock.module to mock ES modules
-    mock.module('../get-spec-file-paths', () => ({
+    mock.module('./get-spec-file-paths', () => ({
       default: mockGetSpecFilePaths,
     }));
 
-    mock.module('../build-user-prompt', () => ({
+    mock.module('./build-user-prompt', () => ({
       default: mockBuildUserPrompt,
     }));
 
-    mock.module('../ask-dial', () => ({
+    mock.module('./ask-dial', () => ({
       default: mockAskDial,
     }));
 
@@ -186,15 +186,15 @@ describe('validate-specs-with-ai', () => {
     const mockBuildUserPrompt = mock(() => Promise.resolve('Built prompt'));
     const mockAskDial = mock(() => Promise.resolve({} as Output));
 
-    mock.module('../get-spec-file-paths', () => ({
+    mock.module('./get-spec-file-paths', () => ({
       default: mockGetSpecFilePaths,
     }));
 
-    mock.module('../build-user-prompt', () => ({
+    mock.module('./build-user-prompt', () => ({
       default: mockBuildUserPrompt,
     }));
 
-    mock.module('../ask-dial', () => ({
+    mock.module('./ask-dial', () => ({
       default: mockAskDial,
     }));
 
@@ -211,11 +211,11 @@ describe('validate-specs-with-ai', () => {
     const mockBuildUserPrompt = mock(() => Promise.resolve('Built prompt'));
     const mockAskDial = mock(() => Promise.resolve({} as Output));
 
-    mock.module('../build-user-prompt', () => ({
+    mock.module('./build-user-prompt', () => ({
       default: mockBuildUserPrompt,
     }));
 
-    mock.module('../ask-dial', () => ({
+    mock.module('./ask-dial', () => ({
       default: mockAskDial,
     }));
 
