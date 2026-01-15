@@ -45,7 +45,7 @@ jobs:
 
       - name: Run CodeMie to address the specs validation summary
         run: |
-          codemie-code --model gpt-5-nano-2025-08-07 --task "$(cat /tmp/task.txt)"
+          codemie-code --model gpt-5-mini-2025-08-07 --task "$(cat /tmp/task.txt)"
           echo "There are changes in the following files after the agent run:"
           git status
 
