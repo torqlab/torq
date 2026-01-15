@@ -12,8 +12,8 @@ const getCliArgs = () => {
   return {
     rootDir: rootDirArg ? rootDirArg : undefined,
     specFilePaths: specFilePathsArg ? specFilePathsArg.split(',').map(path => path.trim()) : undefined,
-    systemPromptPath: getCliArg('--systemPrompt'),
-    userPromptPath: getCliArg('--userPrompt'),
+  systemPromptPath: getCliArg('--systemPrompt'),
+  userPromptPath: getCliArg('--userPrompt'),
   };
 };
 
