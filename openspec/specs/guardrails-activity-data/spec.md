@@ -11,6 +11,7 @@ Define guardrails for validating activity input data, user-provided text, and ta
 An activity input SHALL contain `type` and `sport_type` as required string fields. Optional fields MAY include `distance`, `avg_hr`, `pace`, `elevation_gain`, `time_of_day`, `weather`, `name`, `description`, `tags`, `gear`, and others from the Strava API. If required fields are missing, the system SHALL reject the activity OR handle it via a predefined fallback.
 
 #### Scenario: Valid activity with required fields
+
 - **GIVEN** an activity input with `type` and `sport_type` present
 - **WHEN** the activity is validated
 - **THEN** the activity passes required field validation
