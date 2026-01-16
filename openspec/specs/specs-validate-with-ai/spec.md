@@ -310,6 +310,66 @@ If validation cannot be completed due to incomplete or inconsistent inputs, the 
 - **WHEN** validation is attempted
 - **THEN** the validator SHALL return INVALID result with violation describing inconsistency
 
+### Requirement: GitHub Actions Workflow for AI Validation
+
+The system SHALL provide a GitHub Actions workflow that executes AI-based specification validation. The workflow SHALL trigger on pushes to the main branch when OpenSpec-related files change, support manual triggering with optional spec selection, require manual approval before execution, detect changed spec files, execute validation, extract validated spec paths, render validation summaries, and expose validation results as outputs.
+
+#### Scenario: Workflow trigger on OpenSpec changes
+- **GIVEN** a push to the main branch
+- **WHEN** files in openspec/**, packages/validate-specs/specs-validate-with-ai, or .github/workflows/specs-validate-with-ai.yml are modified
+- **THEN** the AI validation workflow SHALL trigger
+
+#### Scenario: Manual workflow trigger with spec selection
+- **GIVEN** a GitHub Actions workflow_dispatch event
+- **WHEN** the AI validation workflow is manually triggered with specs input
+- **THEN** the workflow SHALL accept an optional specs input parameter (comma-separated spec paths or "*" for all specs)
+- **AND** if specs is "*", the workflow SHALL validate all specs
+- **AND** if specs contains paths, the workflow SHALL validate only those specified specs
+
+#### Scenario: Changed spec files detection
+- **GIVEN** the workflow is triggered by a push event
+- **WHEN** detecting changed spec files
+- **THEN** the workflow SHALL compare the current commit with the previous commit
+- **AND** the workflow SHALL identify all changed .spec.md files within the openspec directory
+- **AND** the workflow SHALL convert changed file paths to absolute paths
+
+#### Scenario: Validated spec paths extraction
+- **GIVEN** validation execution context is available
+- **WHEN** extracting validated spec paths
+- **THEN** if changed specs were detected, the workflow SHALL extract spec paths from the changed specs output
+- **AND** if no changed specs were detected, the workflow SHALL find all spec.md files in the openspec directory
+- **AND** the workflow SHALL store the list of validated spec paths as a JSON array
+
+#### Scenario: Validation summary rendering
+- **GIVEN** validation results are parsed
+- **WHEN** rendering the summary
+- **THEN** the workflow SHALL render a markdown table in GitHub Step Summary showing result status, violation count, and notes count (if any)
+
+#### Scenario: Complete validation results rendering
+- **GIVEN** validation results and validated spec paths are available
+- **WHEN** rendering validation results
+- **THEN** the workflow SHALL render a markdown table in GitHub Step Summary showing all validated specs with spec ID, status, rule, and description columns
+- **AND** for valid specs (no violations), the workflow SHALL show "✅ Valid" status with "No issues found" message
+- **AND** for invalid specs (with violations), the workflow SHALL show each violation with "❌ Invalid" status, rule, and description
+- **AND** the workflow SHALL extract display spec IDs from paths using the same logic as violation spec_id extraction
+
+#### Scenario: Global violations handling
+- **GIVEN** validation results contain violations without spec_id
+- **WHEN** rendering validation results
+- **THEN** the workflow SHALL render global violations in a separate "Global Issues" subsection
+- **AND** global violations SHALL be displayed with "global" as the spec ID
+
+#### Scenario: Validation result exposure
+- **GIVEN** validation results are available
+- **WHEN** exposing results as outputs
+- **THEN** the workflow SHALL base64-encode the validation summary JSON and expose it as validation-summary-json output
+
+#### Scenario: Validation execution error handling
+- **GIVEN** the validation script execution fails
+- **WHEN** handling the failure
+- **THEN** the workflow SHALL create a valid error JSON response with INVALID result and notes describing the failure
+- **AND** the workflow SHALL continue execution to render summaries and expose outputs
+
 ### Requirement: Manual Approval Before AI Validation
 
 The system SHALL require manual approval before executing AI-based specification validation. The validation job SHALL use the validate-specs-with-ai-approval environment to pause workflow execution and wait for manual approval from designated reviewers before proceeding with AI validation steps.
@@ -342,6 +402,12 @@ The system SHALL require manual approval before automatically fixing specificati
 - **GIVEN** approval is granted
 - **WHEN** the fix-specs-with-ai job executes
 - **THEN** the workflow SHALL call the fix-specs-with-ai.yml reusable workflow with the validation summary JSON
+
+#### Scenario: Finalization job execution
+- **GIVEN** validation and fix jobs complete
+- **WHEN** the finally job executes
+- **THEN** the workflow SHALL run a finalization job that depends on both validation and fix jobs
+- **AND** if validation status is INVALID, the workflow SHALL exit with code 1 and display a failure message
 
 ### Requirement: Automated Spec Fix Workflow
 

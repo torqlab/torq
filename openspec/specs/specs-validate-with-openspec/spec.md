@@ -12,7 +12,7 @@ The system SHALL provide a GitHub Actions workflow that validates specifications
 
 #### Scenario: Workflow trigger on OpenSpec changes
 - **GIVEN** a push to the main branch
-- **WHEN** files in openspec/**, packages/validate-specs/validate-specs-with-openspec/**, or .github/workflows/validate-specs-with-openspec.yml are modified
+- **WHEN** files in openspec/**, packages/validate-specs/validate-specs-with-openspec/**, or .github/workflows/specs-validate-with-openspec.yml are modified
 - **THEN** the OpenSpec CLI validation workflow SHALL trigger
 
 #### Scenario: Manual workflow trigger
@@ -40,10 +40,31 @@ The system SHALL provide a GitHub Actions workflow that validates specifications
 - **WHEN** rendering the summary
 - **THEN** the workflow SHALL render a markdown table in GitHub Step Summary showing status, total items, passed count, and failed count
 
-#### Scenario: Validation failures rendering
-- **GIVEN** validation failures exist
-- **WHEN** rendering failures
-- **THEN** the workflow SHALL render a markdown table in GitHub Step Summary showing spec ID, level, and message for each failed validation item
+### Requirement: Complete Validation Results Display
+
+The workflow SHALL render all validated specs in the GitHub Step Summary, not just failures. The workflow SHALL display both valid and invalid specs to provide complete visibility into the validation process.
+
+#### Scenario: All validated specs rendering
+- **GIVEN** validation results are available
+- **WHEN** rendering validation results
+- **THEN** the workflow SHALL render a markdown table showing all validated specs regardless of validation status
+
+#### Scenario: Valid specs display
+- **GIVEN** a spec passes validation
+- **WHEN** rendering validation results
+- **THEN** the workflow SHALL display the spec with "✅ Valid" status and "No issues found" message
+
+#### Scenario: Invalid specs display
+- **GIVEN** a spec fails validation
+- **WHEN** rendering validation results
+- **THEN** the workflow SHALL display each validation issue for the spec with the issue level and message
+
+#### Scenario: Validation results rendering
+- **GIVEN** validation results are available
+- **WHEN** rendering validation results
+- **THEN** the workflow SHALL render a markdown table in GitHub Step Summary showing all validated specs with spec ID, status, and message columns
+- **AND** for valid specs, the workflow SHALL show "✅ Valid" status with "No issues found" message
+- **AND** for invalid specs, the workflow SHALL show each issue with the issue level and message
 
 #### Scenario: Validation result exposure
 - **GIVEN** validation results are available
