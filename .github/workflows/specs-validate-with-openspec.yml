@@ -49,7 +49,7 @@ jobs:
         id: validation
         run: |
           mkdir -p .specs-validation/openspec
-          bun packages/validate-specs/validate-specs-with-openspec/index.ts --rootDir $(pwd) > .specs-validation/openspec/result.json || true
+          bun packages/validate-specs/validate-specs-with-openspec/index.ts --rootDir $(pwd)/openspec/specs > .specs-validation/openspec/result.json || true
 
       - name: Parse validation result
         id: parse-result

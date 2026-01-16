@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define requirements for the reusable GitHub Actions workflow that automatically fixes OpenSpec specification validation failures using AI. The workflow accepts validation summaries from validation pipelines, uses CodeMie AI to fix violations, and creates pull requests with the fixes.
+Define requirements for the reusable GitHub Actions workflow that automatically fixes OpenSpec specification validation failures using AI. The workflow accepts validation summaries from validation pipelines, uses CodeMie AI to fix violations, and creates pull requests with the fixes. The workflow SHALL only fix specifications in the openspec/specs/ directory, and all other spec files SHALL be neglected.
 
 ## Requirements
 
@@ -137,6 +137,16 @@ The workflow SHALL require contents: write and pull-requests: write permissions 
 - **GIVEN** the fix-specs-with-ai workflow
 - **WHEN** examining permissions
 - **THEN** the workflow SHALL have pull-requests: write permission
+
+### Requirement: Validation Scope Restriction
+
+The workflow SHALL only fix specifications located in the openspec/specs/ directory. All other spec files outside this directory SHALL be neglected and not modified by the fix workflow.
+
+#### Scenario: Fix scope restriction
+- **GIVEN** the fix-specs-with-ai workflow is executing
+- **WHEN** fixing specification validation failures
+- **THEN** the workflow SHALL only modify specifications in the openspec/specs/ directory
+- **AND** all other spec files outside openspec/specs/ SHALL be neglected and not modified
 
 ### Requirement: Error Handling
 

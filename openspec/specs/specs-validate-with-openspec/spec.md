@@ -28,15 +28,16 @@ The system SHALL provide a GitHub Actions workflow that validates specifications
 #### Scenario: OpenSpec CLI validation execution
 - **GIVEN** the workflow environment is set up
 - **WHEN** executing validation
-- **THEN** the workflow SHALL run the validate-specs-with-openspec script with --rootDir parameter pointing to the repository root directory
+- **THEN** the workflow SHALL run the validate-specs-with-openspec script with --rootDir parameter pointing to the openspec/specs directory
 - **AND** the script SHALL internally invoke the OpenSpec CLI tool with flags --all --strict --no-interactive --json
 - **AND** the workflow SHALL write results to .specs-validation/openspec/result.json
 
 #### Scenario: OpenSpec validation scope
 - **GIVEN** the workflow executes validation
 - **WHEN** determining which files to validate
-- **THEN** the workflow SHALL validate the entire repository (using rootDir pointing to repository root)
-- **AND** the OpenSpec CLI SHALL scan all directories recursively for spec files matching its validation criteria
+- **THEN** the workflow SHALL validate only specifications in the openspec/specs/ directory
+- **AND** all other spec files outside openspec/specs/ SHALL be neglected and not validated
+- **AND** the OpenSpec CLI SHALL scan only the openspec/specs/ directory recursively for spec files matching its validation criteria
 
 #### Scenario: Validation result parsing
 - **GIVEN** validation results are available
@@ -100,12 +101,18 @@ The system SHALL require manual approval before automatically fixing specificati
 
 ### Requirement: Automated Spec Fix Workflow
 
-The system SHALL provide a reusable GitHub Actions workflow that automatically fixes specification validation failures using AI. The workflow SHALL accept a validation summary as input, checkout the repository, setup CodeMie CLI, authenticate, prepare a task with the fix-specs prompt and validation summary, execute CodeMie to fix violations, and create a pull request with the fixes.
+The system SHALL provide a reusable GitHub Actions workflow that automatically fixes specification validation failures using AI. The workflow SHALL accept a validation summary as input, checkout the repository, setup CodeMie CLI, authenticate, prepare a task with the fix-specs prompt and validation summary, execute CodeMie to fix violations, and create a pull request with the fixes. The workflow SHALL only fix specifications in the openspec/specs/ directory, and all other spec files SHALL be neglected.
 
 #### Scenario: Fix workflow input acceptance
 - **GIVEN** the fix-specs-with-ai workflow is called
 - **WHEN** receiving inputs
 - **THEN** the workflow SHALL accept a required summary input (base64-encoded validation summary JSON)
+
+#### Scenario: Fix workflow scope restriction
+- **GIVEN** the fix-specs-with-ai workflow is executing
+- **WHEN** fixing specification validation failures
+- **THEN** the workflow SHALL only fix specifications located in the openspec/specs/ directory
+- **AND** all other spec files outside openspec/specs/ SHALL be neglected and not modified
 
 #### Scenario: Fix workflow environment setup
 - **GIVEN** the fix workflow is executing
