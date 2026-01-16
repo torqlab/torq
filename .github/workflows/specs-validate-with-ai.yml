@@ -137,7 +137,7 @@ jobs:
             }
           else
             echo "No changed spec files detected, validating all specs..."
-            bun run --filter @pace/validate-specs validate-specs:ai -- --rootDir $(pwd) --systemPrompt $(pwd)/prompts/validate-specs.system.md --userPrompt $(pwd)/prompts/validate-specs.user.md > .specs-validation/ai/raw-output.txt 2>&1 || {
+            bun run --filter @pace/validate-specs validate-specs:ai -- --rootDir $(pwd)/openspec/specs --systemPrompt $(pwd)/prompts/validate-specs.system.md --userPrompt $(pwd)/prompts/validate-specs.user.md > .specs-validation/ai/raw-output.txt 2>&1 || {
               echo "Validation script failed. Raw output:"
               cat .specs-validation/ai/raw-output.txt
               # Create a valid error JSON response
@@ -195,21 +195,35 @@ jobs:
             # Extract spec paths from comma-separated list (already absolute paths)
             echo "${{ steps.changed-specs.outputs.spec_paths }}" | tr ',' '\n' | jq -R . | jq -s . > .specs-validation/ai/validated-specs.json
           else
-            # Find all spec.md files from openspec directory only
-            # Recursively find all files ending with spec.md within ./openspec
-            # Exclude templates directory (schemas/spec-driven/templates)
-            # Convert to absolute paths to match violation spec_ids format
+            # Find all spec.md files from openspec/specs directory only
+            echo "Extracting validated spec paths from ./openspec/specs..."
             ROOT_DIR=$(pwd)
-            find ./openspec -name "*spec.md" -type f -not -path "*/schemas/spec-driven/templates/*" | while read -r file; do
-              # Convert relative path to absolute path
-              if [[ "$file" == ./* ]]; then
-                echo "$ROOT_DIR${file#.}"
-              elif [[ "$file" == /* ]]; then
-                echo "$file"
-              else
-                echo "$ROOT_DIR/$file"
-              fi
-            done | sort | jq -R . | jq -s . > .specs-validation/ai/validated-specs.json
+            
+            # Find files and show what we find for debugging
+            SPEC_FILES=$(find ./openspec/specs -name "*spec.md" -type f 2>/dev/null || true)
+            
+            if [ -z "$SPEC_FILES" ]; then
+              echo "Warning: No spec files found in ./openspec/specs"
+              echo "[]" > .specs-validation/ai/validated-specs.json
+            else
+              echo "Found spec files:"
+              echo "$SPEC_FILES"
+              
+              # Convert to absolute paths and create JSON array
+              echo "$SPEC_FILES" | while read -r file; do
+                # Convert relative path to absolute path
+                if [[ "$file" == ./* ]]; then
+                  echo "$ROOT_DIR${file#.}"
+                elif [[ "$file" == /* ]]; then
+                  echo "$file"
+                else
+                  echo "$ROOT_DIR/$file"
+                fi
+              done | sort | jq -R . | jq -s . > .specs-validation/ai/validated-specs.json
+            fi
+            
+            echo "Validated specs JSON:"
+            cat .specs-validation/ai/validated-specs.json
           fi
 
       - name: Check for execution errors
