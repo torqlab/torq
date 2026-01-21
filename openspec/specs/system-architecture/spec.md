@@ -22,12 +22,12 @@ The system SHALL operate as a rule-based, deterministic pipeline that ingests St
 
 ### Requirement: Primary Data Flow
 
-The system SHALL process activities through the following sequence: Activity fetches data from Strava API, Guardrails validates raw activity data, Activity Signals extracts semantic signals, Prompt Generation creates image prompts, Guardrails validates prompts, and Image Generation produces final output.
+The system SHALL process activities through the following sequence: Activity fetches data from Strava API, Activity Guardrails validates raw activity data, Activity Signals extracts semantic signals, Activity Prompt Generation creates image prompts, Activity Guardrails validates prompts, and Image Generation produces final output.
 
 #### Scenario: Successful activity processing flow
 - **GIVEN** a valid activity ID from Strava webhook
 - **WHEN** the system processes the activity
-- **THEN** each module SHALL be invoked in sequence: Activity → Guardrails → Activity Signals → Prompt Generation → Guardrails → Image Generation
+- **THEN** each module SHALL be invoked in sequence: Activity → Activity Guardrails → Activity Signals → Activity Prompt Generation → Activity Guardrails → Image Generation
 
 #### Scenario: Module dependency enforcement
 - **GIVEN** an activity being processed
@@ -41,32 +41,32 @@ The system SHALL process activities through the following sequence: Activity fet
 
 ### Requirement: Module Orchestration
 
-The system SHALL consist of five core modules: Guardrails, Activity, Activity Signals, Prompt Generation, and Image Generation. Each module SHALL have a single responsibility and communicate through well-defined interfaces.
+The system SHALL consist of five core modules: Activity Guardrails, Activity, Activity Signals, Activity Prompt Generation, and Image Generation. Each module SHALL have a single responsibility and communicate through well-defined interfaces.
 
-#### Scenario: Guardrails independence
-- **GIVEN** the Guardrails module
+#### Scenario: Activity Guardrails independence
+- **GIVEN** the Activity Guardrails module
 - **WHEN** validating content
 - **THEN** the module SHALL operate independently without dependencies on other modules
 
 #### Scenario: Activity integration
 - **GIVEN** the Activity module
 - **WHEN** fetching activity data
-- **THEN** the module SHALL depend on Guardrails for validation and SHALL fetch data from Strava API
+- **THEN** the module SHALL depend on Activity Guardrails for validation and SHALL fetch data from Strava API
 
 #### Scenario: Activity Signals extraction
 - **GIVEN** the Activity Signals module
 - **WHEN** extracting signals from activity data
-- **THEN** the module SHALL depend on Guardrails for validation and SHALL produce normalized semantic signals
+- **THEN** the module SHALL depend on Activity Guardrails for validation and SHALL produce normalized semantic signals
 
-#### Scenario: Prompt Generation composition
-- **GIVEN** the Prompt Generation module
+#### Scenario: Activity Prompt Generation composition
+- **GIVEN** the Activity Prompt Generation module
 - **WHEN** generating prompts
-- **THEN** the module SHALL depend on Activity Signals for input and Guardrails for validation
+- **THEN** the module SHALL depend on Activity Signals for input and Activity Guardrails for validation
 
 #### Scenario: Image Generation execution
 - **GIVEN** the Image Generation module
 - **WHEN** generating images
-- **THEN** the module SHALL depend on Prompt Generation for prompts and SHALL submit requests to external AI image generation API
+- **THEN** the module SHALL depend on Activity Prompt Generation for prompts and SHALL submit requests to external AI image generation API
 
 ### Requirement: Supported Activity Types
 
@@ -136,7 +136,7 @@ The system SHALL process multiple data points to create contextually appropriate
 - **WHEN** processing tags
 - **THEN** tags SHALL influence mood and scene composition (e.g., recovery → calm mood, race → competitive energy, with kid → playful atmosphere)
 
-### Requirement: Prompt Generation Pipeline
+### Requirement: Activity Prompt Generation Pipeline
 
 The system SHALL generate prompts through the following steps: Input Validation (ensure required fields present), Signal Extraction (process user text safely), Classification (determine activity type, intensity, environment), Style Selection (choose appropriate visual style deterministically), Mood Mapping (align emotional tone with activity characteristics), Scene Composition (build environment and atmosphere), Prompt Assembly (construct text prompt ≤400 characters), Validation (ensure compliance with guardrails), and Fallback (use safe defaults if validation fails).
 
@@ -164,8 +164,8 @@ The system SHALL generate prompts through the following steps: Input Validation 
 
 Each module SHALL expose a well-defined TypeScript interface. Modules SHALL communicate only through these interfaces. Dependencies SHALL be explicit and injected.
 
-#### Scenario: Guardrails interface
-- **GIVEN** the Guardrails module
+#### Scenario: Activity Guardrails interface
+- **GIVEN** the Activity Guardrails module
 - **WHEN** accessing the module
 - **THEN** the module SHALL expose `validateActivity`, `validateActivitySignals`, and `validateActivityImagePrompt` methods
 
@@ -179,8 +179,8 @@ Each module SHALL expose a well-defined TypeScript interface. Modules SHALL comm
 - **WHEN** accessing the module
 - **THEN** the module SHALL expose `getSignals` method that accepts Activity and returns Promise<ActivitySignals>
 
-#### Scenario: Prompt Generation interface
-- **GIVEN** the Prompt Generation module
+#### Scenario: Activity Prompt Generation interface
+- **GIVEN** the Activity Prompt Generation module
 - **WHEN** accessing the module
 - **THEN** the module SHALL expose `generatePrompt` and `getFallbackPrompt` methods
 

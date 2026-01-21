@@ -124,7 +124,7 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - Use template literals for string interpolation: `` `${userPrompt}\n\n--- BEGIN SPECIFICATIONS ---` ``
 
 #### Naming Conventions
-- Modules: PascalCase reflecting purpose (e.g., `Guardrails`)
+- Modules: PascalCase reflecting purpose (e.g., `ActivityGuardrails`)
 - Interfaces: PascalCase, matching module names
 - Files: kebab-case for function folders (e.g., `get-cli-args/`), lowercase for configs
 - Functions: camelCase (e.g., `getCliArgs`, `validateSpecsWithAI`)
@@ -136,7 +136,7 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - **Single Responsibility Principle**: Each module has one clear purpose
 - **Interface-First Design**: Well-defined TypeScript interfaces for all modules
 - **Specification-Driven Development**: Formal specs guide implementation
-- **Guardrails Pattern**: Centralized validation module for all content safety
+- **Guardrails Pattern**: Validation modules for activity and specs content safety
 
 ### Testing
 
@@ -196,10 +196,10 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - **Safety First**: All prompts validated through guardrails
 
 ### Modules
-1. **Guardrails**: Content validation and safety enforcement
+1. **Activity Guardrails**: Validates input, output, and intermediate contents to ensure the final system output follows system rules and principles
 2. **Activity**: Strava API integration and data retrieval
 3. **Activity Signals**: Semantic signal extraction from activity data
-4. **Prompt Generation**: AI prompt creation from signals
+4. **Activity Prompt Generation**: AI prompt creation from signals
 5. **Image Generation**: AI image generation management
 6. **Specs Guardrails**: Specification validation and compliance enforcement
 
@@ -289,10 +289,10 @@ The system is designed as a modular architecture with clear separation of concer
 
 ### Modules
 
-1. **Guardrails:** Enforces all safety and content restrictions.
+1. **Activity Guardrails:** Validates input, output, and intermediate contents to ensure the final system output follows system rules and principles.
 2. **Activity:** Manages Strava API integration and activity data retrieval.
 3. **Activity Signals:** Extracts semantic signals from raw Strava activity data.
-4. **Prompt Generation:** Generates text prompts for image generation based on extracted Strava activity signals.
+4. **Activity Prompt Generation:** Generates text prompts for image generation based on extracted Strava activity signals.
 5. **Image Generation:** Generates Strava activity image based on the prompt derived from the activity data.
 6. **Specs Guardrails:** Validates OpenSpec specifications to ensure compliance and prevent invalid behavior.
 
@@ -305,21 +305,21 @@ graph TD
     ImageGenAPI[External AI Image Generation API]
     
     %% Core Modules
-    Guardrails[Guardrails]
+    ActivityGuardrails[Activity Guardrails]
     Activity[Activity]
     ActivitySignals[Activity Signals]
-    PromptGeneration[Prompt Generation]
+    ActivityPromptGeneration[Activity Prompt Generation]
     ImageGeneration[Image Generation]
     
     %% Data Flow and Dependencies
     Strava -->|1. Provide an activity ID via a web hook| Activity
     Activity -->|2. Fetch full activity data by ID| Strava
-    Activity -->|3. Validate raw activity data| Guardrails
+    Activity -->|3. Validate raw activity data| ActivityGuardrails
     Activity -->|4. Raw activity data| ActivitySignals
-    ActivitySignals -->|5. Validate extracted activity signals| Guardrails
-    ActivitySignals -->|6. Extracted activity signals| PromptGeneration
-    PromptGeneration -->|7. Validate prepared image generation prompt| Guardrails
-    PromptGeneration -->|8. Image generation prompt| ImageGeneration
+    ActivitySignals -->|5. Validate extracted activity signals| ActivityGuardrails
+    ActivitySignals -->|6. Extracted activity signals| ActivityPromptGeneration
+    ActivityPromptGeneration -->|7. Validate prepared image generation prompt| ActivityGuardrails
+    ActivityPromptGeneration -->|8. Image generation prompt| ImageGeneration
     ImageGeneration -->|9. API Request| ImageGenAPI
     
     %% Styling
@@ -328,36 +328,37 @@ graph TD
     classDef data fill:#ffffcc,stroke:#cccc00,stroke-width:1px,stroke-dasharray: 5 5
     
     class Strava,ImageGenAPI external
-    class Guardrails,Activity,ActivitySignals,PromptGeneration,ImageGeneration core
+    class ActivityGuardrails,Activity,ActivitySignals,ActivityPromptGeneration,ImageGeneration core
 ```
 
 #### Module Dependency Matrix
 
-| Module                | Direct Dependencies                   | Purpose of Dependency                       |
-|-----------------------|---------------------------------------|---------------------------------------------|
-| **Guardrails**        | None                                  | Independent validation module               |
-| **Activity**          | 1. Guardrails                         | 1. Content validation                       |
-| **Activity Signals**  | 1. Guardrails                         | 1. Signal validation                        |
-| **Prompt Generation** | 1. Activity Signals<br/>2. Guardrails | 1. Signal input<br/>2. Prompt validation    |
-| **Image Generation**  | 1. Prompt Generation                  | 2. Prompt source                            |
-| **Specs Guardrails**  | None                                  | Independent specification validation module |
+| Module                         | Direct Dependencies                            | Purpose of Dependency                    |
+|--------------------------------|------------------------------------------------|------------------------------------------|
+| **Activity Guardrails**        | None                                           | N/A                                      |
+| **Activity**                   | 1. Activity Guardrails                         | 1. Content validation                    |
+| **Activity Signals**           | 1. Activity Guardrails                         | 1. Signal validation                     |
+| **Activity Prompt Generation** | 1. Activity Signals<br/>2. Activity Guardrails | 1. Signal input<br/>2. Prompt validation |
+| **Image Generation**           | 1. Activity Prompt Generation                  | 2. Prompt source                         |
+| **Specs Guardrails**           | None                                           | N/A                                      |
 
-#### Guardrails
+#### Activity Guardrails
 
-**Purpose**: Enforces all safety and content restrictions.
+**Purpose**: Validates input, output, and intermediate contents to ensure the final system output follows system rules and principles.
 
 **Responsibilities**:
 - Validate content against forbidden lists.
 - Check for prohibited patterns.
 - Sanitize user input and system output.
 - Enforce compliance rules.
+- Validate input, output, and intermediate contents.
 
 **Dependencies**:
 - None
 
 **Interface**:
 ```typescript
-interface Guardrails {
+interface ActivityGuardrails {
   validateActivity(activity: Activity): ValidationResult
   validateActivitySignals(signals: ActivitySignals): ValidationResult
   validateActivityImagePrompt(prompt: ActivityImagePrompt): ValidationResult
@@ -374,7 +375,7 @@ interface Guardrails {
 - Transform API responses to internal format.
 
 **Dependencies**:
-- Guardrails
+- Activity Guardrails
 
 **Interface**:
 ```typescript
@@ -392,7 +393,7 @@ interface Activity {
 - Extract activity signals from the Strava API response: subject, style, mood, scene, and others.
 
 **Dependencies**:
-- Guardrails
+- Activity Guardrails
 
 **Interface**:
 ```typescript
@@ -401,7 +402,7 @@ interface ActivitySignals {
 }
 ```
 
-#### Prompt Generation
+#### Activity Prompt Generation
 
 **Purpose**: Generates text prompts for image generation based on extracted Strava activity signals.
 
@@ -413,11 +414,11 @@ interface ActivitySignals {
 
 **Dependencies**:
 - Activity Signals
-- Guardrails
+- Activity Guardrails
 
 **Interface**:
 ```typescript
-interface PromptGeneration {
+interface ActivityPromptGeneration {
   generatePrompt(signals: ActivitySignals): ActivityImagePrompt
   getFallbackPrompt(): ActivityImagePrompt
 }
@@ -433,7 +434,7 @@ interface PromptGeneration {
 - Manage rate limiting.
 
 **Dependencies**:
-- Prompt Generation
+- Activity Prompt Generation
 
 **Interface**:
 ```typescript
@@ -476,10 +477,10 @@ interface SpecsGuardrails {
 
 1. **Input**: Activity ID from the Strava web hook.
 2. **Activity**: Fetches activity from the Strava API.
-3. **Guardrails**: Validates raw activity data for safety.
+3. **Activity Guardrails**: Validates raw activity data for safety.
 4. **Activity Signals**: Extracts semantic signals from the raw Strava activity data.
-5. **Prompt Generation**: Creates image prompt based on extracted activity signals.
-6. **Guardrails**: Validates image prompt for safety.
+5. **Activity Prompt Generation**: Creates image prompt based on extracted activity signals.
+6. **Activity Guardrails**: Validates image prompt for safety.
 7. **Image Generation**: Generates image using the prompt.
 8. **Output**: Generated image URL is shared with the requestor.
 
@@ -802,7 +803,7 @@ Strava tags influence mood and scene composition:
 - `commute` → Urban, routine settings.
 - And others provided by Strava.
 
-### Prompt Generation Pipeline
+### Activity Prompt Generation Pipeline
 
 1. **Input Validation**: Ensure required fields are present.
 2. **Signal Extraction**: Process user text safely.

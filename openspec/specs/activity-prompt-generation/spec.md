@@ -1,4 +1,4 @@
-# Prompt Generation
+# Activity Prompt Generation
 
 ## Purpose
 
@@ -281,7 +281,7 @@ Prompts SHALL follow the defined structure and length constraints. Prompts SHALL
 
 ### Requirement: Prompt Validation
 
-Generated prompts SHALL be validated before returning using the Guardrails module.
+Generated prompts SHALL be validated before returning using the Activity Guardrails module.
 
 #### Scenario: Successful validation
 - **GIVEN** a generated prompt
