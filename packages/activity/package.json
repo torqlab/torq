@@ -1,0 +1,8 @@
+{
+  "name": "@pace/activity",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test"
+  }
+}

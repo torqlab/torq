@@ -47,6 +47,16 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - Functions are `const` declarations, not function declarations
 - Return types are explicitly specified: `Promise<Output>`, `Promise<string[]>`, etc.
 - No early returns - uses explicit `if...else if...else` pattern
+- **JSDoc comments are REQUIRED for EVERY function**: ALL functions (exported, internal, public, private) MUST have JSDoc comments (`/** ... */`) directly above the function definition. This is mandatory with no exceptions. JSDoc MUST include:
+  - **Description**: Clear description of what the function does and its purpose
+  - **`@param` tags**: One tag per parameter with **explicit type in curly braces** and description (e.g., `@param {string} activityId - The activity ID to validate`). Types MUST always be specified using JSDoc type syntax (`{Type}`, `{Promise<Type>}`, `{Type | null}`, etc.). Optional parameters use square brackets: `@param {string} [optionalParam] - Description`.
+  - **`@returns` tag**: **Explicit return type in curly braces** and description (e.g., `@returns {Promise<Activity>} Promise resolving to validated Activity object`). Return types MUST always be specified using JSDoc type syntax. For void returns, use `@returns {void}`.
+  - **`@throws` tags**: Document all error conditions the function may throw (if applicable)
+  - **`@see` tags**: Links to external resources (API documentation, RFCs, standards) when relevant
+  - **`@example` tags**: Usage examples when helpful for understanding
+  - **`@remarks`**: Additional important implementation notes or constraints
+  - **`@internal` tag**: Mark internal/private helper functions that are not part of the public API
+  - **`@template` tags**: For generic functions, document type parameters (e.g., `@template T - The return type of the function`)
 
 #### CLI Entry Points
 - Use `#!/usr/bin/env bun` shebang at the top of CLI entry files
@@ -61,6 +71,8 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - Use `export type` for type exports
 - Use union types for enums: `type Status = 'VALID' | 'INVALID'`
 - Types use PascalCase: `ValidationResult`, `DialResponse`, `Output`
+- **Module-scoped types MUST use module name prefix**: Types defined within a module package MUST be prefixed with the module name (e.g., `ActivityConfig`, `ActivityError`, `ActivityValidationResult`). This ensures type names are unambiguous across modules and clearly indicate their scope.
+- **Type comments MUST use JSDoc format**: All type definitions and their properties MUST be documented using JSDoc comments (`/** ... */`). Inline comments (`//`) are not allowed for type documentation. Property-level documentation should use JSDoc format directly above the property.
 - Optional properties use `?:` syntax
 - Array types use `Array<Type>` or `Type[]` syntax consistently
 

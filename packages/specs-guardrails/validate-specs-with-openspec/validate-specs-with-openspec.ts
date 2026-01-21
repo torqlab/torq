@@ -7,10 +7,15 @@ import { Output } from './types';
 
 /**
  * Gets the path to the openspec binary.
+ *
  * Finds node_modules by walking up from rootDir until it's found.
  * This allows rootDir to be openspec/specs while node_modules is at repo root.
- * @param {string} rootDir - The root directory of the project.
- * @returns {string} The path to the openspec binary.
+ *
+ * @param {string} rootDir - The root directory of the project
+ * @returns {string} The path to the openspec binary
+ * @throws {Error} Throws error if openspec binary cannot be found in node_modules
+ *
+ * @internal
  */
 const getOpenSpecBin = (rootDir: string): string => {
   let currentDir = resolve(rootDir);
@@ -32,6 +37,32 @@ const getOpenSpecBin = (rootDir: string): string => {
   return openspecBin;
 };
 
+/**
+ * Validates OpenSpec specifications using the OpenSpec CLI tool.
+ *
+ * Executes the OpenSpec CLI validation command and parses the JSON output.
+ * Validates all specifications in the provided root directory using strict
+ * validation rules. Returns structured validation results including items,
+ * summary, and version information.
+ *
+ * @param {string} rootDir - Root directory containing OpenSpec specifications to validate
+ * @returns {Promise<Output>} Promise resolving to validation output with success status, items, summary, and version
+ * @throws {Error} Throws error if openspec binary cannot be found or if JSON output cannot be parsed
+ *
+ * @remarks
+ * Executes: `openspec validate --all --strict --no-interactive --json`
+ * The command validates all specs in the rootDir directory tree.
+ *
+ * @see {@link https://github.com/fission-ai/openspec | OpenSpec CLI Documentation}
+ *
+ * @example
+ * ```typescript
+ * const result = await validateSpecsWithOpenspec('/path/to/openspec');
+ * if (result.success) {
+ *   console.log('All specs valid');
+ * }
+ * ```
+ */
 const validateSpecsWithOpenspec = async (rootDir: string): Promise<Output> => {
   const openspecBin = getOpenSpecBin(rootDir);
   

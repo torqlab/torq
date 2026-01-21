@@ -1,0 +1,9 @@
+export const STRAVA_API_BASE_URL = 'https://www.strava.com/api/v3';
+export const STRAVA_API_ACTIVITY_ENDPOINT = '/activities';
+export const STRAVA_RATE_LIMIT = 600; // requests per 15 minutes
+export const STRAVA_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+export const MAX_RETRIES = 3;
+export const INITIAL_BACKOFF_MS = 1000;
+export const MAX_BACKOFF_MS = 16000;
+export const RETRYABLE_STATUS_CODES = [429, 500, 502, 503, 504];
+export const NON_RETRYABLE_STATUS_CODES = [400, 401, 403, 404];

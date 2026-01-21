@@ -3,6 +3,38 @@
 import { CONFIG } from './constants';
 import { DialResponse } from './types';
 
+/**
+ * Sends a prompt to the DIAL AI service and returns parsed response.
+ *
+ * Makes a POST request to the DIAL (AI Proxy) service with system and user
+ * prompts. The service returns a JSON response that is parsed and returned
+ * as the specified type. Handles errors and validates response structure.
+ *
+ * @template T - Expected response type (must be a record/object type)
+ * @template T - Expected response type (must be a record/object type)
+ * @param {string} systemPrompt - System prompt providing context and instructions to the AI
+ * @param {string} userPrompt - User prompt with the actual request/question
+ * @returns {Promise<T>} Promise resolving to parsed JSON response of type T
+ * @throws {Error} Throws error if:
+ *   - DIAL_KEY environment variable is not set
+ *   - API returns an error response
+ *   - Response content is missing or invalid JSON
+ *
+ * @remarks
+ * The function expects the AI response content to be valid JSON that can be
+ * parsed into the specified type T. The response is wrapped in a DialResponse
+ * structure from the API.
+ *
+ * @see {@link https://ai-proxy.lab.epam.com/ | DIAL AI Proxy Service}
+ *
+ * @example
+ * ```typescript
+ * const result = await askDial<ValidationOutput>(
+ *   'You are a specification validator...',
+ *   'Validate these specs: ...'
+ * );
+ * ```
+ */
 const askDial = async <T extends Record<string, unknown>>(systemPrompt: string, userPrompt: string): Promise<T> => {
   if (!process.env.DIAL_KEY) {
     throw new Error('DIAL_KEY is not set');
