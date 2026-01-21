@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define architectural requirements for the PACE system's service-oriented architecture to ensure robust, deterministic, and safe image generation from Strava activity data.
+Define architectural requirements for the PACE system's modular architecture to ensure robust, deterministic, and safe image generation from Strava activity data.
 
 ## Requirements
 
@@ -22,51 +22,51 @@ The system SHALL operate as a rule-based, deterministic pipeline that ingests St
 
 ### Requirement: Primary Data Flow
 
-The system SHALL process activities through the following sequence: Activity Service fetches data from Strava API, Guardrails Service validates raw activity data, Activity Signals Service extracts semantic signals, Prompt Generation Service creates image prompts, Guardrails Service validates prompts, and Image Generation Service produces final output.
+The system SHALL process activities through the following sequence: Activity fetches data from Strava API, Guardrails validates raw activity data, Activity Signals extracts semantic signals, Prompt Generation creates image prompts, Guardrails validates prompts, and Image Generation produces final output.
 
 #### Scenario: Successful activity processing flow
 - **GIVEN** a valid activity ID from Strava webhook
 - **WHEN** the system processes the activity
-- **THEN** each service SHALL be invoked in sequence: Activity Service → Guardrails Service → Activity Signals Service → Prompt Generation Service → Guardrails Service → Image Generation Service
+- **THEN** each module SHALL be invoked in sequence: Activity → Guardrails → Activity Signals → Prompt Generation → Guardrails → Image Generation
 
-#### Scenario: Service dependency enforcement
+#### Scenario: Module dependency enforcement
 - **GIVEN** an activity being processed
-- **WHEN** services interact
-- **THEN** services SHALL only communicate through defined interfaces and follow dependency relationships
+- **WHEN** modules interact
+- **THEN** modules SHALL only communicate through defined interfaces and follow dependency relationships
 
 #### Scenario: Error flow handling
-- **GIVEN** a service failure during processing
+- **GIVEN** a module failure during processing
 - **WHEN** an error occurs
 - **THEN** error logging SHALL be triggered, fallback mechanisms SHALL activate, and the system SHALL return a safe default output
 
-### Requirement: Service Orchestration
+### Requirement: Module Orchestration
 
-The system SHALL consist of five core services: Guardrails Service, Activity Service, Activity Signals Service, Prompt Generation Service, and Image Generation Service. Each service SHALL have a single responsibility and communicate through well-defined interfaces.
+The system SHALL consist of five core modules: Guardrails, Activity, Activity Signals, Prompt Generation, and Image Generation. Each module SHALL have a single responsibility and communicate through well-defined interfaces.
 
-#### Scenario: Guardrails Service independence
-- **GIVEN** the Guardrails Service
+#### Scenario: Guardrails independence
+- **GIVEN** the Guardrails module
 - **WHEN** validating content
-- **THEN** the service SHALL operate independently without dependencies on other services
+- **THEN** the module SHALL operate independently without dependencies on other modules
 
-#### Scenario: Activity Service integration
-- **GIVEN** the Activity Service
+#### Scenario: Activity integration
+- **GIVEN** the Activity module
 - **WHEN** fetching activity data
-- **THEN** the service SHALL depend on Guardrails Service for validation and SHALL fetch data from Strava API
+- **THEN** the module SHALL depend on Guardrails for validation and SHALL fetch data from Strava API
 
-#### Scenario: Activity Signals Service extraction
-- **GIVEN** the Activity Signals Service
+#### Scenario: Activity Signals extraction
+- **GIVEN** the Activity Signals module
 - **WHEN** extracting signals from activity data
-- **THEN** the service SHALL depend on Guardrails Service for validation and SHALL produce normalized semantic signals
+- **THEN** the module SHALL depend on Guardrails for validation and SHALL produce normalized semantic signals
 
-#### Scenario: Prompt Generation Service composition
-- **GIVEN** the Prompt Generation Service
+#### Scenario: Prompt Generation composition
+- **GIVEN** the Prompt Generation module
 - **WHEN** generating prompts
-- **THEN** the service SHALL depend on Activity Signals Service for input and Guardrails Service for validation
+- **THEN** the module SHALL depend on Activity Signals for input and Guardrails for validation
 
-#### Scenario: Image Generation Service execution
-- **GIVEN** the Image Generation Service
+#### Scenario: Image Generation execution
+- **GIVEN** the Image Generation module
 - **WHEN** generating images
-- **THEN** the service SHALL depend on Prompt Generation Service for prompts and SHALL submit requests to external AI image generation API
+- **THEN** the module SHALL depend on Prompt Generation for prompts and SHALL submit requests to external AI image generation API
 
 ### Requirement: Supported Activity Types
 
@@ -160,34 +160,34 @@ The system SHALL generate prompts through the following steps: Input Validation 
 - **WHEN** validation fails
 - **THEN** the system SHALL use safe default prompts
 
-### Requirement: Service Interface Contracts
+### Requirement: Module Interface Contracts
 
-Each service SHALL expose a well-defined TypeScript interface. Services SHALL communicate only through these interfaces. Dependencies SHALL be explicit and injected.
+Each module SHALL expose a well-defined TypeScript interface. Modules SHALL communicate only through these interfaces. Dependencies SHALL be explicit and injected.
 
-#### Scenario: Guardrails Service interface
-- **GIVEN** the Guardrails Service
-- **WHEN** accessing the service
-- **THEN** the service SHALL expose `validateActivity`, `validateActivitySignals`, and `validateActivityImagePrompt` methods
+#### Scenario: Guardrails interface
+- **GIVEN** the Guardrails module
+- **WHEN** accessing the module
+- **THEN** the module SHALL expose `validateActivity`, `validateActivitySignals`, and `validateActivityImagePrompt` methods
 
-#### Scenario: Activity Service interface
-- **GIVEN** the Activity Service
-- **WHEN** accessing the service
-- **THEN** the service SHALL expose `fetchActivity` method that accepts activity ID and returns Promise<Activity>
+#### Scenario: Activity interface
+- **GIVEN** the Activity module
+- **WHEN** accessing the module
+- **THEN** the module SHALL expose `fetchActivity` method that accepts activity ID and returns Promise<Activity>
 
-#### Scenario: Activity Signals Service interface
-- **GIVEN** the Activity Signals Service
-- **WHEN** accessing the service
-- **THEN** the service SHALL expose `getSignals` method that accepts Activity and returns Promise<ActivitySignals>
+#### Scenario: Activity Signals interface
+- **GIVEN** the Activity Signals module
+- **WHEN** accessing the module
+- **THEN** the module SHALL expose `getSignals` method that accepts Activity and returns Promise<ActivitySignals>
 
-#### Scenario: Prompt Generation Service interface
-- **GIVEN** the Prompt Generation Service
-- **WHEN** accessing the service
-- **THEN** the service SHALL expose `generatePrompt` and `getFallbackPrompt` methods
+#### Scenario: Prompt Generation interface
+- **GIVEN** the Prompt Generation module
+- **WHEN** accessing the module
+- **THEN** the module SHALL expose `generatePrompt` and `getFallbackPrompt` methods
 
-#### Scenario: Image Generation Service interface
-- **GIVEN** the Image Generation Service
-- **WHEN** accessing the service
-- **THEN** the service SHALL expose `generateImage` and `regenerateWithFallback` methods
+#### Scenario: Image Generation interface
+- **GIVEN** the Image Generation module
+- **WHEN** accessing the module
+- **THEN** the module SHALL expose `generateImage` and `regenerateWithFallback` methods
 
 ### Requirement: Strava API Integration
 

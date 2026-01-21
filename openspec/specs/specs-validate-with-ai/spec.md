@@ -316,10 +316,10 @@ The system SHALL provide a GitHub Actions workflow that executes AI-based specif
 
 #### Scenario: Workflow trigger on OpenSpec changes
 - **GIVEN** a push to the main branch
-- **WHEN** files in openspec/**, packages/validate-specs/specs-validate-with-ai, or .github/workflows/specs-validate-with-ai.yml are modified
+- **WHEN** files in openspec/**, packages/specs-guardrails/validate-specs-with-ai, or .github/workflows/specs-validate-with-ai.yml are modified
 - **THEN** the AI validation workflow SHALL trigger
 
-**Note**: The path `packages/validate-specs/specs-validate-with-ai` in the workflow trigger may be a typo and should likely be `packages/validate-specs/validate-specs-with-ai` to match the actual package structure.
+**Note**: The path `packages/specs-guardrails/validate-specs-with-ai` matches the actual package structure.
 
 #### Scenario: Manual workflow trigger with spec selection
 - **GIVEN** a GitHub Actions workflow_dispatch event

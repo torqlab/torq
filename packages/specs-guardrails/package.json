@@ -1,5 +1,5 @@
 {
-  "name": "@pace/validate-specs",
+  "name": "@pace/specs-guardrails",
   "private": true,
   "type": "module",
   "scripts": {

@@ -11,8 +11,8 @@
         "typescript": "^5.9.3",
       },
     },
-    "packages/validate-specs": {
-      "name": "@pace/validate-specs",
+    "packages/specs-guardrails": {
+      "name": "@pace/specs-guardrails",
     },
   },
   "packages": {
@@ -78,7 +78,7 @@
 
     "@oven/bun-windows-x64-baseline": ["@oven/bun-windows-x64-baseline@1.3.6", "", { "os": "win32", "cpu": "x64" }, "sha512-PFUa7JL4lGoyyppeS4zqfuoXXih+gSE0XxhDMrCPVEUev0yhGNd/tbWBvcdpYnUth80owENoGjc8s5Knopv9wA=="],
 
-    "@pace/validate-specs": ["@pace/validate-specs@workspace:packages/validate-specs"],
+    "@pace/specs-guardrails": ["@pace/specs-guardrails@workspace:packages/specs-guardrails"],
 
     "@posthog/core": ["@posthog/core@1.9.1", "", { "dependencies": { "cross-spawn": "^7.0.6" } }, "sha512-kRb1ch2dhQjsAapZmu6V66551IF2LnCbc1rnrQqnR7ArooVyJN9KOPXre16AJ3ObJz2eTfuP7x25BMyS2Y5Exw=="],
 

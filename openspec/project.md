@@ -30,8 +30,8 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
   - Strict mode enabled with `noImplicitAny`
   - Bun types included
 - **Naming Conventions**:
-  - Services: PascalCase with "Service" suffix (e.g., `GuardrailsService`)
-  - Interfaces: PascalCase, matching service names
+  - Modules: PascalCase reflecting purpose (e.g., `Guardrails`)
+  - Interfaces: PascalCase, matching module names
   - Files: kebab-case for specs, lowercase for configs
 - **Import Style**: ES modules with explicit extensions where needed
 - **Async/Await**: Preferred over callbacks and raw promises
@@ -41,12 +41,12 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - **Conditional Constructions:** Avoid early-return pattern. Always use explicit `if...else if...else` conditional constructions.
 
 ### Architectual Patterns
-- **Service-Oriented Architecture**: Modular services with clear boundaries
-- **Dependency Injection**: Explicit dependencies injected into services
+- **Modular Architecture**: Modules with clear boundaries
+- **Dependency Injection**: Explicit dependencies injected into modules
 - **Single Responsibility Principle**: Each module has one clear purpose
-- **Interface-First Design**: Well-defined TypeScript interfaces for all services
+- **Interface-First Design**: Well-defined TypeScript interfaces for all modules
 - **Specification-Driven Development**: Formal specs guide implementation
-- **Guardrails Pattern**: Centralized validation service for all content safety
+- **Guardrails Pattern**: Centralized validation module for all content safety
 
 ### Testing
 
@@ -57,8 +57,8 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
   - Minimum 80% coverage for all metrics (branches, functions, lines, statements)
   - 100% coverage for critical paths
 - **Test Types**:
-  - Unit tests for each service in isolation
-  - Integration tests for service interactions
+  - Unit tests for each module in isolation
+  - Integration tests for module interactions
   - End-to-end tests for complete flows
 - **Test Location**: Tests alongside source files
 - **Mocking**: Dependency injection for easy mocking
@@ -105,12 +105,13 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - **Style Variety**: Supports multiple artistic styles and moods
 - **Safety First**: All prompts validated through guardrails
 
-### Service Components
-1. **Guardrails Service**: Content validation and safety enforcement
-2. **Activity Service**: Strava API integration and data retrieval
-3. **Activity Signals Service**: Semantic signal extraction from activity data
-4. **Prompt Generation Service**: AI prompt creation from signals
-5. **Image Generation Service**: AI image generation management
+### Modules
+1. **Guardrails**: Content validation and safety enforcement
+2. **Activity**: Strava API integration and data retrieval
+3. **Activity Signals**: Semantic signal extraction from activity data
+4. **Prompt Generation**: AI prompt creation from signals
+5. **Image Generation**: AI image generation management
+6. **Specs Guardrails**: Specification validation and compliance enforcement
 
 ## Important Constraints
 
@@ -121,14 +122,14 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - **Fallback Mechanisms**: Safe defaults for any validation failures
 
 ### Technical Constraints
-- **Stateless Services**: All services designed for horizontal scaling
+- **Stateless Modules**: All modules designed for horizontal scaling
 - **Rate Limiting**: Respect API rate limits for Strava and AI services
 - **Error Resilience**: Failures in one module shouldn't cascade
 - **Performance**: Quick response times for webhook processing
 
 ### Compliance Requirements
 - **Specification Compliance**: Must adhere to all formal specifications
-- **Validation**: Automated spec validation via validate-specs script
+- **Validation**: Automated spec validation via specs-guardrails script
 - **Documentation**: Comprehensive specs for all major components
 
 ## External Dependencies
@@ -194,17 +195,18 @@ graph TD
     class System core
 ```
 
-The system is designed as a modular, service-oriented architecture with clear separation of concerns and well-defined interfaces between components.
+The system is designed as a modular architecture with clear separation of concerns and well-defined interfaces between components.
 
-### Services
+### Modules
 
 1. **Guardrails:** Enforces all safety and content restrictions.
 2. **Activity:** Manages Strava API integration and activity data retrieval.
 3. **Activity Signals:** Extracts semantic signals from raw Strava activity data.
 4. **Prompt Generation:** Generates text prompts for image generation based on extracted Strava activity signals.
 5. **Image Generation:** Generates Strava activity image based on the prompt derived from the activity data.
+6. **Specs Guardrails:** Validates OpenSpec specifications to ensure compliance and prevent invalid behavior.
 
-#### Service Dependency Graph
+#### Module Dependency Graph
 
 ```mermaid
 graph TD
@@ -212,23 +214,23 @@ graph TD
     Strava[Strava]
     ImageGenAPI[External AI Image Generation API]
     
-    %% Core Services
-    GuardrailsService[Guardrails Service]
-    ActivityService[Activity Service]
-    ActivitySignalsService[Activity Signals Service]
-    PromptGenerationService[Prompt Generation Service]
-    ImageGenerationService[Image Generation Service]
+    %% Core Modules
+    Guardrails[Guardrails]
+    Activity[Activity]
+    ActivitySignals[Activity Signals]
+    PromptGeneration[Prompt Generation]
+    ImageGeneration[Image Generation]
     
     %% Data Flow and Dependencies
-    Strava -->|1. Provide an activity ID via a web hook| ActivityService
-    ActivityService -->|2. Fetch full activity data by ID| Strava
-    ActivityService -->|3. Validate raw activity data| GuardrailsService
-    ActivityService -->|4. Raw activity data| ActivitySignalsService
-    ActivitySignalsService -->|5. Validate extracted activity signals| GuardrailsService
-    ActivitySignalsService -->|6. Extracted activity signals| PromptGenerationService
-    PromptGenerationService -->|7. Validate prepared image generation prompt| GuardrailsService
-    PromptGenerationService -->|8. Image generation prompt| ImageGenerationService
-    ImageGenerationService -->|9. API Request| ImageGenAPI
+    Strava -->|1. Provide an activity ID via a web hook| Activity
+    Activity -->|2. Fetch full activity data by ID| Strava
+    Activity -->|3. Validate raw activity data| Guardrails
+    Activity -->|4. Raw activity data| ActivitySignals
+    ActivitySignals -->|5. Validate extracted activity signals| Guardrails
+    ActivitySignals -->|6. Extracted activity signals| PromptGeneration
+    PromptGeneration -->|7. Validate prepared image generation prompt| Guardrails
+    PromptGeneration -->|8. Image generation prompt| ImageGeneration
+    ImageGeneration -->|9. API Request| ImageGenAPI
     
     %% Styling
     classDef external fill:#ffcccc,stroke:#cc0000,stroke-width:2px,color:#000
@@ -236,20 +238,21 @@ graph TD
     classDef data fill:#ffffcc,stroke:#cccc00,stroke-width:1px,stroke-dasharray: 5 5
     
     class Strava,ImageGenAPI external
-    class GuardrailsService,ActivityService,ActivitySignalsService,PromptGenerationService,ImageGenerationService core
+    class Guardrails,Activity,ActivitySignals,PromptGeneration,ImageGeneration core
 ```
 
-#### Service Dependency Matrix
+#### Module Dependency Matrix
 
-| Service                       | Direct Dependencies                                   | Purpose of Dependency                    |
-|-------------------------------|-------------------------------------------------------|------------------------------------------|
-| **Guardrails Service**        | None                                                  | Independent validation service           |
-| **Activity Service**          | 1. Guardrails Service                                 | 1. Content validation                    |
-| **Activity Signals Service**  | 1. Guardrails Service                                 | 1. Signal validation                     |
-| **Prompt Generation Service** | 1. Activity Signals Service<br/>2. Guardrails Service | 1. Signal input<br/>2. Prompt validation |
-| **Image Generation Service**  | 1. Prompt Generation Service                          | 2. Prompt source                         |
+| Module                | Direct Dependencies                   | Purpose of Dependency                       |
+|-----------------------|---------------------------------------|---------------------------------------------|
+| **Guardrails**        | None                                  | Independent validation module               |
+| **Activity**          | 1. Guardrails                         | 1. Content validation                       |
+| **Activity Signals**  | 1. Guardrails                         | 1. Signal validation                        |
+| **Prompt Generation** | 1. Activity Signals<br/>2. Guardrails | 1. Signal input<br/>2. Prompt validation    |
+| **Image Generation**  | 1. Prompt Generation                  | 2. Prompt source                            |
+| **Specs Guardrails**  | None                                  | Independent specification validation module |
 
-#### Guardrails Service
+#### Guardrails
 
 **Purpose**: Enforces all safety and content restrictions.
 
@@ -264,14 +267,14 @@ graph TD
 
 **Interface**:
 ```typescript
-interface GuardrailsService {
+interface Guardrails {
   validateActivity(activity: Activity): ValidationResult
   validateActivitySignals(signals: ActivitySignals): ValidationResult
   validateActivityImagePrompt(prompt: ActivityImagePrompt): ValidationResult
 }
 ```
 
-#### Activity Service
+#### Activity
 
 **Purpose**: Manages Strava API integration and activity data retrieval.
 
@@ -281,16 +284,16 @@ interface GuardrailsService {
 - Transform API responses to internal format.
 
 **Dependencies**:
-- Guardrails Service
+- Guardrails
 
 **Interface**:
 ```typescript
-interface ActivityService {
+interface Activity {
   fetchActivity(activityId: string): Promise<Activity>;
 }
 ```
 
-#### Activity Signals Service
+#### Activity Signals
 
 **Purpose**: Extracts semantic signals from raw Strava activity data.
 
@@ -299,16 +302,16 @@ interface ActivityService {
 - Extract activity signals from the Strava API response: subject, style, mood, scene, and others.
 
 **Dependencies**:
-- Guardrails Service
+- Guardrails
 
 **Interface**:
 ```typescript
-interface ActivitySignalsService {
+interface ActivitySignals {
   getSignals(activity: Activity): Promise<ActivitySignals>;
 }
 ```
 
-#### Prompt Generation Service
+#### Prompt Generation
 
 **Purpose**: Generates text prompts for image generation based on extracted Strava activity signals.
 
@@ -319,18 +322,18 @@ interface ActivitySignalsService {
 - Validate prompt safety.
 
 **Dependencies**:
-- Activity Signals Service
-- Guardrails Service
+- Activity Signals
+- Guardrails
 
 **Interface**:
 ```typescript
-interface PromptGenerationService {
+interface PromptGeneration {
   generatePrompt(signals: ActivitySignals): ActivityImagePrompt
   getFallbackPrompt(): ActivityImagePrompt
 }
 ```
 
-#### Image Generation Service
+#### Image Generation
 
 **Purpose**: Generates Strava activity image based on the prompt derived from the activity data.
 
@@ -340,13 +343,40 @@ interface PromptGenerationService {
 - Manage rate limiting.
 
 **Dependencies**:
-- Prompt Generation Service
+- Prompt Generation
 
 **Interface**:
 ```typescript
-interface ImageGenerationService {
+interface ImageGeneration {
   generateImage(prompt: ActivityImagePrompt): Promise<ActivityImage>
   regenerateWithFallback(prompt: ActivityImagePrompt): Promise<ActivityImage>
+}
+```
+
+#### Specs Guardrails
+
+**Purpose**: Protects specification contents from invalid behavior by validating OpenSpec specifications.
+
+**Responsibilities**:
+- Validate OpenSpec specifications using OpenSpec CLI.
+- Validate OpenSpec specifications using AI-based validation.
+- Ensure specification compliance with OpenSpec rules.
+- Detect specification violations and inconsistencies.
+
+**Dependencies**:
+- OpenSpec CLI (external tool)
+- AI external service (for AI-based validation)
+
+**Interface**:
+```typescript
+interface SpecsGuardrails {
+  validateSpecsWithAI(
+    systemPrompt: string,
+    userPrompt: string,
+    rootDir?: string,
+    specFilePaths?: string[]
+  ): Promise<ValidationResult>
+  validateSpecsWithOpenspec(rootDir: string): Promise<ValidationResult>
 }
 ```
 
@@ -355,17 +385,17 @@ interface ImageGenerationService {
 #### Primary Flow: New Activity to AI Image Generation
 
 1. **Input**: Activity ID from the Strava web hook.
-2. **Activity Service**: Fetches activity from the Strava API.
-3. **Guardrails Service**: Validates raw activity data for safety.
-4. **Activity Signals Service**: Extracts semantic signals from the raw Strava activity data.
-5. **Prompt Generation Service**: Creates image prompt based on extracted activity signals.
-6. **Guardrails Service**: Validates image prompt for safety.
-7. **Image Generation Service**: Generates image using the prompt.
+2. **Activity**: Fetches activity from the Strava API.
+3. **Guardrails**: Validates raw activity data for safety.
+4. **Activity Signals**: Extracts semantic signals from the raw Strava activity data.
+5. **Prompt Generation**: Creates image prompt based on extracted activity signals.
+6. **Guardrails**: Validates image prompt for safety.
+7. **Image Generation**: Generates image using the prompt.
 8. **Output**: Generated image URL is shared with the requestor.
 
 #### Error Flow
 
-1. Any service failure triggers error logging.
+1. Any module failure triggers error logging.
 2. Fallback mechanisms activate for persistent failures.
 3. System returns a safe default output.
 
@@ -373,14 +403,14 @@ interface ImageGenerationService {
 
 #### Unit Testing
 
-- Each service **MUST** be tested in isolation.
+- Each module **MUST** be tested in isolation.
 - Mock dependencies are injected.
 - 100% coverage for critical paths.
 - Edge cases and error conditions.
 
 #### Integration Testing
 
-- Test service interactions.
+- Test module interactions.
 - Verify data flow.
 - Test error propagation.
 - Validate contracts.
@@ -392,7 +422,7 @@ interface ImageGenerationService {
 
 ### Deployment Considerations
 
-#### Service Packaging
+#### Module Packaging
 
 - Each module as separate package.
 - Clear version management.
@@ -406,7 +436,7 @@ interface ImageGenerationService {
 
 #### Scalability
 
-- Stateless service design.
+- Stateless module design.
 - Horizontal scaling capability.
 - Rate limiting.
 

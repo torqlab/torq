@@ -8,18 +8,18 @@ Define how textual prompts for image generation are constructed from extracted S
 
 ### Requirement: Input Contract
 
-Prompt generation SHALL receive activity signals from the Activity Signals Service and SHALL use these signals to generate prompts.
+Prompt generation SHALL receive activity signals from the Activity Signals module and SHALL use these signals to generate prompts.
 
 #### Scenario: Valid activity signals input
-- **GIVEN** extracted activity signals from Activity Signals Service
+- **GIVEN** extracted activity signals from Activity Signals
 - **WHEN** prompt generation is invoked
-- **THEN** the service SHALL receive activity signals as input
-- **AND** the service SHALL use these signals to generate prompts
+- **THEN** the module SHALL receive activity signals as input
+- **AND** the module SHALL use these signals to generate prompts
 
 #### Scenario: Missing or invalid signals
 - **GIVEN** missing or invalid activity signals
 - **WHEN** prompt generation is invoked
-- **THEN** the service SHALL use fallback prompt generation
+- **THEN** the module SHALL use fallback prompt generation
 
 ### Requirement: Output Contract
 
@@ -28,7 +28,7 @@ Prompt generation SHALL return a complete prompt structure suitable for image ge
 #### Scenario: Complete prompt structure
 - **GIVEN** valid activity signals
 - **WHEN** prompt generation completes
-- **THEN** the service SHALL return a complete prompt structure
+- **THEN** the module SHALL return a complete prompt structure
 - **AND** the prompt SHALL comply with image generation prompt guardrails
 - **AND** the prompt SHALL include all required elements for image generation
 
@@ -281,7 +281,7 @@ Prompts SHALL follow the defined structure and length constraints. Prompts SHALL
 
 ### Requirement: Prompt Validation
 
-Generated prompts SHALL be validated before returning using the Guardrails Service.
+Generated prompts SHALL be validated before returning using the Guardrails module.
 
 #### Scenario: Successful validation
 - **GIVEN** a generated prompt

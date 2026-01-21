@@ -12,7 +12,7 @@ The system SHALL provide a GitHub Actions workflow that validates specifications
 
 #### Scenario: Workflow trigger on OpenSpec changes
 - **GIVEN** a push to the main branch
-- **WHEN** files in openspec/**, packages/validate-specs/validate-specs-with-openspec/**, or .github/workflows/specs-validate-with-openspec.yml are modified
+- **WHEN** files in openspec/**, packages/specs-guardrails/validate-specs-with-openspec/**, or .github/workflows/specs-validate-with-openspec.yml are modified
 - **THEN** the OpenSpec CLI validation workflow SHALL trigger
 
 #### Scenario: Manual workflow trigger
