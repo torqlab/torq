@@ -1,0 +1,23 @@
+[build]
+  command = "echo 'No build step needed'"
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  included_files = ["packages/**/*.ts", "packages/**/*.js"]
+
+[[redirects]]
+  from = "/strava/auth"
+  to = "/.netlify/functions/strava-auth"
+  status = 200
+
+[[redirects]]
+  from = "/strava/auth/callback"
+  to = "/.netlify/functions/strava-auth-callback"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/root"
+  status = 200

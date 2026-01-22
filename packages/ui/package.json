@@ -1,0 +1,12 @@
+{
+  "name": "@pace/ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/server.ts",
+    "start": "bun run src/server.ts"
+  },
+  "dependencies": {
+    "@pace/strava-auth": "workspace:*"
+  }
+}

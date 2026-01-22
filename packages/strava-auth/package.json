@@ -1,0 +1,5 @@
+{
+  "name": "@pace/strava-auth",
+  "private": true,
+  "type": "module"
+}

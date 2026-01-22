@@ -21,6 +21,16 @@
     "packages/specs-guardrails": {
       "name": "@pace/specs-guardrails",
     },
+    "packages/strava-auth": {
+      "name": "@pace/strava-auth",
+    },
+    "packages/ui": {
+      "name": "@pace/ui",
+      "dependencies": {
+        "@pace/activity": "workspace:*",
+        "@pace/strava-auth": "workspace:*",
+      },
+    },
   },
   "packages": {
     "@es-joy/jsdoccomment": ["@es-joy/jsdoccomment@0.46.0", "", { "dependencies": { "comment-parser": "1.4.1", "esquery": "^1.6.0", "jsdoc-type-pratt-parser": "~4.0.0" } }, "sha512-C3Axuq1xd/9VqFZpW4YAzOx5O9q/LP46uIQy/iNDpHG3fmPa6TBtvfglMCs3RBiBxAIi0Go97r8+jvTt55XMyQ=="],
@@ -116,6 +126,10 @@
     "@pace/activity": ["@pace/activity@workspace:packages/activity"],
 
     "@pace/specs-guardrails": ["@pace/specs-guardrails@workspace:packages/specs-guardrails"],
+
+    "@pace/strava-auth": ["@pace/strava-auth@workspace:packages/strava-auth"],
+
+    "@pace/ui": ["@pace/ui@workspace:packages/ui"],
 
     "@pkgr/core": ["@pkgr/core@0.1.2", "", {}, "sha512-fdDH1LSGfZdTH2sxdpVMw31BanV28K/Gry0cVFxaNP77neJSkd82mM8ErPNYs9e+0O7SdHBLTDzDgwUuy18RnQ=="],
 
