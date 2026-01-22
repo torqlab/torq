@@ -185,3 +185,13 @@ export type ActivityError = {
   /** Whether the error is retryable. */
   retryable?: boolean;
 };
+
+/**
+ * Token refresh response from Strava OAuth endpoint.
+ */
+export type ActivityTokenRefreshResponse = {
+  /** New access token. */
+  access_token?: string;
+  /** New refresh token (optional). */
+  refresh_token?: string;
+};

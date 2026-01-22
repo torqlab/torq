@@ -12,12 +12,26 @@ export type ValidationItem = {
   durationMs: number;
 };
 
+/**
+ * Validation count statistics.
+ */
+export type ValidationCounts = {
+  items: number;
+  passed: number;
+  failed: number;
+};
+
+/**
+ * Validation counts grouped by type.
+ */
+export type ValidationCountsByType = {
+  change: ValidationCounts;
+  spec: ValidationCounts;
+};
+
 export type ValidationSummary = {
-  totals: { items: number; passed: number; failed: number };
-  byType: {
-    change: { items: number; passed: number; failed: number };
-    spec: { items: number; passed: number; failed: number };
-  };
+  totals: ValidationCounts;
+  byType: ValidationCountsByType;
 };
 
 export type Output = {

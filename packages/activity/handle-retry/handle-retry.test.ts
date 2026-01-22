@@ -47,10 +47,10 @@ describe('handle-retry', () => {
       'retries and succeeds on second attempt',
       {
         fn: (() => {
-          let attempts = 0;
+          const attemptCounter = { count: 0 };
           return async () => {
-            attempts++;
-            if (attempts === 1) {
+            attemptCounter.count = attemptCounter.count + 1;
+            if (attemptCounter.count === 1) {
               throw createRetryableError();
             }
             return 'success';
@@ -87,10 +87,10 @@ describe('handle-retry', () => {
       'succeeds after multiple retries',
       {
         fn: (() => {
-          let attempts = 0;
+          const attemptCounter = { count: 0 };
           return async () => {
-            attempts++;
-            if (attempts < 3) {
+            attemptCounter.count = attemptCounter.count + 1;
+            if (attemptCounter.count < 3) {
               throw createRetryableError();
             }
             return 'success';
@@ -102,21 +102,21 @@ describe('handle-retry', () => {
       },
     ],
   ])('%#. %s', async (_name, { fn, maxRetries, initialBackoffMs, shouldSucceed, expectedAttempts }) => {
-    let attempts = 0;
+    const attemptCounter = { count: 0 };
     const wrappedFn = async () => {
-      attempts++;
+      attemptCounter.count = attemptCounter.count + 1;
       return await fn();
     };
 
     if (shouldSucceed) {
       const result = await handleRetry(wrappedFn, maxRetries, initialBackoffMs);
       expect(result).toBe('success');
-      expect(attempts).toBe(expectedAttempts);
+      expect(attemptCounter.count).toBe(expectedAttempts);
     } else {
       await expect(async () => {
         await handleRetry(wrappedFn, maxRetries, initialBackoffMs);
       }).toThrow();
-      expect(attempts).toBe(expectedAttempts);
+      expect(attemptCounter.count).toBe(expectedAttempts);
     }
   });
 });

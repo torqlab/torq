@@ -25,6 +25,50 @@ const createActivityError = (
 };
 
 /**
+ * Fetches the API response from Strava API.
+ *
+ * @param {string} url - The full API endpoint URL
+ * @param {HeadersInit} headers - Request headers including authorization
+ * @returns {Promise<Response>} Promise resolving to the fetch response
+ * @throws {Error} Throws ActivityError with 'NETWORK_ERROR' code if fetch fails
+ * @internal
+ */
+const fetchApiResponse = async (url: string, headers: HeadersInit): Promise<Response> => {
+  try {
+    return await fetch(url, {
+      method: 'GET',
+      headers,
+    });
+  } catch (error) {
+    throw createActivityError(
+      'NETWORK_ERROR',
+      'Failed to connect to Strava API',
+      true
+    );
+  }
+};
+
+/**
+ * Parses JSON data from the API response.
+ *
+ * @param {Response} response - Response object to parse
+ * @returns {Promise<ActivityStravaApiResponse>} Promise resolving to parsed API response
+ * @throws {Error} Throws ActivityError with 'MALFORMED_RESPONSE' code if JSON parsing fails
+ * @internal
+ */
+const parseApiJsonData = async (response: Response): Promise<ActivityStravaApiResponse> => {
+  try {
+    return (await response.json()) as ActivityStravaApiResponse;
+  } catch (error) {
+    throw createActivityError(
+      'MALFORMED_RESPONSE',
+      'Invalid response format from Strava API',
+      false
+    );
+  }
+};
+
+/**
  * Fetches activity data from the Strava API.
  *
  * Makes an authenticated HTTP GET request to the Strava API to retrieve
@@ -61,20 +105,7 @@ const fetchFromApi = async (
   const url = `${baseUrl}${STRAVA_API_ACTIVITY_ENDPOINT}/${activityId}`;
   const headers = getAuthHeaders(config);
 
-  let response: Response;
-
-  try {
-    response = await fetch(url, {
-      method: 'GET',
-      headers,
-    });
-  } catch (error) {
-    throw createActivityError(
-      'NETWORK_ERROR',
-      'Failed to connect to Strava API',
-      true
-    );
-  }
+  const response = await fetchApiResponse(url, headers);
 
   if (response.status === 404) {
     throw createActivityError(
@@ -127,17 +158,7 @@ const fetchFromApi = async (
     );
   }
 
-  let jsonData: ActivityStravaApiResponse;
-
-  try {
-    jsonData = (await response.json()) as ActivityStravaApiResponse;
-  } catch (error) {
-    throw createActivityError(
-      'MALFORMED_RESPONSE',
-      'Invalid response format from Strava API',
-      false
-    );
-  }
+  const jsonData = await parseApiJsonData(response);
 
   return jsonData;
 };

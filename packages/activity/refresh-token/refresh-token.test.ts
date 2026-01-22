@@ -18,14 +18,14 @@ const parseError = (error: Error): ActivityError => {
 };
 
 describe('refresh-token', () => {
-  let originalFetch: typeof fetch;
+  const fetchState = { originalFetch: globalThis.fetch };
 
   beforeEach(() => {
-    originalFetch = globalThis.fetch;
+    fetchState.originalFetch = globalThis.fetch;
   });
 
   afterEach(() => {
-    globalThis.fetch = originalFetch;
+    globalThis.fetch = fetchState.originalFetch;
   });
 
   test.each<Case>([

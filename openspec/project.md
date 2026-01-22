@@ -47,6 +47,7 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - Functions are `const` declarations, not function declarations
 - Return types are explicitly specified: `Promise<Output>`, `Promise<string[]>`, etc.
 - No early returns - uses explicit `if...else if...else` pattern
+- **NEVER use nested functions**: All functions MUST be defined at the top level of the file. Nested functions (functions defined inside other functions) are FORBIDDEN as they lead to poor performance. When decomposing a function into smaller pieces, extract each helper function to the top level of the file and pass necessary parameters explicitly. Use the `@internal` tag in JSDoc to mark helper functions that are not part of the public API.
 - **JSDoc comments are REQUIRED for EVERY function**: ALL functions (exported, internal, public, private) MUST have JSDoc comments (`/** ... */`) directly above the function definition. This is mandatory with no exceptions. JSDoc MUST include:
   - **Description**: Clear description of what the function does and its purpose
   - **`@param` tags**: One tag per parameter with **explicit type in curly braces** and description (e.g., `@param {string} activityId - The activity ID to validate`). Types MUST always be specified using JSDoc type syntax (`{Type}`, `{Promise<Type>}`, `{Type | null}`, etc.). Optional parameters use square brackets: `@param {string} [optionalParam] - Description`.
@@ -75,6 +76,11 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - **Type comments MUST use JSDoc format**: All type definitions and their properties MUST be documented using JSDoc comments (`/** ... */`). Inline comments (`//`) are not allowed for type documentation. Property-level documentation should use JSDoc format directly above the property.
 - Optional properties use `?:` syntax
 - Array types use `Array<Type>` or `Type[]` syntax consistently
+- **NEVER use inline types**: All types MUST be defined as named type definitions. Inline types in function parameters, return types, variable declarations, or anywhere else are FORBIDDEN. Types MUST be defined either:
+  - At the top of the file (for file-local types)
+  - In a `types.ts` file within the same directory (preferred for shared types)
+  - Examples of FORBIDDEN inline types: `(param: { key: string }) => void`, `let data: { id: number }`, `fn: () => Promise<string>`
+  - Examples of REQUIRED approach: Define `type ParamType = { key: string }` and use `(param: ParamType) => void`
 
 #### Constants
 - Constants in separate `constants.ts` files when needed
@@ -104,7 +110,12 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - Async functions always return `Promise<Type>`
 
 #### Variable Naming
-- Use `const` by default, `let` only when reassignment is needed
+- **NEVER use `let`**: The `let` keyword is FORBIDDEN. Always use `const` for all variable declarations.
+- **Code MUST be pure and immutable**: Avoid mutations. Use immutable patterns:
+  - Instead of reassigning variables, create new constants with descriptive names
+  - Use functional patterns: `const updatedConfig = { ...currentConfig, accessToken: newToken }`
+  - For loops that need iteration counters, use `Array.from()` with index, or refactor to use `Array.map()`, `Array.reduce()`, or other functional methods
+  - If reassignment is truly necessary, refactor the code to avoid it (e.g., use recursion, array methods, or extract to separate functions)
 - Variable names are descriptive and camelCase: `rootDir`, `specFilePaths`, `userPrompt`
 - Boolean flags use `has` prefix: `hasRootDir`, `hasSpecFilePaths`
 - Temporary variables use descriptive names: `originalArgv`, `tempDir`, `candidateBin`
@@ -177,6 +188,13 @@ PACE (Personal Activity Canvas Engine) is an AI-powered Strava activity image ge
 - Use business-friendly names for test cases and avoid using complex technical words and variable names.
 - Use names for test cases based on behavior rather than implementation details.
 - When possible, avoid using mocks to make sure system components interact correctly.
+
+#### Test Execution Requirements
+
+- **MUST run tests after code changes**: After making any code changes, ALL tests MUST be run and fixed in case of issues.
+- **Test command**: Use `bun run test` from the root directory to run all tests across all packages.
+- **Fix failing tests**: If any tests fail after code changes, they MUST be fixed before the changes are considered complete.
+- **Test before committing**: Ensure all tests pass before committing code changes.
 
 ### Git Workflow
 - **Repository**: GitHub (github.com/mrbalov/pace)

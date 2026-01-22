@@ -1,5 +1,6 @@
 import { ActivityError } from '../types';
 import { INITIAL_BACKOFF_MS, MAX_BACKOFF_MS } from '../constants';
+import { RetryFunction } from './types';
 
 /**
  * Parses an Error object to extract ActivityError if present.
@@ -20,6 +21,50 @@ const parseError = (error: Error): ActivityError | null => {
 };
 
 /**
+ * Attempts to execute a function with exponential backoff retry logic.
+ *
+ * @template T - The return type of the function being retried
+ * @param {RetryFunction<T>} fn - Async function to execute and retry on failure
+ * @param {number} attemptIndex - Current attempt index (0-based)
+ * @param {number} maxRetries - Maximum number of retry attempts
+ * @param {number} currentBackoffMs - Current backoff delay in milliseconds
+ * @param {Error | null} previousError - Previous error encountered (if any)
+ * @returns {Promise<T>} Promise resolving to the function's return value on success
+ * @throws {Error} Throws the error if all retries are exhausted or error is non-retryable
+ * @internal
+ */
+const attemptWithBackoff = async <T>(
+  fn: RetryFunction<T>,
+  attemptIndex: number,
+  maxRetries: number,
+  currentBackoffMs: number,
+  previousError: Error | null
+): Promise<T> => {
+  try {
+    return await fn();
+  } catch (error) {
+    const currentError = error as Error;
+    const activityError = parseError(currentError);
+
+    if (activityError !== null && activityError.retryable === false) {
+      throw currentError;
+    }
+
+    const isLastAttempt = attemptIndex >= maxRetries;
+    if (isLastAttempt) {
+      throw currentError;
+    }
+
+    const delayMs = Math.min(currentBackoffMs, MAX_BACKOFF_MS);
+    await Bun.sleep(delayMs);
+    const nextBackoffMs = currentBackoffMs * 2;
+    const nextAttemptIndex = attemptIndex + 1;
+
+    return attemptWithBackoff(fn, nextAttemptIndex, maxRetries, nextBackoffMs, currentError);
+  }
+};
+
+/**
  * Implements retry logic with exponential backoff for async operations.
  *
  * Executes a function with automatic retries on failure. Uses exponential backoff
@@ -28,7 +73,7 @@ const parseError = (error: Error): ActivityError | null => {
  * errors are immediately thrown without retry attempts.
  *
  * @template T - The return type of the function being retried
- * @param {() => Promise<T>} fn - Async function to execute and retry on failure
+ * @param {RetryFunction<T>} fn - Async function to execute and retry on failure
  * @param {number} maxRetries - Maximum number of retry attempts (total attempts = maxRetries + 1)
  * @param {number} [initialBackoffMs=1000] - Initial backoff delay in milliseconds (default: 1000ms)
  * @returns {Promise<T>} Promise resolving to the function's return value on success
@@ -45,33 +90,11 @@ const parseError = (error: Error): ActivityError | null => {
  * ```
  */
 const handleRetry = async <T>(
-  fn: () => Promise<T>,
+  fn: RetryFunction<T>,
   maxRetries: number,
   initialBackoffMs: number = INITIAL_BACKOFF_MS
 ): Promise<T> => {
-  let lastError: Error;
-  let backoffMs = initialBackoffMs;
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error as Error;
-      const activityError = parseError(lastError);
-
-      if (activityError !== null && activityError.retryable === false) {
-        throw lastError;
-      }
-
-      if (attempt < maxRetries) {
-        const delayMs = Math.min(backoffMs, MAX_BACKOFF_MS);
-        await Bun.sleep(delayMs);
-        backoffMs = backoffMs * 2;
-      }
-    }
-  }
-
-  throw lastError!;
+  return attemptWithBackoff(fn, 0, maxRetries, initialBackoffMs, null);
 };
 
 export default handleRetry;

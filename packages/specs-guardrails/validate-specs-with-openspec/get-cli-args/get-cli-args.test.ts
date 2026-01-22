@@ -10,17 +10,16 @@ type Case = [
 ];
 
 describe('get-cli-args', () => {
-  let originalArgv: string[];
-  let originalCwd: string;
+  const testState = { originalArgv: process.argv, originalCwd: process.cwd() };
 
   beforeEach(() => {
-    originalArgv = process.argv;
-    originalCwd = process.cwd();
+    testState.originalArgv = process.argv;
+    testState.originalCwd = process.cwd();
   });
 
   afterEach(() => {
-    process.argv = originalArgv;
-    process.chdir(originalCwd);
+    process.argv = testState.originalArgv;
+    process.chdir(testState.originalCwd);
   });
 
   test.each<Case>([

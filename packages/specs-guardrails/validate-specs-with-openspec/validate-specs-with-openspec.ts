@@ -6,6 +6,31 @@ import { existsSync } from 'node:fs';
 import { Output } from './types';
 
 /**
+ * Recursively finds the openspec binary by walking up the directory tree.
+ *
+ * @param {string} currentDir - Current directory being searched
+ * @param {string} startDir - Original starting directory (for error messages)
+ * @returns {string} The path to the openspec binary
+ * @throws {Error} Throws error if openspec binary cannot be found in node_modules
+ * @internal
+ */
+const findOpenSpecBinRecursive = (currentDir: string, startDir: string): string => {
+  const candidateBin = join(currentDir, 'node_modules', '.bin', 'openspec');
+  const parentDir = dirname(currentDir);
+  const isRoot = currentDir === parentDir;
+
+  if (existsSync(candidateBin)) {
+    return candidateBin;
+  }
+
+  if (isRoot) {
+    throw new Error(`Could not find openspec binary in node_modules. Searched from ${startDir} up to ${currentDir}`);
+  }
+
+  return findOpenSpecBinRecursive(parentDir, startDir);
+};
+
+/**
  * Gets the path to the openspec binary.
  *
  * Finds node_modules by walking up from rootDir until it's found.
@@ -18,23 +43,33 @@ import { Output } from './types';
  * @internal
  */
 const getOpenSpecBin = (rootDir: string): string => {
-  let currentDir = resolve(rootDir);
-  let openspecBin: string | null = null;
-  
-  while (currentDir !== dirname(currentDir)) {
-    const candidateBin = join(currentDir, 'node_modules', '.bin', 'openspec');
-    if (existsSync(candidateBin)) {
-      openspecBin = candidateBin;
-      break;
-    }
-    currentDir = dirname(currentDir);
+  const startDir = resolve(rootDir);
+  return findOpenSpecBinRecursive(startDir, startDir);
+};
+
+/**
+ * Parsed validation data from OpenSpec JSON output.
+ */
+type ParsedValidationData = {
+  items: Output['items'];
+  summary: Output['summary'];
+  version: string;
+};
+
+/**
+ * Parses validation data from OpenSpec JSON output.
+ *
+ * @param {string} stdout - Standard output from openspec command
+ * @returns {ParsedValidationData} Parsed validation data
+ * @throws {Error} Throws error if JSON parsing fails
+ * @internal
+ */
+const parseValidationData = (stdout: string): ParsedValidationData => {
+  try {
+    return JSON.parse(stdout.trim()) as ParsedValidationData;
+  } catch (error) {
+    throw new Error(`Failed to parse openspec JSON output: ${error instanceof Error ? error.message : String(error)}`);
   }
-  
-  if (!openspecBin) {
-    throw new Error(`Could not find openspec binary in node_modules. Searched from ${rootDir} up to ${currentDir}`);
-  }
-  
-  return openspecBin;
 };
 
 /**
@@ -81,22 +116,7 @@ const validateSpecsWithOpenspec = async (rootDir: string): Promise<Output> => {
   ]);
 
   const exitCode = await proc.exited;
-
-  let validationData: {
-    items: Output['items'];
-    summary: Output['summary'];
-    version: string;
-  };
-
-  try {
-    validationData = JSON.parse(stdout.trim()) as {
-      items: Output['items'];
-      summary: Output['summary'];
-      version: string;
-    };
-  } catch (error) {
-    throw new Error(`Failed to parse openspec JSON output: ${error instanceof Error ? error.message : String(error)}`);
-  }
+  const validationData = parseValidationData(stdout);
 
   return {
     success: exitCode === 0,

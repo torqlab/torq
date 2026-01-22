@@ -1,4 +1,4 @@
-import { ActivityConfig, ActivityError } from '../types';
+import { ActivityConfig, ActivityError, ActivityTokenRefreshResponse } from '../types';
 
 /**
  * Creates an ActivityError wrapped in an Error object.
@@ -15,6 +15,45 @@ const createActivityError = (code: ActivityError['code'], message: string): Erro
     retryable: false,
   };
   return new Error(JSON.stringify(error));
+};
+
+/**
+ * Fetches the token refresh response from Strava OAuth endpoint.
+ *
+ * @param {string} url - The OAuth token endpoint URL
+ * @param {string} body - The URL-encoded request body
+ * @returns {Promise<Response>} Promise resolving to the fetch response
+ * @throws {Error} Throws ActivityError with 'NETWORK_ERROR' code if fetch fails
+ * @internal
+ */
+const fetchTokenRefreshResponse = async (url: string, body: string): Promise<Response> => {
+  try {
+    return await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body,
+    });
+  } catch (error) {
+    throw createActivityError('NETWORK_ERROR', 'Failed to connect to Strava OAuth endpoint');
+  }
+};
+
+/**
+ * Parses JSON data from a cloned response.
+ *
+ * @param {Response} clonedResponse - Cloned response object to parse
+ * @returns {Promise<ActivityTokenRefreshResponse>} Promise resolving to parsed token refresh response
+ * @throws {Error} Throws ActivityError with 'MALFORMED_RESPONSE' code if JSON parsing fails
+ * @internal
+ */
+const parseTokenRefreshJsonData = async (clonedResponse: Response): Promise<ActivityTokenRefreshResponse> => {
+  try {
+    return (await clonedResponse.json()) as ActivityTokenRefreshResponse;
+  } catch (error) {
+    throw createActivityError('MALFORMED_RESPONSE', 'Invalid response format from token refresh endpoint');
+  }
 };
 
 /**
@@ -62,19 +101,7 @@ const refreshToken = async (config: ActivityConfig): Promise<string> => {
     refresh_token: config.refreshToken,
   });
 
-  let response: Response;
-
-  try {
-    response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: body.toString(),
-    });
-  } catch (error) {
-    throw createActivityError('NETWORK_ERROR', 'Failed to connect to Strava OAuth endpoint');
-  }
+  const response = await fetchTokenRefreshResponse(url, body.toString());
 
   if (!response.ok) {
     throw createActivityError('UNAUTHORIZED', 'Token refresh failed');
@@ -82,13 +109,7 @@ const refreshToken = async (config: ActivityConfig): Promise<string> => {
 
   // Clone response to avoid consuming the body stream
   const clonedResponse = response.clone();
-  let jsonData: { access_token?: string; refresh_token?: string };
-
-  try {
-    jsonData = (await clonedResponse.json()) as { access_token?: string; refresh_token?: string };
-  } catch (error) {
-    throw createActivityError('MALFORMED_RESPONSE', 'Invalid response format from token refresh endpoint');
-  }
+  const jsonData = await parseTokenRefreshJsonData(clonedResponse);
 
   if (jsonData.access_token === undefined || jsonData.access_token === null) {
     throw createActivityError('MALFORMED_RESPONSE', 'Access token not found in refresh response');

@@ -17,15 +17,15 @@ type Case = [
 ];
 
 describe('validate-specs-with-ai', () => {
-  let tempDir: string;
+  const testState = { tempDir: '' };
 
   beforeEach(async () => {
-    tempDir = join(tmpdir(), `test-validate-specs-with-ai-${Date.now()}`);
-    await mkdir(tempDir, { recursive: true });
+    testState.tempDir = join(tmpdir(), `test-validate-specs-with-ai-${Date.now()}`);
+    await mkdir(testState.tempDir, { recursive: true });
   });
 
   afterEach(async () => {
-    await rm(tempDir, { recursive: true, force: true });
+    await rm(testState.tempDir, { recursive: true, force: true });
   });
 
   test.each<Case>([

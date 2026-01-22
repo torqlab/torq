@@ -4,6 +4,28 @@ import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
 /**
+ * Recursively walks a directory tree and collects spec.md file paths.
+ *
+ * @param {string} dir - Directory to walk
+ * @param {string[]} result - Array to collect file paths (mutated)
+ * @returns {Promise<void>} Promise that resolves when walking is complete
+ * @internal
+ */
+const walkDirectoryForSpecFiles = async (dir: string, result: string[]): Promise<void> => {
+  const entries = await readdir(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      await walkDirectoryForSpecFiles(fullPath, result);
+    } else if (entry.isFile() && entry.name.endsWith('spec.md')) {
+      result.push(fullPath);
+    }
+  }
+};
+
+/**
  * Recursively finds all OpenSpec specification files in a directory.
  *
  * Walks the directory tree starting from rootDir and collects all files
@@ -20,22 +42,7 @@ import { join } from 'node:path';
  */
 const getSpecFilePaths = async (rootDir: string): Promise<string[]> => {
   const result: string[] = [];
-  const walk = async (dir: string) => {
-    const entries = await readdir(dir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = join(dir, entry.name);
-
-      if (entry.isDirectory()) {
-        await walk(fullPath);
-      } else if (entry.isFile() && entry.name.endsWith('spec.md')) {
-        result.push(fullPath);
-      }
-    }
-  };
-
-  await walk(rootDir);
-
+  await walkDirectoryForSpecFiles(rootDir, result);
   return result.sort();
 };
 

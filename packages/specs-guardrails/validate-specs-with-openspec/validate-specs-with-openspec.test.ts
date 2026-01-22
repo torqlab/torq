@@ -18,13 +18,12 @@ type Case = [
 ];
 
 describe('validate-specs-with-openspec', () => {
-  let tempDir: string;
-  let originalSpawn: typeof Bun.spawn;
+  const testState = { tempDir: '', originalSpawn: Bun.spawn };
 
   beforeEach(async () => {
-    tempDir = join(tmpdir(), `test-validate-specs-with-openspec-${Date.now()}`);
-    await mkdir(tempDir, { recursive: true });
-    originalSpawn = Bun.spawn;
+    testState.tempDir = join(tmpdir(), `test-validate-specs-with-openspec-${Date.now()}`);
+    await mkdir(testState.tempDir, { recursive: true });
+    testState.originalSpawn = Bun.spawn;
     
     // Mock existsSync to return true for any path ending with node_modules/.bin/openspec
     const actualFs = await import('node:fs');
@@ -40,8 +39,8 @@ describe('validate-specs-with-openspec', () => {
   });
 
   afterEach(async () => {
-    await rm(tempDir, { recursive: true, force: true });
-    Bun.spawn = originalSpawn;
+    await rm(testState.tempDir, { recursive: true, force: true });
+    Bun.spawn = testState.originalSpawn;
   });
 
   test.each<Case>([

@@ -15,21 +15,20 @@ type Case = [
 ];
 
 describe('ask-dial', () => {
-  let originalEnv: string | undefined;
-  let originalFetch: typeof fetch;
+  const testState = { originalEnv: process.env.DIAL_KEY, originalFetch: global.fetch };
 
   beforeEach(() => {
-    originalEnv = process.env.DIAL_KEY;
-    originalFetch = global.fetch;
+    testState.originalEnv = process.env.DIAL_KEY;
+    testState.originalFetch = global.fetch;
   });
 
   afterEach(() => {
-    if (originalEnv !== undefined) {
-      process.env.DIAL_KEY = originalEnv;
+    if (testState.originalEnv !== undefined) {
+      process.env.DIAL_KEY = testState.originalEnv;
     } else {
       delete process.env.DIAL_KEY;
     }
-    global.fetch = originalFetch;
+    global.fetch = testState.originalFetch;
   });
 
   test.each<Case>([
@@ -324,10 +323,10 @@ describe('ask-dial', () => {
   test('includes correct messages in request body', async () => {
     process.env.DIAL_KEY = 'test-key';
 
-    let requestBody: any;
+    const requestBodyState = { value: null as any };
 
     const mockFetch = mock((url, options) => {
-      requestBody = JSON.parse(options?.body as string);
+      requestBodyState.value = JSON.parse(options?.body as string);
       return Promise.resolve({
         json: () =>
           Promise.resolve({
@@ -346,15 +345,15 @@ describe('ask-dial', () => {
 
     await askDial('Test system', 'Test user');
 
-    expect(requestBody.messages).toHaveLength(2);
-    expect(requestBody.messages[0]).toStrictEqual({
+    expect(requestBodyState.value.messages).toHaveLength(2);
+    expect(requestBodyState.value.messages[0]).toStrictEqual({
       role: 'system',
       content: 'Test system',
     });
-    expect(requestBody.messages[1]).toStrictEqual({
+    expect(requestBodyState.value.messages[1]).toStrictEqual({
       role: 'user',
       content: 'Test user',
     });
-    expect(requestBody.temperature).toBeDefined();
+    expect(requestBodyState.value.temperature).toBeDefined();
   });
 });

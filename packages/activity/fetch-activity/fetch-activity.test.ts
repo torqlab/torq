@@ -19,14 +19,14 @@ const parseError = (error: Error): ActivityError => {
 };
 
 describe('fetch-activity', () => {
-  let originalFetch: typeof fetch;
+  const fetchState = { originalFetch: globalThis.fetch };
 
   beforeEach(() => {
-    originalFetch = globalThis.fetch;
+    fetchState.originalFetch = globalThis.fetch;
   });
 
   afterEach(() => {
-    globalThis.fetch = originalFetch;
+    globalThis.fetch = fetchState.originalFetch;
   });
 
   test.each<Case>([
@@ -129,13 +129,13 @@ describe('fetch-activity', () => {
           clientSecret: 'client-secret',
         },
         mockFetch: (() => {
-          let callCount = 0;
+          const callCounter = { count: 0 };
           return async () => {
-            callCount++;
-            if (callCount === 1) {
+            callCounter.count = callCounter.count + 1;
+            if (callCounter.count === 1) {
               return new Response('Unauthorized', { status: 401 });
             }
-            if (callCount === 2) {
+            if (callCounter.count === 2) {
               return new Response(
                 JSON.stringify({
                   access_token: 'new-access-token',
@@ -185,10 +185,10 @@ describe('fetch-activity', () => {
           accessToken: 'test-token',
         },
         mockFetch: (() => {
-          let callCount = 0;
+          const callCounter = { count: 0 };
           return async () => {
-            callCount++;
-            if (callCount === 1) {
+            callCounter.count = callCounter.count + 1;
+            if (callCounter.count === 1) {
               return new Response('Rate Limited', {
                 status: 429,
                 headers: {
@@ -222,10 +222,10 @@ describe('fetch-activity', () => {
           accessToken: 'test-token',
         },
         mockFetch: (() => {
-          let callCount = 0;
+          const callCounter = { count: 0 };
           return async () => {
-            callCount++;
-            if (callCount === 1) {
+            callCounter.count = callCounter.count + 1;
+            if (callCounter.count === 1) {
               return new Response('Server Error', { status: 500 });
             }
             return new Response(

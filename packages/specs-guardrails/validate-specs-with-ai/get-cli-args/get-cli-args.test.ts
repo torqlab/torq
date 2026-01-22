@@ -15,14 +15,14 @@ type Case = [
 ];
 
 describe('get-cli-args', () => {
-  let originalArgv: string[];
+  const testState = { originalArgv: process.argv };
 
   beforeEach(() => {
-    originalArgv = process.argv;
+    testState.originalArgv = process.argv;
   });
 
   afterEach(() => {
-    process.argv = originalArgv;
+    process.argv = testState.originalArgv;
   });
 
   test.each<Case>([

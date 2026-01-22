@@ -14,15 +14,15 @@ type Case = [
 ];
 
 describe('build-user-prompt', () => {
-  let tempDir: string;
+  const testState = { tempDir: '' };
 
   beforeEach(async () => {
-    tempDir = join(tmpdir(), `test-build-user-prompt-${Date.now()}`);
-    await mkdir(tempDir, { recursive: true });
+    testState.tempDir = join(tmpdir(), `test-build-user-prompt-${Date.now()}`);
+    await mkdir(testState.tempDir, { recursive: true });
   });
 
   afterEach(async () => {
-    await rm(tempDir, { recursive: true, force: true });
+    await rm(testState.tempDir, { recursive: true, force: true });
   });
 
   test.each<Case>([
@@ -161,13 +161,16 @@ describe('build-user-prompt', () => {
       },
     ],
   ])('%#. %s', async (_name, { specContents, userPrompt, expectedContains }) => {
-    const specFilePaths: string[] = [];
-
-    for (let i = 0; i < specContents.length; i++) {
-      const specFile = join(tempDir, `spec${i + 1}.spec.md`);
-      await writeFile(specFile, specContents[i]);
-      specFilePaths.push(specFile);
-    }
+    await Promise.all(
+      specContents.map(async (content, i) => {
+        const specFile = join(testState.tempDir, `spec${i + 1}.spec.md`);
+        await writeFile(specFile, content);
+      })
+    );
+    
+    const specFilePaths = Array.from({ length: specContents.length }, (_, i) =>
+      join(testState.tempDir, `spec${i + 1}.spec.md`)
+    );
 
     const result = await buildUserPrompt(specFilePaths, userPrompt);
 
@@ -177,7 +180,7 @@ describe('build-user-prompt', () => {
   });
 
   test('reads and includes actual specification file content', async () => {
-    const specFile = join(tempDir, 'test.spec.md');
+    const specFile = join(testState.tempDir, 'test.spec.md');
     const specContent = '# Test Specification\n\nThis is a test specification.';
     await writeFile(specFile, specContent);
 
@@ -189,7 +192,7 @@ describe('build-user-prompt', () => {
   });
 
   test('handles specification files with complex markdown content', async () => {
-    const specFile = join(tempDir, 'complex.spec.md');
+    const specFile = join(testState.tempDir, 'complex.spec.md');
     const specContent = '# Title\n\n## Section\n\n- Item 1\n- Item 2\n\n```typescript\ncode block\n```';
     await writeFile(specFile, specContent);
 
@@ -199,7 +202,7 @@ describe('build-user-prompt', () => {
   });
 
   test('handles empty specification file', async () => {
-    const specFile = join(tempDir, 'empty.spec.md');
+    const specFile = join(testState.tempDir, 'empty.spec.md');
     await writeFile(specFile, '');
 
     const result = await buildUserPrompt([specFile], 'Check empty');

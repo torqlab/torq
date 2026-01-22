@@ -15,15 +15,15 @@ type Case = [
 ];
 
 describe('get-spec-file-paths', () => {
-  let tempDir: string;
+  const testState = { testState.tempDir: '' };
 
   beforeEach(async () => {
-    tempDir = join(tmpdir(), `test-get-spec-file-paths-${Date.now()}`);
-    await mkdir(tempDir, { recursive: true });
+    testState.testState.tempDir = join(tmpdir(), `test-get-spec-file-paths-${Date.now()}`);
+    await mkdir(testState.testState.tempDir, { recursive: true });
   });
 
   afterEach(async () => {
-    await rm(tempDir, { recursive: true, force: true });
+    await rm(testState.testState.tempDir, { recursive: true, force: true });
   });
 
   test.each<Case>([
@@ -231,19 +231,19 @@ describe('get-spec-file-paths', () => {
     ],
   ])('%#. %s', async (_name, { files, directories, expectedCount, expectedPaths }) => {
     for (const dir of directories) {
-      await mkdir(join(tempDir, dir), { recursive: true });
+      await mkdir(join(testState.tempDir, dir), { recursive: true });
     }
 
     for (const file of files) {
-      await writeFile(join(tempDir, file.path), file.content);
+      await writeFile(join(testState.tempDir, file.path), file.content);
     }
 
-    const result = await getSpecFilePaths(tempDir);
+    const result = await getSpecFilePaths(testState.tempDir);
 
     expect(result.length).toStrictEqual(expectedCount);
 
     if (expectedPaths.length > 0) {
-      const relativePaths = result.map((path) => path.replace(tempDir + '/', ''));
+      const relativePaths = result.map((path) => path.replace(testState.tempDir + '/', ''));
       for (const expectedPath of expectedPaths) {
         expect(relativePaths).toContain(expectedPath);
       }
@@ -251,22 +251,22 @@ describe('get-spec-file-paths', () => {
   });
 
   test('returns absolute paths', async () => {
-    const specFile = join(tempDir, 'test.spec.md');
+    const specFile = join(testState.tempDir, 'test.spec.md');
     await writeFile(specFile, 'content');
 
-    const result = await getSpecFilePaths(tempDir);
+    const result = await getSpecFilePaths(testState.tempDir);
 
-    expect(result[0]).toContain(tempDir);
+    expect(result[0]).toContain(testState.tempDir);
     expect(result[0]).toContain('test.spec.md');
   });
 
   test('sorts paths correctly with different directory depths', async () => {
-    await mkdir(join(tempDir, 'a'), { recursive: true });
-    await mkdir(join(tempDir, 'z'), { recursive: true });
-    await writeFile(join(tempDir, 'z', 'file.spec.md'), 'z');
-    await writeFile(join(tempDir, 'a', 'file.spec.md'), 'a');
+    await mkdir(join(testState.tempDir, 'a'), { recursive: true });
+    await mkdir(join(testState.tempDir, 'z'), { recursive: true });
+    await writeFile(join(testState.tempDir, 'z', 'file.spec.md'), 'z');
+    await writeFile(join(testState.tempDir, 'a', 'file.spec.md'), 'a');
 
-    const result = await getSpecFilePaths(tempDir);
+    const result = await getSpecFilePaths(testState.tempDir);
 
     expect(result.length).toStrictEqual(2);
     expect(result[0]).toContain('a/file.spec.md');
