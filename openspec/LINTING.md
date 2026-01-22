@@ -100,17 +100,20 @@ npx husky add .husky/pre-commit "bun run lint"
 
 ### Common Issues
 
-1. **"Cannot find module 'typescript-eslint'"**
+1. **"Object.hasOwn is not a function" or "ESLint flat config requires ESLint 9+"**
+   - **Root cause**: ESLint 9+ requires Node.js 18+ (Object.hasOwn was added in Node.js 16.9+)
+   - **Solution**: Use Node.js 18+ or higher. The project specifies Node.js 24.x in `package.json` engines.
+   - **Check Node version**: Run `node --version` - should show v18.x, v20.x, v22.x, or v24.x
+   - **If using nvm**: Run `nvm use 24` or `nvm install 24` to switch to Node.js 24
+   - **Alternative**: Use `bunx eslint packages` which may work with Bun's Node.js compatibility
+
+2. **"Cannot find module 'typescript-eslint'"**
    - Run `bun install` to install dependencies
    - Ensure you have ESLint 9+ and typescript-eslint 8+ installed
 
-2. **"Parsing error: Cannot read tsconfig.json"**
+3. **"Parsing error: Cannot read tsconfig.json"**
    - Ensure `tsconfig.json` exists in the project root
    - Check that the path in `eslint.config.mjs` is correct
-
-3. **"ESLint flat config requires ESLint 9+"**
-   - Update ESLint: `bun add -d eslint@^9.15.0`
-   - Update typescript-eslint: `bun add -d typescript-eslint@^8.15.0`
 
 4. **Too many errors after enabling linting**
    - Run `bun run lint:fix` to auto-fix many issues

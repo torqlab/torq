@@ -15,15 +15,15 @@ type Case = [
 ];
 
 describe('get-spec-file-paths', () => {
-  const testState = { testState.tempDir: '' };
+  const testState = { tempDir: '' };
 
   beforeEach(async () => {
-    testState.testState.tempDir = join(tmpdir(), `test-get-spec-file-paths-${Date.now()}`);
-    await mkdir(testState.testState.tempDir, { recursive: true });
+    testState.tempDir = join(tmpdir(), `test-get-spec-file-paths-${Date.now()}`);
+    await mkdir(testState.tempDir, { recursive: true });
   });
 
   afterEach(async () => {
-    await rm(testState.testState.tempDir, { recursive: true, force: true });
+    await rm(testState.tempDir, { recursive: true, force: true });
   });
 
   test.each<Case>([
