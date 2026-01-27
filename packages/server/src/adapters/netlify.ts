@@ -211,13 +211,17 @@ const webResponseToNetlify = async (response: Response): Promise<NetlifyResponse
  */
 const handleOptionsRequest = (event: NetlifyEvent): NetlifyResponse => {
   const allowedOrigin = getAllowedOrigin();
+  const requestMethod = event.headers['access-control-request-method'] || 'GET';
+  const requestHeaders = event.headers['access-control-request-headers'] || 'Content-Type';
+  
   return {
     statusCode: 204,
     headers: {
       'Access-Control-Allow-Origin': allowedOrigin,
       'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': requestHeaders,
+      'Access-Control-Max-Age': '86400', // Cache preflight for 24 hours
     },
   };
 };
@@ -391,6 +395,11 @@ export const stravaLogoutHandler = async (event: NetlifyEvent): Promise<NetlifyR
  * @internal
  */
 const stravaActivitiesSuccess = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  // Handle OPTIONS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return handleOptionsRequest(event);
+  }
+
   const config = getConfig();
   const request = netlifyEventToRequest(event);
   const response = await stravaActivities(request, config);
