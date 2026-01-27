@@ -254,7 +254,8 @@ describe('fetch-activity', () => {
         config: {
           accessToken: 'test-token',
           guardrails: {
-            validate: (activity: StravaActivity) => {
+            validate: (input: Record<string, unknown>) => {
+              const activity = input as StravaActivity;
               if (activity.type === 'Ride') {
                 return { valid: true };
               }
@@ -286,7 +287,7 @@ describe('fetch-activity', () => {
         config: {
           accessToken: 'test-token',
           guardrails: {
-            validate: (activity: StravaActivity) => {
+            validate: (_input: Record<string, unknown>) => {
               return { valid: false, errors: ['Validation failed'] };
             },
           },

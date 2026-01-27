@@ -1,20 +1,25 @@
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
+
 import fetchActivities from './fetch-activities';
-import { StravaActivityConfig, StravaActivityApiResponse, StravaActivityError } from '../../activity/types';
+import { StravaApiConfig, StravaActivityApiResponse, StravaApiError } from '../../types';
 
 type Case = [
   string,
   {
-    config: StravaActivityConfig;
+    config: StravaApiConfig;
     mockFetch?: () => Promise<Response>;
     shouldThrow: boolean;
-    expectedError?: StravaActivityError;
+    expectedError?: StravaApiError;
     expectedActivities?: StravaActivityApiResponse[];
   }
 ];
 
-const parseError = (error: Error): StravaActivityError => {
-  return JSON.parse(error.message) as StravaActivityError;
+// Set longer timeout for tests that involve retries (default is 5000ms)
+// Network failure test needs ~7s for retries (1s + 2s + 4s) plus execution time
+const TEST_TIMEOUT = 15000;
+
+const parseError = (error: Error): StravaApiError => {
+  return JSON.parse(error.message) as StravaApiError;
 };
 
 describe('fetch-activities', () => {
@@ -335,29 +340,48 @@ describe('fetch-activities', () => {
       },
     ],
   ])('%#. %s', async (_name, { config, mockFetch, shouldThrow, expectedError, expectedActivities }) => {
+    // Use longer timeout for network failure test to account for retries with backoff
+    const timeout = _name === 'throws error for network failure' ? TEST_TIMEOUT : undefined;
+    
     if (mockFetch !== undefined) {
       // @ts-expect-error - mockFetch is a function
       globalThis.fetch = mockFetch;
     }
 
-    if (shouldThrow) {
-      await expect(async () => {
-        await fetchActivities(config);
-      }).toThrow();
+    const testFn = async () => {
+      if (shouldThrow) {
+        await expect(async () => {
+          await fetchActivities(config);
+        }).toThrow();
 
-      try {
-        await fetchActivities(config);
-      } catch (error) {
-        const parsedError = parseError(error as Error);
-        expect(parsedError.code).toStrictEqual(expectedError!.code);
-        expect(parsedError.message).toStrictEqual(expectedError!.message);
-        if (expectedError!.retryable !== undefined) {
-          expect(parsedError.retryable).toStrictEqual(expectedError!.retryable);
+        try {
+          await fetchActivities(config);
+        } catch (error) {
+          const parsedError = parseError(error as Error);
+          expect(parsedError.code).toStrictEqual(expectedError!.code);
+          expect(parsedError.message).toStrictEqual(expectedError!.message);
+          if (expectedError!.retryable !== undefined) {
+            expect(parsedError.retryable).toStrictEqual(expectedError!.retryable);
+          }
         }
+      } else {
+        const result = await fetchActivities(config);
+        expect(result).toStrictEqual(expectedActivities ?? []);
       }
+    };
+
+    if (timeout !== undefined) {
+      await Promise.race([
+        testFn(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Test timeout')), timeout))
+      ]).catch((error) => {
+        if (error.message === 'Test timeout') {
+          throw new Error(`Test timed out after ${timeout}ms`);
+        }
+        throw error;
+      });
     } else {
-      const result = await fetchActivities(config);
-      expect(result).toStrictEqual(expectedActivities ?? []);
+      await testFn();
     }
-  });
+  }, TEST_TIMEOUT);
 });
