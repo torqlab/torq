@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import fetchActivity from './fetch-activity';
-import { StravaActivityConfig, StravaActivity, StravaActivityError, StravaActivityGuardrails } from './types';
+import { StravaActivityConfig, StravaActivity, StravaActivityError, StravaActivityGuardrails } from '../types';
 
 type Case = [
   string,

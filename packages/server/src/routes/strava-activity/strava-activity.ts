@@ -1,4 +1,4 @@
-import { fetchActivity, type ActivityConfig } from '@pace/strava-api';
+import { fetchStravaActivity, type StravaActivityConfig } from '@pace/strava-api';
 import { getTokens } from '../../cookies';
 import type { ServerConfig, ServerTokenResult } from '../../types';
 
@@ -10,7 +10,7 @@ import type { ServerConfig, ServerTokenResult } from '../../types';
  * @returns {ActivityConfig} Activity module configuration
  * @internal
  */
-const createActivityConfig = (tokens: ServerTokenResult, config: ServerConfig): ActivityConfig => {
+const createActivityConfig = (tokens: ServerTokenResult, config: ServerConfig): StravaActivityConfig => {
   return {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
@@ -136,7 +136,7 @@ const fetchActivityAndCreateResponse = async (
   config: ServerConfig
 ): Promise<Response> => {
   const activityConfig = createActivityConfig(tokens, config);
-  const activity = await fetchActivity(activityId, activityConfig);
+  const activity = await fetchStravaActivity(activityId, activityConfig);
 
   return new Response(JSON.stringify(activity), {
     status: 200,

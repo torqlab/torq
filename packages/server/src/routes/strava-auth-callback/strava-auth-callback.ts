@@ -1,4 +1,4 @@
-import { exchangeToken } from '@pace/strava-api';
+import { exchangeStravaAuthToken } from '@pace/strava-api';
 import { setTokens } from '../../cookies';
 import type { ServerConfig } from '../../types';
 
@@ -31,7 +31,7 @@ const exchangeCodeAndCreateSuccessResponse = async (
   code: string,
   config: ServerConfig
 ): Promise<Response> => {
-  const tokens = await exchangeToken(code, {
+  const tokens = await exchangeStravaAuthToken(code, {
     clientId: config.strava.clientId,
     clientSecret: config.strava.clientSecret,
     redirectUri: config.strava.redirectUri,

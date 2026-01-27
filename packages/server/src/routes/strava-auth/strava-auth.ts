@@ -1,4 +1,4 @@
-import { getAuthorizationUrl } from '@pace/strava-api';
+import { getStravaAuthUrl } from '@pace/strava-api';
 import type { ServerConfig } from '../../types';
 
 /**
@@ -16,7 +16,7 @@ const createAuthSuccessResponse = (config: ServerConfig): Response => {
   console.log(`   Scope: ${config.strava.scope}`);
   console.log(`⚠️  Make sure the redirect URI matches your Strava app's registered callback URL!`);
 
-  const authUrl = getAuthorizationUrl({
+  const authUrl = getStravaAuthUrl({
     clientId: config.strava.clientId,
     clientSecret: config.strava.clientSecret,
     redirectUri: config.strava.redirectUri,

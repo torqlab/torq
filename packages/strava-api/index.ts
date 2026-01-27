@@ -1,1 +1,2 @@
-export { default as fetchStravaActivity } from './fetch-activity';
+export * from './activity';
+export * from './auth';

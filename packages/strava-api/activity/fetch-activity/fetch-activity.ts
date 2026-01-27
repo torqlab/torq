@@ -1,11 +1,11 @@
-import { StravaActivity, StravaActivityConfig, StravaActivityError, StravaActivityApiResponse } from './types';
-import { MAX_RETRIES, INITIAL_BACKOFF_MS } from './constants';
-import validateActivityId from './validate-activity-id';
-import fetchFromApi from './fetch-from-api';
-import transformResponse from './transform-response';
-import handleRetry from './handle-retry';
-import handleRateLimit from './handle-rate-limit';
-import refreshToken from './refresh-token';
+import { StravaActivity, StravaActivityConfig, StravaActivityError, StravaActivityApiResponse } from '../types';
+import { MAX_RETRIES, INITIAL_BACKOFF_MS } from '../constants';
+import validateActivityId from '../validate-activity-id';
+import fetchFromApi from '../fetch-from-api';
+import transformResponse from '../transform-response';
+import handleRetry from '../handle-retry';
+import handleRateLimit from '../handle-rate-limit';
+import refreshToken from '../refresh-token';
 
 /**
  * Parses an Error object to extract ActivityError if present.
