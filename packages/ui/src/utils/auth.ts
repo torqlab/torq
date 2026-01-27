@@ -30,13 +30,6 @@ function clearCookies(): void {
 }
 
 /**
- * Clears all localStorage data.
- */
-function clearLocalStorage(): void {
-  localStorage.clear();
-}
-
-/**
  * Logs out the user by clearing authentication cookies.
  * Calls backend logout endpoint to clear HTTP-only cookies,
  * then redirects to home page where auth status will be checked.
