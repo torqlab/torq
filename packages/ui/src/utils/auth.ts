@@ -74,13 +74,3 @@ export async function logout(): Promise<void> {
   window.location.replace('/');
 }
 
-/**
- * Checks if user is logged in by checking if we have auth data.
- * This is a simple check - actual auth state is determined by API calls.
- */
-export function isLoggedIn(): boolean {
-  // Check if theme preference exists (indicates user has been here before)
-  // But more importantly, we'll check this via the activities hook
-  // For now, return true if localStorage has theme preference
-  return localStorage.getItem('theme') !== null;
-}

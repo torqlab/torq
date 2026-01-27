@@ -128,17 +128,6 @@ export default function HomePage() {
             </Card.Footer>
           </Card>
         </Grid>
-      ) : error ? (
-        // Other error
-        <Grid xs={24} sm={20} md={16} lg={12} style={{ margin: '0 auto' }}>
-          <Note type="error" label="Error">
-            {error}
-          </Note>
-          <Spacer h={1} />
-          <Button onClick={refetch} width="100%" placeholder="Try Again" onPointerEnterCapture={() => {}} onPointerLeaveCapture={() => {}}>
-            Try Again
-          </Button>
-        </Grid>
       ) : (
         // Authorized - show activities
         <>

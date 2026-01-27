@@ -50,20 +50,10 @@ export function useActivities(): UseActivitiesResult {
         }
       } catch (err) {
         if (mounted) {
-          if (err instanceof APIError) {
-            // For 401 Unauthorized, treat as "not logged in" not an error
-            if (err.status === 401) {
-              setError(null);
-              setIsUnauthorized(true);
-              setActivities(null);
-            } else {
-              setError(err.message);
-              setIsUnauthorized(false);
-            }
-          } else {
-            setError('Failed to fetch activities');
-            setIsUnauthorized(false);
-          }
+          // For any error (including 401), treat as unauthorized - don't show error UI
+          setError(null);
+          setIsUnauthorized(true);
+          setActivities(null);
         }
       } finally {
         if (mounted) {
