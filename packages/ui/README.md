@@ -1,496 +1,385 @@
 # @pace/ui
 
-UI server package for PACE that provides web endpoints for Strava OAuth authorization and token management.
+Single Page Application (SPA) UI package for PACE built with React, Vite, and Geist UI. This package provides a pure client-side application that communicates with the `/packages/server` backend API.
 
 ## Features
 
-- **OAuth Flow**: Complete Strava OAuth2 authorization flow
-- **Cookie Storage**: Secure HTTP-only cookie storage for tokens
-- **Token Management**: Automatic token storage and retrieval
-- **Bun Server**: Built on Bun.serve() for high performance
+- **Pure SPA**: No server capabilities - just static HTML, CSS, and JavaScript
+- **React**: Modern React 18 with TypeScript
+- **Geist UI**: Beautiful, accessible UI components from Vercel's design system
+- **Vite**: Lightning-fast development server with Hot Module Replacement (HMR)
+- **Wouter**: Minimal, fast routing library
+- **Dark Mode**: Automatic dark mode support via Geist UI
+- **Cookie-Based Auth**: Uses HTTP-only cookies from backend for secure authentication
+
+## Architecture
+
+```
+┌─────────────┐         ┌──────────────┐         ┌─────────────┐
+│   Browser   │────────▶│  Vite Dev    │────────▶│   Server    │
+│   (SPA)     │         │  Server      │         │   (API)     │
+└─────────────┘         └──────────────┘         └─────────────┘
+                              │
+                              ▼
+                        ┌──────────────┐
+                        │  React App   │
+                        │  + Geist UI  │
+                        └──────────────┘
+```
+
+The UI package is a pure static site that:
+- Uses Vite for development and production builds
+- Makes API calls to `/packages/server` backend
+- Uses cookies automatically for authentication (via `credentials: 'include'`)
+- Leverages Vite proxy during development to avoid CORS issues
 
 ## Installation
 
 This package is part of the PACE monorepo and is automatically available.
 
-## Quick Start
+## Development
 
-### 1. Configure Strava Application
+### Prerequisites
 
-**IMPORTANT**: The redirect URI in your Strava app settings must exactly match what you configure here!
+1. Backend server (`/packages/server`) must be running on `http://localhost:3000`
+2. Install dependencies: `bun install` (or `npm install`)
 
-1. Go to [Strava Developers](https://www.strava.com/settings/api)
-2. Edit your application settings
-3. Set **Authorization Callback Domain** to: `localhost:3000`
-   - Note: Strava uses the domain only, not the full URL
-4. The full redirect URI will be: `http://localhost:3000/strava/auth/callback`
-
-### 2. Set Environment Variables
-
-Create a `.env` file in the project root:
-
-```bash
-STRAVA_CLIENT_ID=your-client-id
-STRAVA_CLIENT_SECRET=your-client-secret
-STRAVA_REDIRECT_URI=http://localhost:3000/strava/auth/callback
-```
-
-**Note**: The `STRAVA_REDIRECT_URI` must match what's configured in your Strava app. If Strava redirects to a different URL, check your app settings!
-
-### 3. Start the Server
+### Start Development Server
 
 ```bash
 cd packages/ui
 bun run dev
-```f
+```
 
-Or from the project root:
+Vite will start on `http://localhost:3001` with:
+- Hot Module Replacement (instant updates)
+- React Fast Refresh (preserves component state)
+- Proxy to backend API (no CORS issues in development)
+
+### Build for Production
 
 ```bash
-bun run --filter @pace/ui dev
+bun run build
 ```
 
-### 4. Authorize Strava
+Output: `packages/ui/dist/` (ready for static hosting)
 
-Visit `http://localhost:3000/strava/auth` in your browser. You'll be redirected to Strava to authorize the application. After authorization, tokens will be saved as cookies and you'll be redirected back.
+### Preview Production Build
 
-## Endpoints
-
-### GET `/strava/auth`
-
-Initiates the Strava OAuth flow. Redirects the user to Strava's authorization page.
-
-**Example:**
-```
-GET http://localhost:3000/strava/auth
+```bash
+bun run preview
 ```
 
-**Response:** 302 Redirect to Strava authorization URL
+Starts a local server to preview the production build.
 
-### GET `/strava/auth/callback`
+## Project Structure
 
-Handles the OAuth callback from Strava. Exchanges the authorization code for tokens and saves them as HTTP-only cookies.
-
-**Query Parameters:**
-- `code` (required): Authorization code from Strava
-- `error` (optional): OAuth error code if authorization failed
-
-**Response:** 302 Redirect with Set-Cookie headers
-
-**Cookies Set:**
-- `strava_access_token`: OAuth2 access token
-- `strava_refresh_token`: OAuth2 refresh token
-- `strava_token_expires_at`: Token expiration timestamp (Unix time)
-
-## Usage in Other Pages
-
-### Reading Tokens from Cookies
-
-```typescript
-import { getTokens } from '@pace/ui';
-
-// In your route handler
-const tokens = getTokens(request);
-
-if (tokens) {
-  const { accessToken, refreshToken, expiresAt } = tokens;
-  // Use tokens to fetch activities
-}
 ```
-
-### Fetching Activities
-
-```typescript
-import { getTokens } from '@pace/ui';
-import { fetchActivity } from '@pace/strava-activity';
-import getConfig from '@pace/ui/config';
-
-// In your route handler
-const tokens = getTokens(request);
-const config = getConfig();
-
-if (!tokens) {
-  // Redirect to /strava/auth if no tokens
-  return new Response(null, {
-    status: 302,
-    headers: { Location: '/strava/auth' },
-  });
-}
-
-// Check if token is expired
-const isExpired = tokens.expiresAt < Math.floor(Date.now() / 1000);
-if (isExpired) {
-  // Refresh token using @pace/strava-auth
-  // Then update cookies
-}
-
-// Fetch activity
-const activity = await fetchActivity('123456789', {
-  accessToken: tokens.accessToken,
-  refreshToken: tokens.refreshToken,
-  clientId: config.strava.clientId,
-  clientSecret: config.strava.clientSecret,
-});
+packages/ui/
+├── src/                    # Source code
+│   ├── main.tsx           # React entry point
+│   ├── App.tsx            # Root app component with routing
+│   ├── api/               # API client
+│   │   ├── client.ts      # Base fetch wrapper
+│   │   ├── strava.ts      # Strava API methods
+│   │   └── hooks.ts       # React hooks for API calls
+│   ├── pages/             # Page components
+│   │   ├── HomePage.tsx   # Home page
+│   │   └── ActivitiesPage.tsx  # Activities list page
+│   └── vite-env.d.ts      # Environment type definitions
+├── index.html             # HTML entry point (Vite requires root)
+├── vite.config.ts         # Vite configuration
+├── tsconfig.json          # TypeScript configuration
+├── tsconfig.node.json     # TypeScript config for Vite config
+├── package.json
+└── README.md
 ```
 
 ## Configuration
 
-Configuration is loaded from environment variables:
+### Environment Variables
 
-### Required
-
-- `STRAVA_CLIENT_ID`: Strava OAuth2 client ID
-- `STRAVA_CLIENT_SECRET`: Strava OAuth2 client secret
-
-### Optional
-
-- `STRAVA_REDIRECT_URI`: OAuth redirect URI (default: `http://localhost:3000/strava/auth/callback`)
-- `STRAVA_SCOPE`: OAuth scope (default: `activity:read`)
-- `HOSTNAME`: Server hostname (default: extracted from Netlify's `URL` env var if available, otherwise `localhost`)
-- `COOKIE_DOMAIN`: Cookie domain (default: undefined)
-- `COOKIE_SECURE`: Secure cookies flag (default: `false` in dev, `true` in production)
-- `COOKIE_SAME_SITE`: SameSite attribute (default: `lax`)
-- `SUCCESS_REDIRECT`: Redirect URL after successful auth (default: `/`)
-- `ERROR_REDIRECT`: Redirect URL after auth failure (default: `/`)
-
-## Cookie Security
-
-Cookies are set with the following security attributes:
-
-- **HttpOnly**: Prevents JavaScript access (XSS protection)
-- **Secure**: HTTPS only (enabled in production)
-- **SameSite**: CSRF protection (default: `lax`)
-- **Path**: `/` (available site-wide)
-- **Max-Age**: Based on token expiration time
-
-## API Reference
-
-### `getTokens(request: Request)`
-
-Extracts Strava OAuth tokens from request cookies.
-
-**Parameters:**
-- `request`: HTTP Request object
-
-**Returns:** `{ accessToken: string; refreshToken: string; expiresAt: number } | null`
-
-### `setTokens(response: Response, accessToken: string, refreshToken: string, expiresAt: number, cookieConfig: ServerConfig['cookies'])`
-
-Sets Strava OAuth tokens as HTTP-only cookies in the response.
-
-**Parameters:**
-- `response`: HTTP Response object
-- `accessToken`: OAuth2 access token
-- `refreshToken`: OAuth2 refresh token
-- `expiresAt`: Token expiration timestamp (Unix time)
-- `cookieConfig`: Cookie configuration
-
-**Returns:** Response with Set-Cookie headers
-
-### `getConfig()`
-
-Gets server configuration from environment variables.
-
-**Returns:** `ServerConfig`
-
-**Throws:** Error if required environment variables are missing
-
-## Testing
-
-Run unit tests:
+Create a `.env` file in `packages/ui/`:
 
 ```bash
-bun test packages/ui
+# Backend API URL (optional with Vite proxy)
+# If not set, Vite proxy will forward /strava requests to localhost:3000
+VITE_API_URL=http://localhost:3000
 ```
 
-## Example: Complete Activity Fetch Flow
+For production, set `VITE_API_URL` to your deployed backend URL.
+
+**Note**: During development, Vite's proxy configuration automatically forwards `/strava` requests to `http://localhost:3000`, so you may not need to set `VITE_API_URL` locally.
+
+### Backend CORS Configuration
+
+The backend (`/packages/server`) must be configured to allow requests from the UI origin. Set the `UI_ORIGIN` environment variable in the server:
+
+```bash
+# In /packages/server/.env
+UI_ORIGIN=http://localhost:3001
+```
+
+For production, set it to your deployed UI URL.
+
+## Usage
+
+### Pages
+
+- `/` - Home page with Strava authorization button
+- `/activities` - List of user's Strava activities (requires authentication)
+
+### Authentication Flow
+
+1. User clicks "Authorize with Strava" on home page
+2. Browser redirects to backend `/strava/auth` endpoint
+3. Backend redirects to Strava OAuth page
+4. User authorizes on Strava
+5. Strava redirects to backend `/strava/auth/callback`
+6. Backend sets HTTP-only cookies and redirects back to UI
+7. UI makes API calls with cookies automatically included
+
+### API Client
+
+The API client provides both plain functions and React hooks:
 
 ```typescript
-import { getTokens } from '@pace/ui';
-import { fetchActivity } from '@pace/strava-activity';
-import { refreshToken } from '@pace/strava-auth';
-import { setTokens } from '@pace/ui/cookies';
-import getConfig from '@pace/ui/config';
+// Plain functions (for non-React code)
+import { authorizeStrava, fetchActivities } from './api/strava';
 
-Bun.serve({
-  routes: {
-    '/activity/:id': {
-      GET: async (request) => {
-        const url = new URL(request.url);
-        const activityId = url.pathname.split('/').pop()!;
-        const config = getConfig();
-        
-        // Get tokens from cookies
-        let tokens = getTokens(request);
-        
-        if (!tokens) {
-          // No tokens, redirect to auth
-          return new Response(null, {
-            status: 302,
-            headers: { Location: '/strava/auth' },
-          });
-        }
-        
-        // Check if token expired
-        const isExpired = tokens.expiresAt < Math.floor(Date.now() / 1000);
-        if (isExpired) {
-          // Refresh token
-          const newTokens = await refreshToken(tokens.refreshToken, {
-            clientId: config.strava.clientId,
-            clientSecret: config.strava.clientSecret,
-            redirectUri: config.strava.redirectUri,
-          });
-          
-          // Update cookies
-          const response = new Response();
-          setTokens(
-            response,
-            newTokens.access_token,
-            newTokens.refresh_token || tokens.refreshToken,
-            newTokens.expires_at,
-            config.cookies
-          );
-          
-          tokens = {
-            accessToken: newTokens.access_token,
-            refreshToken: newTokens.refresh_token || tokens.refreshToken,
-            expiresAt: newTokens.expires_at,
-          };
-        }
-        
-        // Fetch activity
-        const activity = await fetchActivity(activityId, {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
-          clientId: config.strava.clientId,
-          clientSecret: config.strava.clientSecret,
-        });
-        
-        return new Response(JSON.stringify(activity), {
-          headers: { 'Content-Type': 'application/json' },
-        });
-      },
-    },
-  },
-});
+authorizeStrava(); // Redirects to OAuth
+const activities = await fetchActivities();
+
+// React hooks (for components)
+import { useActivities } from './api/hooks';
+
+function MyComponent() {
+  const { activities, loading, error, refetch } = useActivities();
+  // ...
+}
 ```
 
-## Deployment to Netlify
+All API calls automatically include cookies via `credentials: 'include'`.
 
-This package can be deployed to Netlify using Netlify Functions. The functions are located in `netlify/functions/` and use the same route handlers as the Bun server.
-
-### Prerequisites
-
-1. A Netlify account ([sign up here](https://app.netlify.com/signup))
-2. Your Strava API credentials (Client ID and Client Secret)
-3. A GitHub repository with your code (or GitLab/Bitbucket)
-
-### Step 1: Set Up Environment Variables
-
-In your Netlify dashboard:
-
-1. Go to **Site settings** → **Environment variables**
-2. Add the following variables:
-
-```
-STRAVA_CLIENT_ID=your-client-id
-STRAVA_CLIENT_SECRET=your-client-secret
-STRAVA_REDIRECT_URI=https://your-site.netlify.app/strava/auth/callback
-NODE_ENV=production
-COOKIE_SECURE=true
-COOKIE_SAME_SITE=lax
-```
-
-**Important**: Replace `your-site.netlify.app` with your actual Netlify domain.
-
-### Step 2: Update Strava App Settings
-
-1. Go to [Strava Developers](https://www.strava.com/settings/api)
-2. Edit your application
-3. Set **Authorization Callback Domain** to your domain (e.g., `pace.balov.dev` or `your-site.netlify.app`)
-   - **Important**: This should be just the domain, without `https://` or any path
-4. The redirect URI in your OAuth request (e.g., `https://pace.balov.dev/strava/auth/callback`) must match a path on the registered domain
-5. Save changes
-
-**Troubleshooting**: If you see a "redirect_uri invalid" error:
-- Verify the `STRAVA_REDIRECT_URI` environment variable in Netlify matches exactly what you're using (including `https://`)
-- Check that your Authorization Callback Domain in Strava matches the domain part of your redirect URI
-- Ensure there are no trailing slashes or extra characters
-- The redirect URI must use HTTPS for production (Strava requires HTTPS for non-localhost domains)
-
-### Step 3: Configure Build Settings
-
-In Netlify dashboard:
-
-1. Go to **Site settings** → **Build & deploy**
-2. Set **Base directory** to: `packages/ui`
-3. Set **Build command** to: (default from `netlify.toml` is recommended)
-   - Default: `curl -fsSL https://bun.sh/install | bash && export PATH="$HOME/.bun/bin:$PATH" && bun run build`
-   - This installs Bun if needed, then builds browser code from `browser/` to `public/js/`
-   - If Bun is already available in your build environment, you can use: `bun run build`
-4. Set **Publish directory** to: `public` (relative to base directory)
-
-**Important**: 
-- The `publish` directory must be set in the Netlify dashboard, not in `netlify.toml`, because Netlify resolves paths in `netlify.toml` relative to the repo root, not the base directory.
-- The build command is required to bundle browser components from TypeScript to JavaScript.
-- Static files in `public/js/` (like `components.js` and `app.js`) are served automatically by Netlify before redirects are processed.
-
-### Step 4: Deploy
-
-#### Option A: Deploy via Netlify Dashboard
-
-1. Go to your Netlify dashboard
-2. Click **Add new site** → **Import an existing project**
-3. Connect your Git repository
-4. Configure:
-   - **Base directory**: `packages/ui`
-   - **Build command**: `bun run build` (or `npm run build` if Bun is not available)
-   - **Publish directory**: `public`
-5. Add environment variables (see Step 1)
-6. Click **Deploy site**
-
-#### Option B: Deploy via Netlify CLI
-
-1. Install Netlify CLI:
-   ```bash
-   npm install -g netlify-cli
-   ```
-
-2. Login to Netlify:
-   ```bash
-   netlify login
-   ```
-
-3. Navigate to the UI package:
-   ```bash
-   cd packages/ui
-   ```
-
-4. Initialize Netlify (if not already done):
-   ```bash
-   netlify init
-   ```
-   - Choose "Create & configure a new site"
-   - Set base directory: `packages/ui`
-   - Set publish directory: `public`
-
-5. Deploy:
-   ```bash
-   netlify deploy --prod
-   ```
-
-### Step 5: Verify Deployment
-
-1. Visit your Netlify site URL
-2. Test the authorization flow:
-   - Visit `https://your-site.netlify.app/strava/auth`
-   - You should be redirected to Strava
-   - After authorization, you should be redirected back
-
-### Testing Locally
-
-You can test Netlify Functions locally using Netlify CLI:
+## Building for Production
 
 ```bash
-cd packages/ui
-netlify dev
+bun run build
 ```
 
-This will start a local development server that simulates Netlify's environment.
+This creates an optimized production build in `dist/` directory. The entire `dist/` directory can be deployed as a static site.
 
-### Troubleshooting
+## Deployment
 
-#### Deploy Directory Does Not Exist
+The UI package is a pure static site and can be deployed to any static hosting service:
 
-If you see the error: `Deploy directory 'public' does not exist`
+### Netlify
 
-**Solution:**
-1. Go to **Site settings** → **Build & deploy**
-2. Ensure **Base directory** is set to: `packages/ui`
-3. Ensure **Publish directory** is set to: `public` (relative to base directory)
-4. **Important**: Do NOT set `publish` in `netlify.toml` - paths in that file are resolved relative to the repo root, not the base directory
-5. The `public` directory must exist at `packages/ui/public/`
+1. Set **Base directory** to: `packages/ui`
+2. Set **Build command** to: `bun run build` (or `npm run build`)
+3. Set **Publish directory** to: `dist`
+4. Add environment variable: `VITE_API_URL=https://your-backend-url.com`
 
-#### Functions Not Working
+### Vercel
 
-- Check Netlify Function logs in the dashboard (Site settings → Functions)
-- Verify environment variables are set correctly
-- Ensure `netlify.toml` is in the `packages/ui/` directory
-- Check that functions are being built (look for function files in deploy logs)
+1. Set **Root Directory** to: `packages/ui`
+2. Set **Build Command** to: `bun run build` (or `npm run build`)
+3. Set **Output Directory** to: `dist`
+4. Add environment variable: `VITE_API_URL=https://your-backend-url.com`
 
-#### Redirect URI Mismatch
+### Cloudflare Pages
 
-- Ensure `STRAVA_REDIRECT_URI` matches your Netlify domain exactly
-- Verify Strava app settings match the redirect URI
-- Check that the domain doesn't have trailing slashes
-- Make sure you're using `https://` in production
+1. Set **Build command** to: `bun run build` (or `npm run build`)
+2. Set **Build output directory** to: `dist`
+3. Add environment variable: `VITE_API_URL=https://your-backend-url.com`
 
-#### Cookie Issues
+### S3 + CloudFront
 
-- Ensure `COOKIE_SECURE=true` in production (required for HTTPS)
-- Check `COOKIE_DOMAIN` if using a custom domain
-- Verify `COOKIE_SAME_SITE` is set appropriately (`lax` or `none` for cross-site)
-- Cookies should work across all functions on the same domain
+1. Build: `bun run build`
+2. Upload contents of `dist/` to S3 bucket
+3. Configure CloudFront to serve from S3
+4. Set environment variable in your deployment process
 
-#### Module Import Errors
+### SPA Routing
 
-- Ensure all dependencies are listed in `package.json`
-- Check that TypeScript files are being transpiled correctly
-- Verify that `node_bundler = "esbuild"` is set in `netlify.toml`
-- Ensure the build command runs successfully (check build logs)
+For client-side routing to work, configure your hosting service to serve `index.html` for all routes:
 
-#### Build Command Fails
+- **Netlify**: Add `_redirects` file in `public/`:
+  ```
+  /*    /index.html   200
+  ```
+  Or configure in `netlify.toml`:
+  ```toml
+  [[redirects]]
+    from = "/*"
+    to = "/index.html"
+    status = 200
+  ```
 
-If `bun run build` fails in Netlify:
+- **Vercel**: Add `vercel.json`:
+  ```json
+  {
+    "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  }
+  ```
 
-1. **Install Bun in build environment**: Add a build command that installs Bun first:
-   ```
-   curl -fsSL https://bun.sh/install | bash && export PATH="$HOME/.bun/bin:$PATH" && bun run build
-   ```
-   Or set it in Netlify dashboard: **Build & deploy** → **Build command**
+- **Cloudflare Pages**: Routing works automatically
 
-2. **Alternative**: Commit the built files (`public/js/components.js` and `public/js/app.js`) to the repository so the build step isn't required (not recommended for production)
+- **S3 + CloudFront**: Configure error pages to return `index.html` for 404s
 
-3. **Check build logs**: Look for errors in the Netlify build logs to see what's failing
+## Technologies
 
-### Netlify File Structure
+### React 18
 
+- Modern React with hooks
+- TypeScript for type safety
+- React Fast Refresh for instant updates
+
+### Vite
+
+- Lightning-fast development server
+- Hot Module Replacement (HMR)
+- Optimized production builds
+- Built-in TypeScript support
+- Proxy configuration for API calls
+
+### Geist UI
+
+- Vercel's design system components
+- Beautiful, accessible components
+- Dark mode support
+- Full TypeScript support
+- [Component Reference](https://geist-ui.dev/)
+
+### Wouter
+
+- Minimal routing library (~2KB)
+- React Router compatible API
+- No configuration needed
+- [Documentation](https://github.com/molefrog/wouter)
+
+## Vite Proxy Benefits
+
+The Vite proxy configuration eliminates CORS complexity during development:
+
+```typescript
+server: {
+  proxy: {
+    '/strava': {
+      target: 'http://localhost:3000',
+      credentials: 'include', // Forward cookies
+    },
+  },
+}
 ```
-packages/ui/
-├── netlify.toml              # Netlify configuration (must be in base directory)
-├── netlify/
-│   └── functions/            # Netlify Functions
-│       ├── strava-auth.ts
-│       ├── strava-auth-callback.ts
-│       └── root.ts
-├── server/                   # Server-side code
-│   ├── server.ts             # Bun server entry point
-│   ├── routes/               # Route handlers
-│   ├── templates/            # HTML template generators
-│   ├── config/               # Server configuration
-│   └── cookies/              # Cookie utilities
-├── browser/                  # Browser-side code
-│   ├── index.ts              # Components entry point
-│   ├── app.ts                # Main client app script
-│   └── components/           # Web components (TypeScript)
-├── public/                   # Static files and build output
-│   ├── index.html
-│   └── js/                   # Built browser code (generated)
-│       ├── components.js
-│       └── app.js
-└── types.ts                  # Shared types
+
+Requests to `/strava/auth` are automatically forwarded to `http://localhost:3000/strava/auth` with cookies preserved. In production, the app uses the configured `VITE_API_URL` environment variable.
+
+## Type Safety
+
+TypeScript provides full type safety:
+- React component props
+- API response types
+- Environment variables (`VITE_API_URL`)
+- Router params
+
+## Bundle Size
+
+Approximate production bundle sizes (gzipped):
+- React + React DOM: ~45 KB
+- Geist UI: ~30 KB
+- Wouter: ~1 KB
+- Application code: ~10 KB
+- **Total**: ~86 KB gzipped
+
+Much smaller than many alternatives while maintaining great developer experience.
+
+## Browser Support
+
+- Modern browsers with ES2020 support
+- React 18 compatible browsers
+- Fetch API with credentials support
+
+## Troubleshooting
+
+### CORS Errors
+
+If you see CORS errors:
+1. **Development**: Vite proxy should handle this automatically. Check `vite.config.ts` proxy settings.
+2. **Production**: Verify `UI_ORIGIN` is set correctly in backend
+3. Check that backend CORS headers include your UI origin
+4. Ensure `credentials: 'include'` is used in fetch calls
+
+### Cookies Not Working
+
+1. Verify backend is setting cookies correctly
+2. Check cookie domain matches your setup
+3. Ensure `credentials: 'include'` is used in fetch calls
+4. For production, ensure both UI and backend are on HTTPS
+
+### Build Errors
+
+1. Run `bun install` (or `npm install`) to ensure dependencies are installed
+2. Check that all required packages are in `package.json`
+3. Verify TypeScript configuration
+4. Check for TypeScript errors: `bun run build` will show them
+
+### Vite Dev Server Issues
+
+1. Check that port 3001 is available
+2. Verify `vite.config.ts` is correct
+3. Check browser console for errors
+4. Try clearing browser cache
+
+### API Errors
+
+1. Verify backend server is running on `http://localhost:3000`
+2. Check `VITE_API_URL` environment variable (if set)
+3. Verify backend endpoints are accessible
+4. Check browser console for detailed error messages
+5. In development, verify Vite proxy is working (check Network tab)
+
+### React Fast Refresh Not Working
+
+1. Ensure components are exported as default or named exports
+2. Check that components are React components (not regular functions)
+3. Verify file extensions are `.tsx` for React components
+
+## Development Tips
+
+### Hot Module Replacement
+
+Vite's HMR updates your app instantly when you save files. React Fast Refresh preserves component state during updates.
+
+### TypeScript
+
+All files use TypeScript for type safety. The build will fail if there are type errors, ensuring type safety in production.
+
+### Geist UI Theming
+
+Geist UI supports theming. You can customize the theme in `src/main.tsx`:
+
+```tsx
+import { GeistProvider, CssBaseline } from '@geist-ui/core';
+
+<GeistProvider themeType="dark"> {/* or "light" */}
+  <CssBaseline />
+  <App />
+</GeistProvider>
 ```
 
-### Important Notes
+### Adding New Routes
 
-- **Netlify Functions run on Node.js runtime**, not Bun. The code uses standard Web APIs (Request, Response, fetch) which are available in Node.js 18+
-- Functions have a **10-second timeout** on the free plan, **26 seconds** on paid plans
-- Cookies work across all functions on the same domain
-- The `netlify.toml` file uses redirects to route requests to functions
-- Make sure your `package.json` includes all necessary dependencies
-- TypeScript files will be automatically transpiled by Netlify's esbuild bundler
+Add routes in `src/App.tsx`:
+
+```tsx
+<Route path="/new-route" component={NewPage} />
+```
 
 ## See Also
 
-- [@pace/strava-auth](../strava-auth/README.md) - OAuth authentication package
-- [@pace/strava-activity](../strava-activity/README.md) - Activity fetching module
+- [@pace/server](../server/README.md) - Backend API server
+- [Geist UI Documentation](https://geist-ui.dev/) - UI component library
+- [Vite Documentation](https://vitejs.dev/) - Build tool and dev server
+- [React Documentation](https://react.dev/) - React framework
+- [Wouter Documentation](https://github.com/molefrog/wouter) - Routing library

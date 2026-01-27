@@ -1,0 +1,36 @@
+import { apiRequest } from './client';
+
+export interface Activity {
+  id: number;
+  type: string;
+  sport_type: string;
+  name: string;
+  distance: number;
+  moving_time: number;
+  elapsed_time: number;
+  start_date: string;
+  total_elevation_gain: number;
+}
+
+/**
+ * Initiate OAuth flow by redirecting to backend auth endpoint.
+ * Uses full URL for redirect (can't use relative URL for window.location.href).
+ */
+export function authorizeStrava(): void {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  window.location.href = `${apiUrl}/strava/auth`;
+}
+
+/**
+ * Fetch list of activities for authenticated user.
+ */
+export async function fetchActivities(): Promise<Activity[]> {
+  return apiRequest<Activity[]>('/strava/activities');
+}
+
+/**
+ * Fetch specific activity by ID.
+ */
+export async function fetchActivity(id: number): Promise<Activity> {
+  return apiRequest<Activity>(`/strava/activity/${id}`);
+}

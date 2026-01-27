@@ -66,6 +66,32 @@ const nodeRequestToWebRequest = async (req: IncomingMessage): Promise<Request> =
 };
 
 /**
+ * Gets the allowed origin for CORS based on environment.
+ *
+ * @returns {string} Allowed origin URL
+ * @internal
+ */
+const getAllowedOrigin = (): string => {
+  // Allow UI origin from environment variable, default to localhost:3001 for dev
+  return process.env.UI_ORIGIN || 'http://localhost:3001';
+};
+
+/**
+ * Adds CORS headers to response.
+ *
+ * @param {ServerResponse} nodeResponse - Node.js server response object
+ * @returns {void}
+ * @internal
+ */
+const addCorsHeaders = (nodeResponse: ServerResponse): void => {
+  const origin = getAllowedOrigin();
+  nodeResponse.setHeader('Access-Control-Allow-Origin', origin);
+  nodeResponse.setHeader('Access-Control-Allow-Credentials', 'true');
+  nodeResponse.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  nodeResponse.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+};
+
+/**
  * Converts Web API Response to Node.js ServerResponse.
  *
  * @param {Response} webResponse - Web API Response object
@@ -78,6 +104,9 @@ const webResponseToNodeResponse = async (
   nodeResponse: ServerResponse
 ): Promise<void> => {
   nodeResponse.statusCode = webResponse.status;
+
+  // Add CORS headers
+  addCorsHeaders(nodeResponse);
 
   // Handle Set-Cookie headers separately to preserve multiple cookies
   const setCookieHeaders = webResponse.headers.getSetCookie();
@@ -179,6 +208,14 @@ const processRequest = async (req: IncomingMessage): Promise<Response | null> =>
  * @internal
  */
 const requestHandler = async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
+  // Handle OPTIONS preflight requests for CORS
+  if (req.method === 'OPTIONS') {
+    addCorsHeaders(res);
+    res.statusCode = 204;
+    res.end();
+    return;
+  }
+
   const response = await processRequest(req);
 
   if (response === null) {
