@@ -8,6 +8,7 @@
   "scripts": {
     "build": "bun build src/server.ts --outdir dist --target node --format esm --minify --external @pace/strava-api",
     "build:watch": "bun build src/server.ts --outdir dist --target node --format esm --watch --external @pace/strava-api",
+    "build:netlify": "bun build netlify/functions/*.ts --outdir netlify/functions --target node --format esm --external @pace/strava-api",
     "dev": "bun --watch src/server.ts",
     "start": "node dist/server.js",
     "test": "bun test"

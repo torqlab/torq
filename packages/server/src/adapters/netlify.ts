@@ -4,7 +4,13 @@
  * Provides Netlify-compatible handler functions that wrap the server route handlers.
  */
 
-import { stravaAuth, stravaAuthCallback } from '../routes';
+import {
+  stravaAuth,
+  stravaAuthCallback,
+  stravaLogout,
+  stravaActivities,
+  stravaActivity,
+} from '../routes';
 import { getConfig } from '../config';
 
 /**
@@ -46,9 +52,47 @@ export type NetlifyResponse = {
    */
   headers: Record<string, string>;
   /**
+   * Multi-value headers (for Set-Cookie).
+   */
+  multiValueHeaders?: Record<string, string[]>;
+  /**
    * Response body.
    */
   body?: string;
+};
+
+/**
+ * Normalizes Netlify function path to expected route path.
+ *
+ * Converts paths like `/.netlify/functions/strava-activity/12345` to `/strava/activity/12345`
+ * so route handlers can properly parse them.
+ *
+ * @param {string} path - Original Netlify path
+ * @returns {string} Normalized path
+ * @internal
+ */
+const normalizePath = (path: string): string => {
+  // Handle Netlify function paths
+  if (path.startsWith('/.netlify/functions/')) {
+    const functionPath = path.replace('/.netlify/functions/', '');
+    const parts = functionPath.split('/');
+    const functionName = parts[0];
+    const remainingPath = parts.slice(1).join('/');
+
+    // Map function names to route paths
+    const routeMap: Record<string, string> = {
+      'strava-auth': '/strava/auth',
+      'strava-auth-callback': '/strava/auth/callback',
+      'strava-logout': '/strava/logout',
+      'strava-activities': '/strava/activities',
+      'strava-activity': '/strava/activity',
+    };
+
+    const baseRoute = routeMap[functionName] || path;
+    return remainingPath ? `${baseRoute}/${remainingPath}` : baseRoute;
+  }
+
+  return path;
 };
 
 /**
@@ -61,16 +105,28 @@ export type NetlifyResponse = {
 const netlifyEventToRequest = (event: NetlifyEvent): Request => {
   const protocol = event.headers['x-forwarded-proto'] || 'https';
   const host = event.headers.host || event.headers['x-forwarded-host'];
+  const normalizedPath = normalizePath(event.path);
   const queryString = event.queryStringParameters
     ? '?' + new URLSearchParams(event.queryStringParameters).toString()
     : '';
-  const url = `${protocol}://${host}${event.path}${queryString}`;
+  const url = `${protocol}://${host}${normalizedPath}${queryString}`;
 
   return new Request(url, {
     method: event.httpMethod || 'GET',
     headers: event.headers,
     body: event.body,
   });
+};
+
+/**
+ * Gets the allowed origin for CORS based on environment.
+ *
+ * @returns {string} Allowed origin URL
+ * @internal
+ */
+const getAllowedOrigin = (): string => {
+  // Allow UI origin from environment variable, default to localhost:3001 for dev
+  return process.env.UI_ORIGIN || 'http://localhost:3001';
 };
 
 /**
@@ -82,8 +138,33 @@ const netlifyEventToRequest = (event: NetlifyEvent): Request => {
  */
 const webResponseToNetlify = async (response: Response): Promise<NetlifyResponse> => {
   const headers: Record<string, string> = {};
+  const multiValueHeaders: Record<string, string[]> = {};
+
+  // Handle Set-Cookie with multiValueHeaders (Netlify requirement)
+  const setCookies = response.headers.getSetCookie();
+  if (setCookies.length > 0) {
+    multiValueHeaders['Set-Cookie'] = setCookies;
+  }
+
+  // Add CORS headers
+  const allowedOrigin = getAllowedOrigin();
+  headers['Access-Control-Allow-Origin'] = allowedOrigin;
+  headers['Access-Control-Allow-Credentials'] = 'true';
+  headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, DELETE';
+  headers['Access-Control-Allow-Headers'] = 'Content-Type';
+
+  // Copy other headers from response (excluding Set-Cookie and CORS headers which we handled above)
   response.headers.forEach((value, key) => {
-    headers[key] = value;
+    const lowerKey = key.toLowerCase();
+    if (
+      lowerKey !== 'set-cookie' &&
+      lowerKey !== 'access-control-allow-origin' &&
+      lowerKey !== 'access-control-allow-credentials' &&
+      lowerKey !== 'access-control-allow-methods' &&
+      lowerKey !== 'access-control-allow-headers'
+    ) {
+      headers[key] = value;
+    }
   });
 
   const hasBody = response.body !== null;
@@ -92,7 +173,28 @@ const webResponseToNetlify = async (response: Response): Promise<NetlifyResponse
   return {
     statusCode: response.status,
     headers,
+    multiValueHeaders: Object.keys(multiValueHeaders).length > 0 ? multiValueHeaders : undefined,
     body,
+  };
+};
+
+/**
+ * Handles OPTIONS preflight request.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {NetlifyResponse} CORS preflight response
+ * @internal
+ */
+const handleOptionsRequest = (event: NetlifyEvent): NetlifyResponse => {
+  const allowedOrigin = getAllowedOrigin();
+  return {
+    statusCode: 204,
+    headers: {
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
   };
 };
 
@@ -104,6 +206,11 @@ const webResponseToNetlify = async (response: Response): Promise<NetlifyResponse
  * @internal
  */
 const stravaAuthSuccess = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  // Handle OPTIONS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return handleOptionsRequest(event);
+  }
+
   const config = getConfig();
   const request = netlifyEventToRequest(event);
   const response = stravaAuth(request, config);
@@ -119,9 +226,16 @@ const stravaAuthSuccess = async (event: NetlifyEvent): Promise<NetlifyResponse> 
  */
 const stravaAuthError = (error: unknown): NetlifyResponse => {
   console.error('Error in strava-auth function:', error);
+  const allowedOrigin = getAllowedOrigin();
   return {
     statusCode: 500,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
     body: JSON.stringify({ error: 'Internal server error' }),
   };
 };
@@ -145,6 +259,11 @@ export const stravaAuthHandler = async (event: NetlifyEvent): Promise<NetlifyRes
  * @internal
  */
 const stravaAuthCallbackSuccess = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  // Handle OPTIONS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return handleOptionsRequest(event);
+  }
+
   const config = getConfig();
   const request = netlifyEventToRequest(event);
   const response = await stravaAuthCallback(request, config);
@@ -160,9 +279,16 @@ const stravaAuthCallbackSuccess = async (event: NetlifyEvent): Promise<NetlifyRe
  */
 const stravaAuthCallbackError = (error: unknown): NetlifyResponse => {
   console.error('Error in strava-auth-callback function:', error);
+  const allowedOrigin = getAllowedOrigin();
   return {
     statusCode: 500,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
     body: JSON.stringify({ error: 'Internal server error' }),
   };
 };
@@ -177,5 +303,161 @@ export const stravaAuthCallbackHandler = async (event: NetlifyEvent): Promise<Ne
   const result = await stravaAuthCallbackSuccess(event).catch((error) =>
     stravaAuthCallbackError(error)
   );
+  return result;
+};
+
+/**
+ * Handles successful strava logout request.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {Promise<NetlifyResponse>} Netlify function response
+ * @internal
+ */
+const stravaLogoutSuccess = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  // Handle OPTIONS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return handleOptionsRequest(event);
+  }
+
+  const config = getConfig();
+  const request = netlifyEventToRequest(event);
+  const response = stravaLogout(request, config);
+  return await webResponseToNetlify(response);
+};
+
+/**
+ * Handles strava logout error.
+ *
+ * @param {unknown} error - Error object
+ * @returns {NetlifyResponse} Error response
+ * @internal
+ */
+const stravaLogoutError = (error: unknown): NetlifyResponse => {
+  console.error('Error in strava-logout function:', error);
+  const allowedOrigin = getAllowedOrigin();
+  return {
+    statusCode: 500,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+    body: JSON.stringify({ error: 'Internal server error' }),
+  };
+};
+
+/**
+ * Netlify Function handler for /strava/logout endpoint.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {Promise<NetlifyResponse>} Netlify function response
+ */
+export const stravaLogoutHandler = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  const result = await stravaLogoutSuccess(event).catch((error) => stravaLogoutError(error));
+  return result;
+};
+
+/**
+ * Handles successful strava activities request.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {Promise<NetlifyResponse>} Netlify function response
+ * @internal
+ */
+const stravaActivitiesSuccess = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  const config = getConfig();
+  const request = netlifyEventToRequest(event);
+  const response = await stravaActivities(request, config);
+  return await webResponseToNetlify(response);
+};
+
+/**
+ * Handles strava activities error.
+ *
+ * @param {unknown} error - Error object
+ * @returns {NetlifyResponse} Error response
+ * @internal
+ */
+const stravaActivitiesError = (error: unknown): NetlifyResponse => {
+  console.error('Error in strava-activities function:', error);
+  const allowedOrigin = getAllowedOrigin();
+  return {
+    statusCode: 500,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+    body: JSON.stringify({ error: 'Internal server error' }),
+  };
+};
+
+/**
+ * Netlify Function handler for /strava/activities endpoint.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {Promise<NetlifyResponse>} Netlify function response
+ */
+export const stravaActivitiesHandler = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  const result = await stravaActivitiesSuccess(event).catch((error) =>
+    stravaActivitiesError(error)
+  );
+  return result;
+};
+
+/**
+ * Handles successful strava activity request.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {Promise<NetlifyResponse>} Netlify function response
+ * @internal
+ */
+const stravaActivitySuccess = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  // Handle OPTIONS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return handleOptionsRequest(event);
+  }
+
+  const config = getConfig();
+  const request = netlifyEventToRequest(event);
+  const response = await stravaActivity(request, config);
+  return await webResponseToNetlify(response);
+};
+
+/**
+ * Handles strava activity error.
+ *
+ * @param {unknown} error - Error object
+ * @returns {NetlifyResponse} Error response
+ * @internal
+ */
+const stravaActivityError = (error: unknown): NetlifyResponse => {
+  console.error('Error in strava-activity function:', error);
+  const allowedOrigin = getAllowedOrigin();
+  return {
+    statusCode: 500,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+    body: JSON.stringify({ error: 'Internal server error' }),
+  };
+};
+
+/**
+ * Netlify Function handler for /strava/activity/:id endpoint.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {Promise<NetlifyResponse>} Netlify function response
+ */
+export const stravaActivityHandler = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  const result = await stravaActivitySuccess(event).catch((error) => stravaActivityError(error));
   return result;
 };
