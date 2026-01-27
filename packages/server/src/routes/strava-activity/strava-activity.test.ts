@@ -112,7 +112,7 @@ describe('stravaActivity', () => {
 
     expect(response.status).toBe(401);
     const body = await response.json();
-    expect(body.error).toBe('Authentication failed');
+    expect(body.error).toBe('Authentication failed. Token may be expired or invalid.');
   });
 
   test('returns 400 when activity ID is invalid', async () => {
@@ -126,6 +126,6 @@ describe('stravaActivity', () => {
 
     expect(response.status).toBe(400);
     const body = await response.json();
-    expect(body.error).toBe('Invalid activity ID');
+    expect(body.error).toBe('Activity ID must be a valid number');
   });
 });
