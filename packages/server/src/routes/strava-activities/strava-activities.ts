@@ -1,16 +1,16 @@
-import { fetchStravaActivities, type StravaActivityConfig } from '@pace/strava-api';
+import { fetchStravaActivities, type StravaApiConfig } from '@pace/strava-api';
 import { getTokens } from '../../cookies';
 import type { ServerConfig, ServerTokenResult } from '../../types';
 
 /**
- * Creates ActivityConfig from server tokens and config.
+ * Creates StravaApiConfig from server tokens and config.
  *
  * @param {ServerTokenResult} tokens - OAuth tokens from cookies
  * @param {ServerConfig} config - Server configuration
- * @returns {StravaActivityConfig} Activity module configuration
+ * @returns {StravaApiConfig} Strava API configuration
  * @internal
  */
-const createActivityConfig = (tokens: ServerTokenResult, config: ServerConfig): StravaActivityConfig => {
+const createActivityConfig = (tokens: ServerTokenResult, config: ServerConfig): StravaApiConfig => {
   return {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,

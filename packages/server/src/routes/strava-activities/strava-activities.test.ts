@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach, mock } from 'bun:test';
 import type { ServerConfig } from '../../types';
 import { COOKIE_NAMES } from '../../types';
-import type { StravaActivityApiResponse } from '@pace/strava-api';
+import { type StravaActivityApiResponse } from '@pace/strava-api';
 
 describe('stravaActivities', () => {
   const mockConfig: ServerConfig = {
