@@ -1,8 +1,32 @@
 import { Card, Button, Text, Grid, Spacer, Loading, Note } from '@geist-ui/core';
-import { Activity as ActivityIcon, Navigation, Clock, TrendingUp } from '@geist-ui/icons';
+import { Activity as ActivityIcon, Navigation, Clock, TrendingUp, Zap } from '@geist-ui/icons';
 import { useEffect, useState } from 'react';
 import { authorizeStrava } from '../api/strava';
 import { useActivities } from '../api/hooks';
+
+/**
+ * Formats activity type to a friendly display name
+ */
+function formatActivityType(type: string): string {
+  // Handle specific known cases
+  const typeMappings: Record<string, string> = {
+    'Weighttraining': 'Weight Training',
+    'weighttraining': 'Weight Training',
+    'WeightTraining': 'Weight Training',
+  };
+
+  // Check if we have a specific mapping
+  if (typeMappings[type]) {
+    return typeMappings[type];
+  }
+
+  // Handle multi-word types like "Trail Run" -> "Trail Run"
+  // Or single words like "Run" -> "Run"
+  return type
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
 
 export default function HomePage() {
   const [skipAuth, setSkipAuth] = useState(false);
@@ -129,18 +153,36 @@ export default function HomePage() {
                     </Text>
                     <Spacer h={0.5} />
                     
-                    <Text small>
-                      <Navigation size={14} /> {(activity.distance / 1000).toFixed(2)} km
-                    </Text>
-                    <Text small>
-                      <Clock size={14} /> {Math.floor(activity.moving_time / 60)} min
-                    </Text>
-                    <Text small>
-                      <TrendingUp size={14} /> {activity.total_elevation_gain} m
-                    </Text>
+                    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+                      {activity.type && (
+                        <Text small>
+                          <ActivityIcon size={14} /> {formatActivityType(activity.type)}
+                        </Text>
+                      )}
+                      {activity.distance > 0 && (
+                        <Text small>
+                          <Navigation size={14} /> {(activity.distance / 1000).toFixed(2)} km
+                        </Text>
+                      )}
+                      {activity.moving_time > 0 && (
+                        <Text small>
+                          <Clock size={14} /> {Math.floor(activity.moving_time / 60)} min
+                        </Text>
+                      )}
+                      {activity.total_elevation_gain != null && activity.total_elevation_gain > 0 && (
+                        <Text small>
+                          <TrendingUp size={14} /> {activity.total_elevation_gain} m
+                        </Text>
+                      )}
+                    </div>
                   </Card.Content>
                   <Card.Footer>
-                    <Button type="success" width="100%" scale={0.8}>
+                    <Button 
+                      type="success" 
+                      width="100%" 
+                      scale={0.8}
+                      icon={<Zap />}
+                    >
                       Generate Image
                     </Button>
                   </Card.Footer>

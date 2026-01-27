@@ -1,9 +1,9 @@
 import { Text, Button } from '@geist-ui/core';
 import { useLocation } from 'wouter';
-import { LogOut, Sun, Moon } from '@geist-ui/icons';
-import { useTheme } from '@geist-ui/core';
+import { LogOut } from '@geist-ui/icons';
 import { logout } from '../utils/auth';
 import { useAuth } from '../hooks/useAuth';
+import ThemeSwitcher from './ThemeSwitcher';
 
 interface HeaderProps {
   onThemeChange: (theme: 'light' | 'dark') => void;
@@ -12,15 +12,9 @@ interface HeaderProps {
 export default function Header({ onThemeChange }: HeaderProps) {
   const [location, setLocation] = useLocation();
   const { isAuthenticated, loading } = useAuth();
-  const theme = useTheme();
 
-  const handleLogout = () => {
-    logout();
-  };
-
-  const toggleTheme = () => {
-    const newTheme = theme.type === 'dark' ? 'light' : 'dark';
-    onThemeChange(newTheme);
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
@@ -57,26 +51,22 @@ export default function Header({ onThemeChange }: HeaderProps) {
       </Text>
       
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <Button
-          auto
-          icon={theme.type === 'dark' ? <Sun /> : <Moon />}
-          onClick={toggleTheme}
-          scale={0.8}
-          aria-label={`Switch to ${theme.type === 'dark' ? 'light' : 'dark'} mode`}
-          title={`Switch to ${theme.type === 'dark' ? 'light' : 'dark'} mode`}
-        />
-        
         {!loading && isAuthenticated && (
           <Button
-            auto
             type="abort"
             icon={<LogOut />}
-            onClick={handleLogout}
+            onClick={() => {
+              void handleLogout();
+            }}
             scale={0.8}
+            placeholder="Logout"
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
           >
             Logout
           </Button>
         )}
+        <ThemeSwitcher onThemeChange={onThemeChange} />
       </div>
     </header>
   );

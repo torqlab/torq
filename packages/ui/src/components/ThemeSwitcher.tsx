@@ -23,6 +23,9 @@ export default function ThemeSwitcher({ className, onThemeChange }: ThemeSwitche
       className={className}
       aria-label={`Switch to ${theme.type === 'dark' ? 'light' : 'dark'} mode`}
       title={`Switch to ${theme.type === 'dark' ? 'light' : 'dark'} mode`}
+      placeholder="Toggle Theme"
+      onPointerEnterCapture={() => {}}
+      onPointerLeaveCapture={() => {}}
     />
   );
 }

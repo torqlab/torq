@@ -1,4 +1,5 @@
 export { default as stravaAuth } from './strava-auth';
+export { default as stravaLogout } from './strava-logout';
 export { default as stravaAuthCallback } from './strava-auth-callback';
 export { default as stravaActivity } from './strava-activity';
 export { default as stravaActivities } from './strava-activities';

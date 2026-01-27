@@ -38,17 +38,29 @@ function clearLocalStorage(): void {
 
 /**
  * Logs out the user by clearing all session data.
- * After logout, the page will refresh to show the login state.
- * 
- * Note: HTTP-only cookies cannot be cleared from JavaScript.
- * The backend cookies will remain until they expire or are cleared by the backend.
- * We use a hard refresh with cache-busting to ensure a fresh state.
+ * Calls backend logout endpoint to clear HTTP-only cookies,
+ * then clears client-side storage and refreshes the page.
  */
-export function logout(): void {
+export async function logout(): Promise<void> {
   // Save theme preference before clearing localStorage
   const theme = localStorage.getItem('theme');
   
-  // Clear all data
+  try {
+    // Call backend logout endpoint to clear HTTP-only cookies
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    await fetch(`${apiUrl}/strava/logout`, {
+      method: 'POST',
+      credentials: 'include', // Include cookies
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  } catch (error) {
+    console.error('Logout request failed:', error);
+    // Continue with client-side cleanup even if backend call fails
+  }
+  
+  // Clear all client-side data
   clearCookies();
   clearLocalStorage();
   
@@ -57,9 +69,9 @@ export function logout(): void {
     localStorage.setItem('theme', theme);
   }
   
-  // Force a hard refresh with cache-busting to ensure fresh state
+  // Force a hard refresh to ensure fresh state
   // Use replace to prevent back button from going to logged-in state
-  window.location.replace(`/?logout=${Date.now()}`);
+  window.location.replace('/');
 }
 
 /**
