@@ -30,7 +30,7 @@ function formatActivityType(type: string): string {
 
 export default function HomePage() {
   const [skipAuth, setSkipAuth] = useState(false);
-  const { activities, loading, error, isUnauthorized, refetch } = useActivities();
+  const { activities, loading, isUnauthorized } = useActivities();
 
   // Check if we just logged out
   useEffect(() => {

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { fetchActivities, type Activity } from './strava';
-import { APIError } from './client';
 
 export interface UseActivitiesResult {
   activities: Activity[] | null;
