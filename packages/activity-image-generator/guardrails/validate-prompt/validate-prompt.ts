@@ -13,7 +13,7 @@ import checkForbiddenContent from '../check-forbidden-content';
  *
  * @remarks
  * Validates:
- * - Prompt length <= 400 characters
+ * - Prompt length <= 600 characters
  * - No forbidden content (real persons, political symbols, violence, text instructions)
  * - Style is from allowed set: cartoon, minimal, abstract, illustrated
  * - Brand usage is compliant (contextual, not excessive)

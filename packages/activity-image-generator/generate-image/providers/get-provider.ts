@@ -1,6 +1,5 @@
 import { ImageProvider, ProviderName } from './types';
 import pollinationsProvider from './pollinations-provider';
-import dialProvider from './dial-provider';
 
 /**
  * Gets the configured image generation provider.
@@ -14,16 +13,11 @@ import dialProvider from './dial-provider';
  * @remarks
  * Supported providers:
  * - 'pollinations' (default): Free, unlimited, no authentication
- * - 'dial': EPAM Dial with DALL-E-3 (requires DIAL_KEY)
  * 
  * @example
  * ```typescript
  * // Use default (Pollinations)
  * const provider = getProvider();
- * 
- * // Use EPAM Dial
- * process.env.IMAGE_PROVIDER = 'dial';
- * const dialProvider = getProvider();
  * ```
  */
 const getProvider = (): ImageProvider => {
@@ -31,10 +25,8 @@ const getProvider = (): ImageProvider => {
   
   if (providerName === 'pollinations') {
     return pollinationsProvider;
-  } else if (providerName === 'dial') {
-    return dialProvider;
   } else {
-    throw new Error(`Unknown IMAGE_PROVIDER: ${providerName}. Supported: pollinations, dial`);
+    throw new Error(`Unknown IMAGE_PROVIDER: ${providerName}. Supported: pollinations`);
   }
 };
 

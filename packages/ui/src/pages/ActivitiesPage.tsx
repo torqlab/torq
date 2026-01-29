@@ -1,10 +1,25 @@
-import { Card, Button, Text, Grid, Spacer, Note } from '@geist-ui/core';
-import { Activity as ActivityIcon, Navigation, Clock, TrendingUp, Zap, ArrowLeft } from '@geist-ui/icons';
+import { Card, Button, Text, Grid, Spacer, Note, Drawer } from '@geist-ui/core';
+import { Activity as ActivityIcon, Navigation, Clock, TrendingUp, Zap, ArrowLeft, X, Download } from '@geist-ui/icons';
 import { Link } from 'wouter';
 import { useState, useEffect } from 'react';
 import { useActivities } from '../api/hooks';
 import { apiRequest } from '../api/client';
 import Preloader from '../components/Preloader';
+
+/**
+ * API response type for image generation.
+ */
+type ImageGenerationResponse = {
+  /** Generated image data. */
+  image?: {
+    /** Base64-encoded image data URL (data:image/png;base64,...). */
+    imageData: string;
+    /** Whether fallback prompt was used. */
+    usedFallback: boolean;
+    /** Number of retries performed. */
+    retriesPerformed: number;
+  };
+};
 
 /**
  * Formats activity type to a friendly display name.
@@ -39,19 +54,90 @@ const formatActivityType = (type: string): string => {
 const ActivitiesPage = (): JSX.Element => {
   const { activities, loading, error, isUnauthorized, refetch } = useActivities();
   const [showContent, setShowContent] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [generatedImageData, setGeneratedImageData] = useState<string | null>(null);
+  const [generationError, setGenerationError] = useState<string | null>(null);
+  const [currentActivityId, setCurrentActivityId] = useState<number | null>(null);
 
   /**
    * Handles image generation request for an activity.
-   * Calls the activity-image-generator endpoint and logs the response.
+   * Opens drawer, shows preloader, calls API, and displays result.
    *
    * @param {number} activityId - Activity ID to generate image for
    */
-  const handleGenerateImage = async (activityId: number) => {
+  const handleGenerateImage = async (activityId: number): Promise<void> => {
+    setCurrentActivityId(activityId);
+    setDrawerVisible(true);
+    setGeneratingImage(true);
+    setGeneratedImageData(null);
+    setGenerationError(null);
+
     try {
-      const response = await apiRequest(`/activity-image-generator/${activityId}`);
-      console.log('Image generation response:', response);
+      const response = await apiRequest<ImageGenerationResponse>(
+        `/activity-image-generator/${activityId}`
+      );
+      
+      if (response.image?.imageData) {
+        const imageData = response.image.imageData;
+        console.log('Image data received:', imageData.substring(0, 50) + '...');
+        setGeneratedImageData(imageData);
+        setGeneratingImage(false);
+      } else {
+        setGenerationError('Image generation completed but no image data was returned.');
+        setGeneratingImage(false);
+      }
     } catch (error) {
-      console.error('Failed to generate image:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate image. Please try again.';
+      setGenerationError(errorMessage);
+      setGeneratingImage(false);
+    }
+  };
+
+  /**
+   * Handles closing the drawer and resetting state.
+   */
+  const handleCloseDrawer = (): void => {
+    setDrawerVisible(false);
+    setGeneratingImage(false);
+    setGeneratedImageData(null);
+    setGenerationError(null);
+    setCurrentActivityId(null);
+  };
+
+  /**
+   * Handles retry of image generation.
+   */
+  const handleRetry = (): void => {
+    if (currentActivityId !== null) {
+      handleGenerateImage(currentActivityId);
+    }
+  };
+
+  /**
+   * Handles downloading the generated image.
+   * Converts base64 data URL to blob and triggers a download.
+   *
+   * @param {string} imageData - Base64-encoded image data URL
+   */
+  const handleDownloadImage = async (imageData: string): Promise<void> => {
+    try {
+      // Convert data URL to blob
+      const response = await fetch(imageData);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'activity-image.png';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download image:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to download image. Please try again.';
+      setGenerationError(errorMessage);
     }
   };
 
@@ -163,7 +249,7 @@ const ActivitiesPage = (): JSX.Element => {
         <Text h1 style={{ margin: 0 }}>Your Activities</Text>
       </Grid>
 
-      {activities && activities.length > 0 ? (
+      {activities && Array.isArray(activities) && activities.length > 0 ? (
         activities.map((activity) => (
           <Grid xs={24} sm={12} md={8} lg={6} key={activity.id}>
             <Card width="100%" hoverable>
@@ -221,6 +307,95 @@ const ActivitiesPage = (): JSX.Element => {
           </Note>
         </Grid>
       )}
+
+      <Drawer
+        visible={drawerVisible}
+        onClose={handleCloseDrawer}
+        placement="right"
+        width="600px"
+      >
+        <Drawer.Title>
+          {generatingImage ? 'Generating Image...' : generatedImageData ? 'Generated Image' : 'Image Generation'}
+        </Drawer.Title>
+        <Drawer.Content>
+          {generatingImage ? (
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              minHeight: '400px',
+              padding: '2rem'
+            }}>
+              <Preloader message="Creating your activity image..." fullHeight={false} />
+            </div>
+          ) : generationError ? (
+            <div style={{ padding: '2rem' }}>
+              <Note type="error" label="Error">
+                <Text>
+                  {generationError}
+                </Text>
+                <Spacer h={1} />
+                <Button
+                  onClick={handleRetry}
+                  type="success"
+                  width="100%"
+                  placeholder="Try Again"
+                  onPointerEnterCapture={() => {}}
+                  onPointerLeaveCapture={() => {}}
+                >
+                  Try Again
+                </Button>
+              </Note>
+            </div>
+          ) : generatedImageData ? (
+            <div style={{ padding: '1rem' }}>
+              <img
+                src={generatedImageData}
+                alt="Generated activity image"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  maxWidth: '100%',
+                  borderRadius: '8px',
+                  display: 'block',
+                  marginBottom: '1rem',
+                }}
+                onLoad={() => {
+                  console.log('Image loaded successfully');
+                }}
+                onError={(e) => {
+                  console.error('Image load error:', e);
+                  setGenerationError(`Failed to load the generated image. Please check the browser console for details.`);
+                }}
+              />
+              <Button
+                onClick={() => handleDownloadImage(generatedImageData)}
+                type="success"
+                width="100%"
+                icon={<Download />}
+                placeholder="Download Image"
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                Download Image
+              </Button>
+            </div>
+          ) : null}
+        </Drawer.Content>
+        <Drawer.Subtitle>
+          <Button
+            onClick={handleCloseDrawer}
+            auto
+            icon={<X />}
+            placeholder="Close"
+            onPointerEnterCapture={() => {}}
+            onPointerLeaveCapture={() => {}}
+          >
+            Close
+          </Button>
+        </Drawer.Subtitle>
+      </Drawer>
     </Grid.Container>
   );
 };

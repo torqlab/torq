@@ -9,7 +9,7 @@ export interface Activity {
   moving_time: number;
   elapsed_time: number;
   start_date: string;
-  total_elevation_gain: number;
+  total_elevation_gain: number | null;
 }
 
 /**

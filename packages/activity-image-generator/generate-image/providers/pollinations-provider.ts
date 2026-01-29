@@ -1,12 +1,11 @@
-import { ImageProvider, ImageGenerationOptions, ImageBlobMetadata } from './types';
-import { mkdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { ImageProvider, ImageGenerationOptions } from './types';
 
 /**
  * Pollinations.ai image generation provider.
  * 
  * Completely free, no authentication required.
- * Uses FLUX and other open-source models.
+ * Supports multiple models: flux (default, best for illustrations), seedream, gpt-image-large, kontext.
+ * Uses negative prompts to avoid common image generation issues.
  * 
  * @internal
  * @see {@link https://pollinations.ai | Pollinations.ai}
@@ -14,8 +13,6 @@ import { join } from 'node:path';
 const pollinationsProvider: ImageProvider = {
   generateImage: async (
     prompt: string,
-    saveDirectory: string,
-    baseUrl: string,
     options?: ImageGenerationOptions
   ): Promise<string> => {
     // Map size to width/height
@@ -30,8 +27,23 @@ const pollinationsProvider: ImageProvider = {
     const pollinationsUrl = new URL('https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt));
     pollinationsUrl.searchParams.set('width', String(dimensions.width));
     pollinationsUrl.searchParams.set('height', String(dimensions.height));
-    pollinationsUrl.searchParams.set('model', 'flux');
+    
+    // Get model from environment variable, default to flux for better illustration/cartoon quality
+    // Available models: flux (best for illustrations, balanced quality), seedream (excellent prompt understanding), gpt-image-large (photorealism), kontext (context-aware)
+    const model = process.env.POLLINATIONS_MODEL || 'flux';
+    pollinationsUrl.searchParams.set('model', model);
+    
     pollinationsUrl.searchParams.set('nologo', 'true');
+    // Enable prompt enhancement - uses LLM to improve prompt for better image quality
+    pollinationsUrl.searchParams.set('enhance', 'true');
+    
+    // Add negative prompt to avoid common image generation issues
+    // Addresses: distorted faces, extra limbs, malformed hands, blurry images, low quality
+    const negativePrompt = 'distorted faces, extra limbs, malformed hands, blurry, low quality, pixelated, ugly, deformed, disfigured, bad anatomy, bad proportions, extra fingers, missing fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, mutated hands, out of focus, long neck, long body';
+    pollinationsUrl.searchParams.set('negative', encodeURIComponent(negativePrompt));
+    
+    // Add random seed to prevent caching - ensures each request generates a unique image
+    pollinationsUrl.searchParams.set('seed', String(Math.floor(Math.random() * 1000000)));
     
     // Fetch image from Pollinations
     const response = await fetch(pollinationsUrl.toString());
@@ -40,29 +52,12 @@ const pollinationsProvider: ImageProvider = {
       throw new Error(`Pollinations API error: ${response.statusText}`);
     }
     
-    // Download image
+    // Download image and convert to base64
     const imageBuffer = await response.arrayBuffer();
-    const filename = `${crypto.randomUUID()}.png`;
-    const key = filename.replace(/\..+$/, '');
+    const base64 = Buffer.from(imageBuffer).toString('base64');
     
-    // Save to Netlify Blobs or filesystem
-    if (options?.storeImage) {
-      const metadata: ImageBlobMetadata = {
-        createdAt: new Date().toISOString(),
-        filename,
-        contentType: 'image/png',
-      };
-      await options.storeImage(key, imageBuffer, metadata);
-    } else {
-      // Fallback to filesystem for local dev
-      await mkdir(saveDirectory, { recursive: true });
-      const filePath = join(saveDirectory, filename);
-      await Bun.write(filePath, imageBuffer);
-    }
-    
-    // Return full URL
-    const relativePath = `/images/${key}`;
-    return new URL(relativePath, baseUrl).toString();
+    // Return data URL
+    return `data:image/png;base64,${base64}`;
   }
 };
 

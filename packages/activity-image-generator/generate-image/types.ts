@@ -14,8 +14,8 @@ export type GenerateImageInput = {
  * Output from image generation.
  */
 export type GenerateImageOutput = {
-  /** URL to the generated image in DIAL storage. */
-  imageUrl: string;
+  /** Base64-encoded image data URL (data:image/png;base64,...). */
+  imageData: string;
   /** Whether fallback was used. */
   usedFallback: boolean;
   /** Number of retries performed. */

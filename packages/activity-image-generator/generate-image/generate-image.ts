@@ -12,34 +12,28 @@ import getFallbackPrompt from './get-fallback-prompt';
  * @param {StravaActivityImagePrompt} currentPrompt - Current prompt to use
  * @param {number} attemptNumber - Current attempt number (0-based)
  * @param {number} maxRetries - Maximum number of retries allowed
- * @param {string} saveDirectory - Directory to save generated images
- * @param {string} baseUrl - Base URL for constructing full image URL
- * @param {ImageGenerationOptions} [options] - Optional configuration including storeImage function
- * @returns {Promise<string>} Promise resolving to full image URL
+ * @param {ImageGenerationOptions} [options] - Optional configuration
+ * @returns {Promise<string>} Promise resolving to base64-encoded image data URL
  * @throws {Error} Throws error if all retries fail
  */
 const attemptGeneration = async (
   currentPrompt: StravaActivityImagePrompt,
   attemptNumber: number,
   maxRetries: number,
-  saveDirectory: string,
-  baseUrl: string,
   options?: ImageGenerationOptions
 ): Promise<string> => {
   const provider = getProvider(); // Get provider based on env var
   
   try {
-    const imageUrl = await provider.generateImage(
+    const imageData = await provider.generateImage(
       currentPrompt.text,
-      saveDirectory,
-      baseUrl,
       options
     );
-    return imageUrl;
+    return imageData;
   } catch (error) {
     if (attemptNumber < maxRetries) {
       const simplifiedPrompt = simplifyPrompt(currentPrompt, attemptNumber + 1);
-      return attemptGeneration(simplifiedPrompt, attemptNumber + 1, maxRetries, saveDirectory, baseUrl, options);
+      return attemptGeneration(simplifiedPrompt, attemptNumber + 1, maxRetries, options);
     } else {
       throw error;
     }
@@ -51,19 +45,16 @@ const attemptGeneration = async (
  *
  * Provider is controlled by IMAGE_PROVIDER environment variable:
  * - 'pollinations' (default): Free, unlimited Pollinations.ai
- * - 'dial': EPAM Dial with DALL-E-3 (requires DIAL_KEY)
  *
  * Implements retry logic with prompt simplification and fallback mechanism.
  * Attempts image generation up to MAX_RETRIES times, simplifying the prompt
  * on each retry. If all retries fail, uses a safe fallback prompt. Images are
- * downloaded from the provider and saved to the server's file system or Netlify Blobs.
+ * downloaded from the provider and returned as base64-encoded data URLs.
  *
  * @param {GenerateImageInput} input - Image generation input with prompt
- * @param {string} saveDirectory - Directory path where images should be saved (for filesystem fallback)
- * @param {string} baseUrl - Base URL for constructing full image URL (e.g., 'http://localhost:3000')
- * @param {ImageGenerationOptions} [options] - Optional configuration including storeImage function for Blobs
- * @returns {Promise<GenerateImageOutput>} Promise resolving to generated image URL and metadata
- * @throws {Error} Throws error if provider-specific requirements are not met (e.g., DIAL_KEY for dial provider)
+ * @param {ImageGenerationOptions} [options] - Optional configuration
+ * @returns {Promise<GenerateImageOutput>} Promise resolving to generated image data and metadata
+ * @throws {Error} Throws error if generation fails
  *
  * @remarks
  * Generation process:
@@ -72,20 +63,18 @@ const attemptGeneration = async (
  * 3. Attempt generation with original prompt
  * 4. On failure, retry with simplified prompt (max 2 retries)
  * 5. If all retries fail, use fallback prompt
- * 6. Images are downloaded from provider and saved to server or Blobs
- * 7. Always returns a valid full image URL
+ * 6. Images are downloaded from provider and returned as base64 data URLs
+ * 7. Always returns a valid base64-encoded image data URL
  *
  * @example
  * ```typescript
- * const result = await generateImage({ prompt }, '/path/to/images', 'http://localhost:3000');
- * console.log('Image URL:', result.imageUrl);
+ * const result = await generateImage({ prompt });
+ * console.log('Image data:', result.imageData);
  * console.log('Used fallback:', result.usedFallback);
  * ```
  */
 const generateImage = async (
   input: GenerateImageInput,
-  saveDirectory: string,
-  baseUrl: string,
   options?: ImageGenerationOptions
 ): Promise<GenerateImageOutput> => {
   const provider = getProvider();
@@ -100,22 +89,20 @@ const generateImage = async (
 
   const result = (async (): Promise<GenerateImageOutput> => {
     try {
-      const imageUrl = await attemptGeneration(input.prompt, 0, maxRetries, saveDirectory, baseUrl, options);
+      const imageData = await attemptGeneration(input.prompt, 0, maxRetries, options);
       return {
-        imageUrl,
+        imageData,
         usedFallback: false,
         retriesPerformed: retryCount,
       };
     } catch (error) {
       const fallbackPrompt = getFallbackPrompt(input.prompt.subject);
-      const fallbackImageUrl = await provider.generateImage(
+      const fallbackImageData = await provider.generateImage(
         fallbackPrompt.text,
-        saveDirectory,
-        baseUrl,
         options
       );
       return {
-        imageUrl: fallbackImageUrl,
+        imageData: fallbackImageData,
         usedFallback: true,
         retriesPerformed: maxRetries,
       };

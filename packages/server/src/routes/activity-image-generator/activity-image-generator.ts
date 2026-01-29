@@ -2,8 +2,6 @@ import { fetchStravaActivity, type StravaApiConfig } from '@pace/strava-api';
 import { getActivitySignals, createActivityImageGenerationPrompt, generateImage } from '@pace/activity-image-generator';
 import { getTokens } from '../../cookies';
 import type { ServerConfig, ServerTokenResult } from '../../types';
-import { join, dirname } from 'node:path';
-import { storeImage } from '../../storage';
 
 /**
  * Creates StravaApiConfig from server tokens and config.
@@ -125,78 +123,30 @@ const createErrorResponse = (error: Error): Response => {
 };
 
 /**
- * Gets the directory path for saving generated images.
- *
- * Uses IMAGES_DIRECTORY environment variable if set, otherwise resolves
- * relative to the server package directory.
- *
- * @returns {string} Images directory path
- * @internal
- */
-const getImagesDirectory = (): string => {
-  if (process.env.IMAGES_DIRECTORY) {
-    return process.env.IMAGES_DIRECTORY;
-  }
-  // Resolve relative to server package directory (three levels up from routes/activity-image-generator/activity-image-generator.ts)
-  // import.meta.dir = packages/server/src/routes/activity-image-generator
-  const routesDir = dirname(import.meta.dir); // packages/server/src/routes
-  const srcDir = dirname(routesDir); // packages/server/src
-  const packageDir = dirname(srcDir); // packages/server
-  return join(packageDir, 'images');
-};
-
-/**
- * Extracts base URL from request.
- *
- * @param {Request} request - HTTP request
- * @returns {string} Base URL (e.g., 'http://localhost:3000')
- * @internal
- */
-const getBaseUrl = (request: Request): string => {
-  const url = new URL(request.url);
-  return `${url.protocol}//${url.host}`;
-};
-
-/**
  * Fetches activity, extracts signals, generates prompt, generates image and creates success response.
  *
  * @param {string} activityId - Activity ID from URL
  * @param {ServerTokenResult} tokens - OAuth tokens from cookies
  * @param {ServerConfig} config - Server configuration
- * @param {Request} request - HTTP request for extracting base URL
  * @returns {Promise<Response>} Success response with activity, signals, prompt, and image data
  * @internal
  */
 const processActivityAndCreateResponse = async (
   activityId: string,
   tokens: ServerTokenResult,
-  config: ServerConfig,
-  request: Request
+  config: ServerConfig
 ): Promise<Response> => {
   const activityConfig = createActivityConfig(tokens, config);
   const activity = await fetchStravaActivity(activityId, activityConfig);
   const signals = activity ? await getActivitySignals(activity) : null;
   const prompt = signals ? createActivityImageGenerationPrompt(signals) : null;
 
-  const imagesDirectory = getImagesDirectory();
-  const baseUrl = getBaseUrl(request);
-
   const image = await (async () => {
     if (!prompt) {
       return null;
     }
     try {
-      // Try to use Netlify Blobs if available (in Netlify environment)
-      // Fallback to filesystem if Blobs context not available (local dev)
-      const useBlobs = typeof process.env.NETLIFY_BLOBS_CONTEXT !== 'undefined' || 
-                       typeof process.env.NETLIFY !== 'undefined';
-      
-      return await generateImage(
-        { prompt },
-        imagesDirectory,
-        baseUrl,
-        useBlobs ? { storeImage } : undefined
-      );
+      return await generateImage({ prompt });
     } catch (error) {
       console.error('Image generation failed:', error);
       return null;
@@ -246,18 +196,16 @@ const createBadRequestResponse = (): Response => {
  * @param {string} activityId - Activity ID from URL
  * @param {ServerTokenResult} tokens - OAuth tokens from cookies
  * @param {ServerConfig} config - Server configuration
- * @param {Request} request - HTTP request for extracting base URL
  * @returns {Promise<Response>} Success or error response
  * @internal
  */
 const handleActivityProcessing = async (
   activityId: string,
   tokens: ServerTokenResult,
-  config: ServerConfig,
-  request: Request
+  config: ServerConfig
 ): Promise<Response> => {
   try {
-    return await processActivityAndCreateResponse(activityId, tokens, config, request);
+    return await processActivityAndCreateResponse(activityId, tokens, config);
   } catch (error) {
     return createErrorResponse(error as Error);
   }
@@ -267,8 +215,8 @@ const handleActivityProcessing = async (
  * Handles GET /activity-image-generator/:activityId - Fetches activity, extracts signals, generates prompt, and generates image.
  *
  * Retrieves activity data from Strava API, extracts semantic signals, generates
- * an image generation prompt, and generates an image using DIAL service. Returns activity data,
- * extracted signals, the generated prompt, and the generated image URL.
+ * an image generation prompt, and generates an image using Pollinations.ai. Returns activity data,
+ * extracted signals, the generated prompt, and the generated image as base64 data.
  * Requires authentication via cookies containing Strava OAuth tokens.
  *
  * @param {Request} request - HTTP request with activity ID in path
@@ -292,7 +240,7 @@ const activityImageGenerator = async (request: Request, config: ServerConfig): P
     if (!hasTokens) {
       return createUnauthorizedResponse();
     } else {
-      return await handleActivityProcessing(activityId, tokens, config, request);
+      return await handleActivityProcessing(activityId, tokens, config);
     }
   }
 };

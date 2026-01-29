@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'bun:test';
 import simplifyPrompt from './simplify-prompt';
-import { StravaActivityImagePrompt } from '../../../types';
+import { StravaActivityImagePrompt } from '../../types';
 
 type Case = [
   string,
@@ -70,7 +70,7 @@ describe('simplify-prompt', () => {
     expect(result.scene).toBe(expectedScene);
     expect(result.mood).toBe(expectedMood);
 
-    if (typeof expectedText === 'string' && expectedText.length <= 400) {
+    if (typeof expectedText === 'string' && expectedText.length <= 600) {
       expect(result.text).toBe(expectedText);
     } else {
       expect(result.text.length).toBeLessThanOrEqual(400);

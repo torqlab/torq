@@ -52,6 +52,7 @@ describe('pollinations-provider', () => {
     expect(fetchUrl).toContain('height=1024');
     expect(fetchUrl).toContain('model=flux');
     expect(fetchUrl).toContain('nologo=true');
+    expect(fetchUrl).toContain('seed='); // Random seed prevents caching
   });
 
   test('pollinationsProvider handles different sizes', async () => {
@@ -75,6 +76,7 @@ describe('pollinations-provider', () => {
     const fetchUrl = mockFetch.mock.calls[0][0];
     expect(fetchUrl).toContain('width=1792');
     expect(fetchUrl).toContain('height=1024');
+    expect(fetchUrl).toContain('seed='); // Random seed prevents caching
   });
 
   test('pollinationsProvider throws error on API failure', async () => {

@@ -8,7 +8,6 @@
  */
 
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
 import { getConfig } from './config';
 import {
   stravaAuth,
@@ -19,7 +18,6 @@ import {
   stravaLogout,
   activityImageGenerator,
 } from './routes';
-import { join, dirname } from 'node:path';
 
 const config = getConfig();
 
@@ -199,88 +197,6 @@ const matchesActivityImageGeneratorRoute = (pathname: string): boolean => {
 };
 
 /**
- * Gets the images directory path.
- *
- * Uses IMAGES_DIRECTORY environment variable if set, otherwise resolves
- * relative to the server package directory.
- *
- * @returns {string} Images directory path
- * @internal
- */
-const getImagesDir = (): string => {
-  if (process.env.IMAGES_DIRECTORY) {
-    return process.env.IMAGES_DIRECTORY;
-  }
-  // Resolve relative to server package directory (one level up from src/server.ts)
-  const packageDir = dirname(import.meta.dir);
-  return join(packageDir, 'images');
-};
-
-/**
- * Determines the Content-Type header for an image file based on its extension.
- *
- * @param {string} filename - Image filename
- * @returns {string} MIME type for the image
- * @internal
- */
-const getImageContentType = (filename: string): string => {
-  const ext = filename.split('.').pop()?.toLowerCase();
-  const mimeTypes: Record<string, string> = {
-    'png': 'image/png',
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'gif': 'image/gif',
-    'webp': 'image/webp',
-    'svg': 'image/svg+xml',
-  };
-  return mimeTypes[ext || ''] || 'application/octet-stream';
-};
-
-/**
- * Serves images from the images directory.
- *
- * @param {Request} request - HTTP request with image filename in path
- * @returns {Promise<Response>} Image response or 404 if not found
- * @internal
- */
-const serveImage = async (request: Request): Promise<Response> => {
-  const url = new URL(request.url);
-  const pathname = url.pathname;
-  const filename = pathname.split('/').pop();
-  
-  if (!filename) {
-    return new Response('Not Found', { status: 404 });
-  }
-  
-  const imagesDir = getImagesDir();
-  const filePath = join(imagesDir, filename);
-  
-  try {
-    // Check if file exists using fs.stat
-    await stat(filePath);
-    
-    // Read file as buffer
-    const fileBuffer = await readFile(filePath);
-    
-    // Determine content type from extension
-    const contentType = getImageContentType(filename);
-    
-    return new Response(fileBuffer, {
-      headers: {
-        'Content-Type': contentType,
-      },
-    });
-  } catch (error) {
-    // stat() throws if file doesn't exist
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      return new Response('Not Found', { status: 404 });
-    }
-    console.error('Error serving image:', error);
-    return new Response('Internal Server Error', { status: 500 });
-  }
-};
-
-/**
  * Handles route matching and returns appropriate response.
  *
  * @param {Request} request - Web API request
@@ -290,9 +206,7 @@ const serveImage = async (request: Request): Promise<Response> => {
 const handleRoute = async (request: Request): Promise<Response> => {
   const url = new URL(request.url);
   const pathname = url.pathname;
-  const promise = pathname.startsWith('/images/')
-    ? serveImage(request)
-    : pathname === '/strava/auth'
+  const promise = pathname === '/strava/auth'
       ? Promise.resolve(stravaAuth(request, config))
       : pathname === '/strava/auth/callback'
         ? stravaAuthCallback(request, config)

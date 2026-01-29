@@ -50,7 +50,7 @@ const getFallbackPrompt = (activityType: string): StravaActivityImagePrompt => {
     mood,
     subject,
     scene,
-    text: text.length <= 400 ? text : text.substring(0, 400),
+    text: text.length <= 600 ? text : text.substring(0, 400),
   };
 };
 

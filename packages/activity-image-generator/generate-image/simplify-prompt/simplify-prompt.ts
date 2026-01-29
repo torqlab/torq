@@ -28,7 +28,7 @@ const simplifyPrompt = (prompt: StravaActivityImagePrompt, retryLevel: number): 
     return {
       ...prompt,
       scene: '',
-      text: simplifiedText.length <= 400 ? simplifiedText : simplifiedText.substring(0, 400),
+      text: simplifiedText.length <= 600 ? simplifiedText : simplifiedText.substring(0, 400),
     };
   } else {
     const basicSubject = prompt.subject.split(',')[0]?.trim() ?? prompt.subject;
@@ -37,7 +37,7 @@ const simplifyPrompt = (prompt: StravaActivityImagePrompt, retryLevel: number): 
       ...prompt,
       mood: '',
       scene: '',
-      text: simplifiedText.length <= 400 ? simplifiedText : simplifiedText.substring(0, 400),
+      text: simplifiedText.length <= 600 ? simplifiedText : simplifiedText.substring(0, 400),
     };
   }
 };
