@@ -37,7 +37,7 @@ export default tseslint.config(
       ],
       'prefer-const': 'error',
       'no-var': 'error',
-      'no-nested-functions': 'error',
+      'no-inner-declarations': 'error',
 
       // TypeScript specific rules
       '@typescript-eslint/explicit-function-return-type': [

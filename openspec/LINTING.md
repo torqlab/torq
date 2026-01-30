@@ -28,7 +28,7 @@ The ESLint configuration enforces the following key rules from `project.md`:
 
 1. **No `let` usage**: The `let` keyword is completely forbidden. Always use `const`. Enforced via `no-restricted-syntax` rule.
 2. **Prefer `const`**: Enforced via `prefer-const` rule.
-3. **No nested functions**: All functions must be defined at the top level of the file. Enforced via `no-nested-functions` rule and `no-restricted-syntax` for nested arrow functions.
+3. **No nested functions**: All functions must be defined at the top level of the file. Enforced via `no-inner-declarations` rule and `no-restricted-syntax` for nested arrow functions.
 4. **Explicit return types**: All functions must have explicit return type annotations. Enforced via `@typescript-eslint/explicit-function-return-type`.
 5. **Type annotations**: All variables, parameters, and properties must have type annotations. Enforced via `@typescript-eslint/typedef`.
 6. **JSDoc requirements**: All functions must have complete JSDoc comments with:
