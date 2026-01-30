@@ -1,6 +1,6 @@
 import { ImageGenerationProvider } from '../../types';
 import { CONFIG } from '../../../constants';
-import { MODEL, NEGATIVE_PROMPT, PROMPT_ENHANCER } from './constants';
+import { BASE_URL, MODEL, NEGATIVE_PROMPT, PROMPT_ENHANCER } from './constants';
 
 /**
  * Random seed prevents caching - ensures each request generates a unique image.
@@ -18,9 +18,7 @@ const getSeed = () => String(Math.floor(Math.random() * 1000000));
  */
 const getUrl = (prompt: string): string => {
   const promptEnhanced = `${PROMPT_ENHANCER}, ${prompt}`;
-  const url = new URL(
-    `https://image.pollinations.ai/prompt/${encodeURIComponent(promptEnhanced)}`,
-  );
+  const url = new URL(`${BASE_URL}${encodeURIComponent(promptEnhanced)}`);
 
   url.searchParams.set('width', String(CONFIG.IMAGE_SIZE.WIDTH));
   url.searchParams.set('height', String(CONFIG.IMAGE_SIZE.HEIGHT));

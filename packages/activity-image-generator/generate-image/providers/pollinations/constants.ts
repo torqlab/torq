@@ -1,3 +1,5 @@
+export const BASE_URL = 'https://image.pollinations.ai/prompt/';
+
 /**
  * Pollinations model for image generation.
  * Available models:
