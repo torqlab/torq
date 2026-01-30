@@ -130,20 +130,20 @@ describe('fetch-activities', () => {
         },
         mockFetch: (() => {
           const callCounter = { count: 0 };
-          return async () => {
+          return () => {
             callCounter.count = callCounter.count + 1;
             if (callCounter.count === 1) {
-              return new Response('Unauthorized', { status: 401 });
+              return Promise.resolve(new Response('Unauthorized', { status: 401 }));
             }
             if (callCounter.count === 2) {
-              return new Response(
+              return Promise.resolve(new Response(
                 JSON.stringify({
                   access_token: 'new-access-token',
                 }),
                 { status: 200 }
-              );
+              ));
             }
-            return new Response(
+            return Promise.resolve(new Response(
               JSON.stringify([
                 {
                   id: 123456,
@@ -152,7 +152,7 @@ describe('fetch-activities', () => {
                 },
               ]),
               { status: 200 }
-            );
+            ));
           };
         })(),
         shouldThrow: false,
@@ -171,7 +171,7 @@ describe('fetch-activities', () => {
         config: {
           accessToken: 'test-token',
         },
-        mockFetch: async () => new Response('Forbidden', { status: 403 }),
+        mockFetch: () => Promise.resolve(new Response('Forbidden', { status: 403 })),
         shouldThrow: true,
         expectedError: {
           code: 'FORBIDDEN',
@@ -188,17 +188,17 @@ describe('fetch-activities', () => {
         },
         mockFetch: (() => {
           const callCounter = { count: 0 };
-          return async () => {
+          return () => {
             callCounter.count = callCounter.count + 1;
             if (callCounter.count === 1) {
-              return new Response('Rate Limited', {
+              return Promise.resolve(new Response('Rate Limited', {
                 status: 429,
                 headers: {
                   'Retry-After': '0.1',
                 },
-              });
+              }));
             }
-            return new Response(
+            return Promise.resolve(new Response(
               JSON.stringify([
                 {
                   id: 123456,
@@ -207,7 +207,7 @@ describe('fetch-activities', () => {
                 },
               ]),
               { status: 200 }
-            );
+            ));
           };
         })(),
         shouldThrow: false,
@@ -228,12 +228,12 @@ describe('fetch-activities', () => {
         },
         mockFetch: (() => {
           const callCounter = { count: 0 };
-          return async () => {
+          return () => {
             callCounter.count = callCounter.count + 1;
             if (callCounter.count === 1) {
-              return new Response('Server Error', { status: 500 });
+              return Promise.resolve(new Response('Server Error', { status: 500 }));
             }
-            return new Response(
+            return Promise.resolve(new Response(
               JSON.stringify([
                 {
                   id: 123456,
@@ -242,7 +242,7 @@ describe('fetch-activities', () => {
                 },
               ]),
               { status: 200 }
-            );
+            ));
           };
         })(),
         shouldThrow: false,
@@ -261,7 +261,7 @@ describe('fetch-activities', () => {
         config: {
           accessToken: 'test-token',
         },
-        mockFetch: async () => {
+        mockFetch: () => {
           throw new Error('Network error');
         },
         shouldThrow: true,
@@ -278,7 +278,7 @@ describe('fetch-activities', () => {
         config: {
           accessToken: 'test-token',
         },
-        mockFetch: async () => new Response('invalid json', { status: 200 }),
+        mockFetch: () => Promise.resolve(new Response('invalid json', { status: 200 })),
         shouldThrow: true,
         expectedError: {
           code: 'MALFORMED_RESPONSE',
@@ -348,7 +348,7 @@ describe('fetch-activities', () => {
 
     const testFn = async () => {
       if (shouldThrow) {
-        await expect(async () => {
+        expect(async () => {
           await fetchActivities(config);
         }).toThrow();
 
@@ -372,8 +372,8 @@ describe('fetch-activities', () => {
       await Promise.race([
         testFn(),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Test timeout')), timeout))
-      ]).catch((error) => {
-        if (error.message === 'Test timeout') {
+      ]).catch((error: unknown) => {
+        if ((error as Error).message === 'Test timeout') {
           throw new Error(`Test timed out after ${timeout}ms`);
         }
         throw error;

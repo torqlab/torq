@@ -1,19 +1,22 @@
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import refreshToken from './refresh-token';
-import { StravaActivityConfig, StravaActivityError } from '../types';
+import { StravaApiConfig, StravaApiError } from '../../types';
 
 type Case = [
   string,
   {
-    config: StravaActivityConfig;
+    config: StravaApiConfig;
     mockResponse: Response | Error;
     shouldThrow: boolean;
-    expectedError?: StravaActivityError;
+    expectedError?: StravaApiError;
     expectedToken?: string;
   }
 ];
 
-const parseError = (error: Error): StravaActivityError => JSON.parse(error.message) as StravaActivityError;
+const parseError = (error: Error): StravaApiError => {
+  const parsed = JSON.parse(error.message) as unknown;
+  return parsed as StravaApiError;
+};
 
 describe('refresh-token', () => {
   const fetchState = { originalFetch: globalThis.fetch };

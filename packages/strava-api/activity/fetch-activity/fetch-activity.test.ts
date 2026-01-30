@@ -129,27 +129,27 @@ describe('fetch-activity', () => {
         },
         mockFetch: (() => {
           const callCounter = { count: 0 };
-          return async () => {
+          return () => {
             callCounter.count = callCounter.count + 1;
             if (callCounter.count === 1) {
-              return new Response('Unauthorized', { status: 401 });
+              return Promise.resolve(new Response('Unauthorized', { status: 401 }));
             }
             if (callCounter.count === 2) {
-              return new Response(
+              return Promise.resolve(new Response(
                 JSON.stringify({
                   access_token: 'new-access-token',
                 }),
                 { status: 200 }
-              );
+              ));
             }
-            return new Response(
+            return Promise.resolve(new Response(
               JSON.stringify({
                 id: 123456,
                 type: 'Ride',
                 sport_type: 'Ride',
               }),
               { status: 200 }
-            );
+            ));
           };
         })(),
         shouldThrow: false,
@@ -185,24 +185,24 @@ describe('fetch-activity', () => {
         },
         mockFetch: (() => {
           const callCounter = { count: 0 };
-          return async () => {
+          return () => {
             callCounter.count = callCounter.count + 1;
             if (callCounter.count === 1) {
-              return new Response('Rate Limited', {
+              return Promise.resolve(new Response('Rate Limited', {
                 status: 429,
                 headers: {
                   'Retry-After': '0.1',
                 },
-              });
+              }));
             }
-            return new Response(
+            return Promise.resolve(new Response(
               JSON.stringify({
                 id: 123456,
                 type: 'Ride',
                 sport_type: 'Ride',
               }),
               { status: 200 }
-            );
+            ));
           };
         })(),
         shouldThrow: false,
@@ -222,19 +222,19 @@ describe('fetch-activity', () => {
         },
         mockFetch: (() => {
           const callCounter = { count: 0 };
-          return async () => {
+          return () => {
             callCounter.count = callCounter.count + 1;
             if (callCounter.count === 1) {
-              return new Response('Server Error', { status: 500 });
+              return Promise.resolve(new Response('Server Error', { status: 500 }));
             }
-            return new Response(
+            return Promise.resolve(new Response(
               JSON.stringify({
                 id: 123456,
                 type: 'Ride',
                 sport_type: 'Ride',
               }),
               { status: 200 }
-            );
+            ));
           };
         })(),
         shouldThrow: false,
@@ -285,7 +285,10 @@ describe('fetch-activity', () => {
         config: {
           accessToken: 'test-token',
           guardrails: {
-            validate: (_input: Record<string, unknown>) => ({ valid: false, errors: ['Validation failed'] }),
+            validate: (_input: Record<string, unknown>) => {
+              void _input; // Explicitly mark as intentionally unused
+              return { valid: false, errors: ['Validation failed'] };
+            },
           },
         },
         mockFetch: () =>
@@ -374,7 +377,7 @@ describe('fetch-activity', () => {
     }
 
     if (shouldThrow) {
-      await expect(async () => {
+      expect(async () => {
         await fetchActivity(activityId, config);
       }).toThrow();
 

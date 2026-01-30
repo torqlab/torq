@@ -28,7 +28,7 @@ const parseError = (error: Error): StravaApiError | null => {
  * @param {number} attemptIndex - Current attempt index (0-based)
  * @param {number} maxRetries - Maximum number of retry attempts
  * @param {number} currentBackoffMs - Current backoff delay in milliseconds
- * @param {Error | null} previousError - Previous error encountered (if any)
+ * @param {Error | null} _previousError - Previous error encountered (if any) (unused)
  * @returns {Promise<T>} Promise resolving to the function's return value on success
  * @throws {Error} Throws the error if all retries are exhausted or error is non-retryable
  * @internal
@@ -40,6 +40,9 @@ const attemptWithBackoff = async <T>(
   currentBackoffMs: number,
   _previousError: Error | null
 ): Promise<T> => {
+  // _previousError may be used for enhanced error reporting in the future
+  void _previousError;
+
   try {
     return await fn();
   } catch (error) {

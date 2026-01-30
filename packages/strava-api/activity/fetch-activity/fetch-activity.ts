@@ -67,7 +67,7 @@ const fetchApiResponseWithErrorHandling = async (
             accessToken: newAccessToken,
           };
           return await fetchFromApi(activityId, refreshedConfig);
-        } catch (refreshError) {
+        } catch {
           throw error;
         }
       } else {
@@ -163,7 +163,8 @@ const fetchActivity = async (activityId: string, config: StravaApiConfig): Promi
   validateActivityId(activityId);
 
   /**
-   *
+   * Inner function to fetch activity with retry capability.
+   * @returns {Promise<StravaActivity | null>} The activity data or null if not found
    */
   const fetchWithRetry = async (): Promise<StravaActivity | null> => fetchActivityWithTokenRefresh(activityId, config, config);
 

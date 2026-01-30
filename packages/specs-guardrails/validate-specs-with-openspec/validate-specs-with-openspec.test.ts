@@ -451,13 +451,13 @@ describe('validate-specs-with-openspec', () => {
       exited: Promise.resolve(exitCode),
     };
 
-    Bun.spawn = mock(() => mockProc as any) as typeof Bun.spawn;
+    Bun.spawn = mock(() => mockProc) as unknown as typeof Bun.spawn;
 
     // Re-import the function to get the mocked version
     const { default: validateSpecsWithOpenspec } = await import('./validate-specs-with-openspec');
 
     if (shouldThrow) {
-      await expect(validateSpecsWithOpenspec(rootDir)).rejects.toThrow(expectedError);
+      expect(validateSpecsWithOpenspec(rootDir)).rejects.toThrow(expectedError);
     } else {
       const result = await validateSpecsWithOpenspec(rootDir);
 
@@ -497,7 +497,7 @@ describe('validate-specs-with-openspec', () => {
         })).body as ReadableStream,
         stderr: new Response('').body as ReadableStream,
         exited: Promise.resolve(0),
-      } as any));
+      } as unknown));
 
     Bun.spawn = mockSpawn as typeof Bun.spawn;
 

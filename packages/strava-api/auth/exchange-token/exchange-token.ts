@@ -121,14 +121,7 @@ const exchangeToken = async (
 
   // Clone response to avoid consuming the body stream
   const clonedResponse = response.clone();
-  const tokenData = await (async (): Promise<StravaAuthTokenResponse> => {
-    try {
-      return await parseTokenResponse(clonedResponse);
-    } catch (error) {
-      // If JSON parsing fails, re-throw the malformed response error
-      throw error;
-    }
-  })();
+  const tokenData = await parseTokenResponse(clonedResponse);
 
   if (!tokenData.access_token) {
     throw createAuthError('MALFORMED_RESPONSE', 'Access token not found in response');

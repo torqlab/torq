@@ -63,8 +63,8 @@ const fetchApiResponseWithErrorHandling = async (
             ...currentConfig,
             accessToken: newAccessToken,
           };
-          return await fetchActivitiesFromApi(refreshedConfig);
-        } catch (refreshError) {
+          return await fetchActivitiesFromApi(refreshedConfig) as StravaActivity[];
+        } catch {
           throw error;
         }
       } else {
@@ -80,15 +80,19 @@ const fetchApiResponseWithErrorHandling = async (
  * Fetches activities list with token refresh support.
  *
  * @param {StravaApiConfig} currentConfig - Current Strava API configuration
- * @param {StravaApiConfig} originalConfig - Original Strava API configuration (for consistency)
+ * @param {StravaApiConfig} _originalConfig - Original Strava API configuration (unused)
  * @returns {Promise<StravaActivityApiResponse[]>} Promise resolving to activities array
  * @throws {Error} Throws error if API errors occur
  * @internal
  */
 const fetchActivitiesWithTokenRefresh = async (
   currentConfig: StravaApiConfig,
-  originalConfig: StravaApiConfig
-): Promise<StravaActivity[]> => await fetchApiResponseWithErrorHandling(currentConfig);
+  _originalConfig: StravaApiConfig
+): Promise<StravaActivity[]> => {
+  // _originalConfig reserved for future use (e.g., fallback scenarios)
+  void _originalConfig;
+  return await fetchApiResponseWithErrorHandling(currentConfig);
+};
 
 /**
  * Fetches a list of activities from Strava API for the authenticated athlete.
@@ -127,7 +131,8 @@ const fetchActivitiesWithTokenRefresh = async (
  */
 const fetchActivities = async (config: StravaApiConfig): Promise<StravaActivity[]> => {
   /**
-   *
+   * Inner function to fetch activities with retry capability.
+   * @returns {Promise<StravaActivity[]>} Array of activities
    */
   const fetchWithRetry = async (): Promise<StravaActivity[]> => fetchActivitiesWithTokenRefresh(config, config);
 

@@ -213,11 +213,14 @@ const webResponseToNetlify = async (response: Response): Promise<NetlifyResponse
 /**
  * Handles OPTIONS preflight request.
  *
- * @param {NetlifyEvent} event - Netlify function event
+ * @param {NetlifyEvent} _event - Netlify function event (unused)
  * @returns {NetlifyResponse} CORS preflight response
  * @internal
  */
 const handleOptionsRequest = (_event: NetlifyEvent): NetlifyResponse => {
+  // Explicitly mark parameter as intentionally unused
+  void _event;
+
   const allowedOrigin = getAllowedOrigin();
   const requestHeaders = 'Content-Type';
   

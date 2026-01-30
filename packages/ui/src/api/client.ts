@@ -43,9 +43,9 @@ export async function apiRequest<T>(
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: response.statusText }));
-    throw new APIError(response.status, error.error || error.message);
+    const error = await response.json().catch(() => ({ error: response.statusText })) as { error?: string; message?: string };
+    throw new APIError(response.status, error.error ?? error.message ?? 'Unknown error');
   }
 
-  return response.json();
+  return response.json() as Promise<T>;
 }
