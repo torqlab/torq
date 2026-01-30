@@ -32,3 +32,61 @@ jobs:
 
       - name: Run tests
         run: bun test
+
+  build-ui:
+    name: Build UI Package
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dev dependencies
+        run: bun install --only dev
+
+      - name: Build UI package
+        run: |
+          cd packages/ui
+          bun build
+
+  build-server:
+    name: Build Server Package
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dev dependencies
+        run: bun install --only dev
+
+      - name: Build Server package
+        run: |
+          cd packages/server
+          bun build
