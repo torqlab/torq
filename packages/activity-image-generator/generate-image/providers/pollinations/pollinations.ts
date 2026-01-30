@@ -1,4 +1,4 @@
-import { ImageGenerationProvider } from '../types';
+import { ImageGenerationProvider } from '../../types';
 import { CONFIG } from '../../../constants';
 import { MODEL, NEGATIVE_PROMPT } from './constants';
 
@@ -55,13 +55,13 @@ const pollinations: ImageGenerationProvider = async (
   const url = getUrl(prompt)  
   const response = await fetch(url);
   
-  if (!response.ok) {
-    throw new Error(`Pollinations API error: ${response.statusText}`);
-  } else {
+  if (response.ok) {
     const imageBuffer = await response.arrayBuffer();
     const base64 = Buffer.from(imageBuffer).toString('base64');
     
     return `data:image/png;base64,${base64}`;
+  } else {
+    throw new Error(`Pollinations API error: ${response.statusText}`);
   }
 };
 

@@ -1,4 +1,4 @@
-import { ImageGenerationProvider } from './types';
+import { ImageGenerationProvider } from '../types';
 import { ImageGenerationProviderName } from '../../types';
 import pollinations from './pollinations';
 
