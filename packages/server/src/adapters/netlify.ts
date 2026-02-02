@@ -11,6 +11,7 @@ import {
   stravaLogout,
   stravaActivities,
   stravaActivity,
+  activityImageGenerator,
 } from '../routes';
 import { getConfig } from '../config';
 
@@ -557,5 +558,60 @@ const stravaActivityError = (error: unknown): NetlifyResponse => {
  */
 export const stravaActivityHandler = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
   const result = await stravaActivitySuccess(event).catch((error) => stravaActivityError(error));
+  return result;
+};
+
+/**
+ * Handles successful activity image generator request.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {Promise<NetlifyResponse>} Netlify function response
+ * @internal
+ */
+const activityImageGeneratorSuccess = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  // Handle OPTIONS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return handleOptionsRequest(event);
+  }
+
+  const config = getConfig();
+  const request = netlifyEventToRequest(event);
+  const response = await activityImageGenerator(request, config);
+  return await webResponseToNetlify(response);
+};
+
+/**
+ * Handles activity image generator error.
+ *
+ * @param {unknown} error - Error object
+ * @returns {NetlifyResponse} Error response
+ * @internal
+ */
+const activityImageGeneratorError = (error: unknown): NetlifyResponse => {
+  console.error('Error in activity-image-generator function:', error);
+  const allowedOrigin = getAllowedOrigin();
+  return {
+    statusCode: 500,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+    body: JSON.stringify({ error: 'Internal server error' }),
+  };
+};
+
+/**
+ * Netlify Function handler for /activity-image-generator endpoint.
+ *
+ * @param {NetlifyEvent} event - Netlify function event
+ * @returns {Promise<NetlifyResponse>} Netlify function response
+ */
+export const activityImageGeneratorHandler = async (event: NetlifyEvent): Promise<NetlifyResponse> => {
+  const result = await activityImageGeneratorSuccess(event).catch((error) =>
+    activityImageGeneratorError(error)
+  );
   return result;
 };
