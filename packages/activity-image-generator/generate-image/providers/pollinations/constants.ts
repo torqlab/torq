@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 export const BASE_URL = 'https://image.pollinations.ai/prompt/';
 
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
 /**
  * Pollinations model for image generation.
  * Available models:
@@ -14,12 +11,6 @@ export const BASE_URL = 'https://image.pollinations.ai/prompt/';
 export const MODEL = 'flux';
 
 /**
-<<<<<<< HEAD
- * Negative prompt allows to avoid common image generation issues.
- * Addresses: distorted faces, extra limbs, malformed hands, blurry images, low quality.
-*/
-export const NEGATIVE_PROMPT = 'distorted faces, extra limbs, malformed hands, blurry, low quality, pixelated, ugly, deformed, disfigured, bad anatomy, bad proportions, extra fingers, missing fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, mutated hands, out of focus, long neck, long body';
-=======
  * Prompt enhancer to improve image quality.
  * 
  * Pollinations generates poor images by default.
@@ -33,4 +24,3 @@ export const PROMPT_ENHANCER = 'side view, natural human anatomy, natural and cl
  * Pollinations generates poor images due to limited resources; negative prompts help mitigate this.
 */
 export const NEGATIVE_PROMPT = 'distorted or warped eyes, twisted joints, distorted feet, unrealistic pose, distorted or warped faces, warped or distorted eyes, extra limbs, malformed or distorted hands, blurry, low quality, pixelated, ugly, deformed body, disfigured, bad or broken anatomy, bad proportions, extra fingers, missing fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, noise, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, mutated hands, out of focus, long neck, long body, logo, watermark';
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0

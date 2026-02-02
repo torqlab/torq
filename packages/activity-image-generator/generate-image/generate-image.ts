@@ -13,7 +13,11 @@ import getFallbackPrompt from './get-fallback-prompt';
  * @param {number} attempt - Current attempt number (0-based).
  * @param {number} maxAttempts - Maximum number of attempts allowed.
 <<<<<<< HEAD
+<<<<<<< HEAD
  * @param {ImageGenerationOptions} [options] - Optional configuration.
+=======
+ * @param {ImageGenerationProviderName} [providerName] - Optional provider name to use.
+>>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
 =======
  * @param {ImageGenerationProviderName} [providerName] - Optional provider name to use.
 >>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
@@ -103,7 +107,11 @@ const generateImage = async (
         attempts,
       };
 <<<<<<< HEAD
+<<<<<<< HEAD
     } catch (error) {
+=======
+    } catch {
+>>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
 =======
     } catch {
 >>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0

@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import { ImageGenerationProvider } from '../types';
-import { CONFIG } from '../../../constants';
-import { MODEL, NEGATIVE_PROMPT } from './constants';
-=======
 import { ImageGenerationProvider } from '../../types';
 import { CONFIG } from '../../../constants';
 import { BASE_URL, MODEL, NEGATIVE_PROMPT, PROMPT_ENHANCER } from './constants';
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
 
 /**
  * Random seed prevents caching - ensures each request generates a unique image.
@@ -16,26 +10,15 @@ const getSeed = () => String(Math.floor(Math.random() * 1000000));
 
 /**
  * Creates Pollinations image generation URL for a given prompt.
-<<<<<<< HEAD
- * 
- * @param prompt - Text prompt for image generation.
-=======
  *
  * @param {string} prompt - Text prompt for image generation.
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
  * @returns {string} URL for Pollinations image generation.
  * @see {@link https://pollinations.ai | Pollinations.ai}
  * @internal
  */
 const getUrl = (prompt: string): string => {
-<<<<<<< HEAD
-  const url = new URL(
-    `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`,
-  );
-=======
   const promptEnhanced = `${PROMPT_ENHANCER}, ${prompt}`;
   const url = new URL(`${BASE_URL}${encodeURIComponent(promptEnhanced)}`);
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
 
   url.searchParams.set('width', String(CONFIG.IMAGE_SIZE.WIDTH));
   url.searchParams.set('height', String(CONFIG.IMAGE_SIZE.HEIGHT));
@@ -71,22 +54,13 @@ const pollinations: ImageGenerationProvider = async (
   const url = getUrl(prompt)  
   const response = await fetch(url);
   
-<<<<<<< HEAD
-  if (!response.ok) {
-    throw new Error(`Pollinations API error: ${response.statusText}`);
-  } else {
-=======
   if (response.ok) {
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
     const imageBuffer = await response.arrayBuffer();
     const base64 = Buffer.from(imageBuffer).toString('base64');
     
     return `data:image/png;base64,${base64}`;
-<<<<<<< HEAD
-=======
   } else {
     throw new Error(`Pollinations API error: ${response.statusText}`);
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
   }
 };
 

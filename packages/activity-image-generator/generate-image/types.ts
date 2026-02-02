@@ -9,11 +9,7 @@ export interface GenerateImageInput {
   /** Number of retry attempts made so far. */
   attempts?: number;
   provider?: ImageGenerationProviderName;
-<<<<<<< HEAD
-};
-=======
 }
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
 
 /**
  * Output from image generation.
@@ -25,9 +21,6 @@ export interface GenerateImageOutput {
   fallback: boolean;
   /** Number of retry attempts performed. */
   attempts: number;
-<<<<<<< HEAD
-};
-=======
 }
 
 /**
@@ -39,4 +32,3 @@ export interface GenerateImageOutput {
  * @throws {Error} Throws error if generation fails.
  */
 export type ImageGenerationProvider = (prompt: string) => Promise<string>;
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0

@@ -1,8 +1,6 @@
 import { StravaActivityImagePrompt } from '../../types';
 import { CONFIG } from '../../constants';
 
-<<<<<<< HEAD
-=======
 /**
  * Deterministically computes style index from activity type string.
  *
@@ -13,7 +11,6 @@ import { CONFIG } from '../../constants';
  * @param {string} activityType - The activity type string (e.g., 'Run', 'Ride').
  * @returns {number} Deterministic index for style selection.
  */
->>>>>>> a24e8e8b4d99cfd9ac6c73aead3b30e8b87836b0
 const getStyleIndex = (activityType: string): number => {
   const chars = Array.from(activityType);
   const hash = chars.reduce((acc, char) => {
