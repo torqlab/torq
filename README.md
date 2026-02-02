@@ -1,7 +1,14 @@
 ![One athele is running. Another athele is riding a road bicycle. Minimalistic style with dark colour tones.](./banner-thin.webp)
 
-[![Test (All Packages)](https://github.com/mrbalov/pace/actions/workflows/test.yml/badge.svg)](https://github.com/mrbalov/pace/actions/workflows/test.yml)
-[![Validate Specs with OpenSpec](https://github.com/mrbalov/pace/actions/workflows/specs-validate-with-openspec.yml/badge.svg)](https://github.com/mrbalov/pace/actions/workflows/specs-validate-with-openspec.yml)
+[![Verify (All Packages)](https://github.com/mrbalov/pace/actions/workflows/verify.yml/badge.svg)](https://github.com/mrbalov/pace/actions/workflows/verify.yml)
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a7399922-20a1-4a8c-b390-ad7bf9c21560/deploy-status)](https://app.netlify.com/projects/pace-api/deploys)
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/7b8eb9b4-63e0-43e5-87d4-473958dd27ae/deploy-status)](https://app.netlify.com/projects/pace-ui/deploys)
+
+[![Validate All Specs with OpenSpec (Static Validation)](https://github.com/mrbalov/pace/actions/workflows/specs-validate-with-openspec.yml/badge.svg)](https://github.com/mrbalov/pace/actions/workflows/specs-validate-with-openspec.yml)
+
+[![Validate Specs with AI](https://github.com/mrbalov/pace/actions/workflows/specs-validate-with-ai.yml/badge.svg)](https://github.com/mrbalov/pace/actions/workflows/specs-validate-with-ai.yml)
 
 # PACE (Strava Activity Image Generator)
 
