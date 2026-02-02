@@ -1,10 +1,10 @@
-![One athele is running. Another athele is riding a road bicycle. Minimalistic style with dark colour tones.](./banner-thin.webp)
-
-[![Verify (All Packages)](https://github.com/mrbalov/pace/actions/workflows/verify.yml/badge.svg)](https://github.com/mrbalov/pace/actions/workflows/verify.yml)
+![One athlete is running. Another athlete is riding a road bicycle. Minimalistic style with dark colour tones.](./banner-thin.webp)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a7399922-20a1-4a8c-b390-ad7bf9c21560/deploy-status)](https://app.netlify.com/projects/pace-api/deploys)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/7b8eb9b4-63e0-43e5-87d4-473958dd27ae/deploy-status)](https://app.netlify.com/projects/pace-ui/deploys)
+
+[![Verify (All Packages)](https://github.com/mrbalov/pace/actions/workflows/verify.yml/badge.svg)](https://github.com/mrbalov/pace/actions/workflows/verify.yml)
 
 [![Validate All Specs with OpenSpec (Static Validation)](https://github.com/mrbalov/pace/actions/workflows/specs-validate-with-openspec.yml/badge.svg)](https://github.com/mrbalov/pace/actions/workflows/specs-validate-with-openspec.yml)
 
