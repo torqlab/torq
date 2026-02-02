@@ -1,4 +1,4 @@
-![One athele is running. Another athele is riding a road bicycle. Minimalistic style with dark colour tones.](./banner-thin.webp)
+![One athlete is running. Another athlete is riding a road bicycle. Minimalistic style with dark colour tones.](./banner-thin.webp)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a7399922-20a1-4a8c-b390-ad7bf9c21560/deploy-status)](https://app.netlify.com/projects/pace-api/deploys)
 
