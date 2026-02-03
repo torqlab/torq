@@ -29,6 +29,8 @@ export default function ThemeSwitcher({ className, onThemeChange }: ThemeSwitche
   return (
     <Button
       auto
+      type='default'
+      scale={0.8}
       icon={theme.type === 'dark' ? <Sun /> : <Moon />}
       onClick={toggleTheme}
       className={className}

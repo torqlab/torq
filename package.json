@@ -1,6 +1,6 @@
 {
   "name": "pace",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Generates AI images based on Strava activity data.",
   "type": "module",
   "private": true,
@@ -14,7 +14,8 @@
     "lint:fix": "eslint packages --fix",
     "validate-specs:ai": "bun run --filter @pace/specs-guardrails validate-specs:ai -- --rootDir $(pwd) --systemPrompt $(pwd)/prompts/validate-specs.system.md --userPrompt $(pwd)/prompts/validate-specs.user.md",
     "validate-specs:openspec": "bun run --filter @pace/specs-guardrails validate-specs:openspec -- --rootDir $(pwd)",
-    "ui:dev": "bun run --filter @pace/ui dev"
+    "ui:dev": "bun run --filter @pace/ui dev",
+    "server:dev": "bun run --filter @pace/server dev"
   },
   "repository": {
     "type": "git",

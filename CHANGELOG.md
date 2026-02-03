@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See the [Changelog Manual](https://kb.epam.com/display/VCTXDSE/14.+Frontastic+Development+-+Changelog) for more details.
 
+## [1.3.0] - 2026-02-03
+
+### Improved Home Page UX and Navigation
+
+### Added
+- External link buttons in header for GitHub repository and website
+- Dedicated `server:dev` script for running the server in development mode
+- Separate Guest and Member view components for better code organization
+
+### Changed
+- Redesigned home page with centered layout and improved visual hierarchy
+- Enhanced header navigation with icon-only buttons for cleaner appearance
+- Updated button styling with consistent scaling (0.8) and auto-sizing across all buttons
+- Improved home page text styling with better color contrast and typography
+- Simplified authentication flow presentation with distinct guest and member experiences
+
 ## [1.2.0] - 2026-02-03
 
 ### Refactored Provider API Key Management

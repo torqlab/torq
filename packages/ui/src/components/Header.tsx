@@ -1,6 +1,6 @@
 import { Text, Button } from '@geist-ui/core';
 import { useLocation } from 'wouter';
-import { LogOut } from '@geist-ui/icons';
+import { LogOut, Github, Globe } from '@geist-ui/icons';
 import { logout } from '../utils/auth';
 import { useAuth } from '../hooks/useAuth';
 import ThemeSwitcher from './ThemeSwitcher';
@@ -59,8 +59,7 @@ export default function Header({ onThemeChange }: HeaderProps) {
       >
         PACE
       </Text>
-      
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
         {!loading && isAuthenticated && (
           <Button
             type="abort"
@@ -68,14 +67,40 @@ export default function Header({ onThemeChange }: HeaderProps) {
             onClick={() => {
               void handleLogout();
             }}
+            auto
             scale={0.8}
+            aria-label="Logout"
             placeholder="Logout"
             onPointerEnterCapture={() => undefined}
             onPointerLeaveCapture={() => undefined}
-          >
-            Logout
-          </Button>
+          />
         )}
+        <Button
+          icon={<Globe />}
+          onClick={() => {
+            window.open('https://balov.dev', '_blank', 'noopener,noreferrer');
+          }}
+          type='default'
+          auto
+          scale={0.8}
+          aria-label="Visit website"
+          placeholder="Visit website"
+          onPointerEnterCapture={() => undefined}
+          onPointerLeaveCapture={() => undefined}
+        />
+        <Button
+          icon={<Github />}
+          onClick={() => {
+            window.open('https://github.com/mrbalov/pace', '_blank', 'noopener,noreferrer');
+          }}
+          type="default"
+          auto
+          scale={0.8}
+          aria-label="View source on GitHub"
+          placeholder="View source on GitHub"
+          onPointerEnterCapture={() => undefined}
+          onPointerLeaveCapture={() => undefined}
+        />
         <ThemeSwitcher onThemeChange={onThemeChange} />
       </div>
     </header>
