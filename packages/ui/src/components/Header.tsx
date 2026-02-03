@@ -80,7 +80,7 @@ export default function Header({ onThemeChange }: HeaderProps) {
           onClick={() => {
             window.open('https://balov.dev', '_blank', 'noopener,noreferrer');
           }}
-          type="abort"
+          type='default'
           auto
           scale={0.8}
           aria-label="Visit website"
@@ -93,7 +93,7 @@ export default function Header({ onThemeChange }: HeaderProps) {
           onClick={() => {
             window.open('https://github.com/mrbalov/pace', '_blank', 'noopener,noreferrer');
           }}
-          type="abort"
+          type="default"
           auto
           scale={0.8}
           aria-label="View source on GitHub"
