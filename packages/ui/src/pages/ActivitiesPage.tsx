@@ -1,4 +1,4 @@
-import { Card, Button, Text, Grid, Spacer, Note, Drawer } from '@geist-ui/core';
+import { Card, Button, Text, Grid, Spacer, Note, Drawer, useTheme } from '@geist-ui/core';
 import { Activity as ActivityIcon, Navigation, Clock, TrendingUp, Zap, ArrowLeft, X, Download } from '@geist-ui/icons';
 import { Link } from 'wouter';
 import { useState, useEffect } from 'react';
@@ -52,6 +52,7 @@ const formatActivityType = (type: string): string => {
  * @returns {JSX.Element} Activities page component
  */
 const ActivitiesPage = (): JSX.Element => {
+  const theme = useTheme();
   const { activities, loading, error, isUnauthorized, refetch } = useActivities();
   const [showContent, setShowContent] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -162,7 +163,13 @@ const ActivitiesPage = (): JSX.Element => {
 
   if (isUnauthorized) {
     return (
-      <Grid.Container gap={2} style={{ padding: '2rem', minHeight: 'calc(100vh - 60px)', backgroundColor: 'var(--geist-background)' }}>
+      <Grid.Container
+        gap={2}
+        style={{
+          padding: '2rem',
+          minHeight: 'calc(100vh - 60px)',
+          backgroundColor: theme.palette.background,
+        }}>
         <Grid xs={24} sm={20} md={16} lg={12} style={{ margin: '0 auto' }}>
           <Card width="100%">
             <Card.Content>
@@ -193,7 +200,13 @@ const ActivitiesPage = (): JSX.Element => {
 
   if (error) {
     return (
-      <Grid.Container gap={2} style={{ padding: '2rem', minHeight: 'calc(100vh - 60px)', backgroundColor: 'var(--geist-background)' }}>
+      <Grid.Container
+        gap={2}
+        style={{
+          padding: '2rem',
+          minHeight: 'calc(100vh - 60px)',
+          backgroundColor: theme.palette.background,
+          }}>
         <Grid xs={24} sm={20} md={16} lg={12} style={{ margin: '0 auto' }}>
           <Card width="100%">
             <Card.Content>
@@ -233,7 +246,7 @@ const ActivitiesPage = (): JSX.Element => {
         opacity: showContent ? 1 : 0,
         transform: showContent ? 'translateY(0)' : 'translateY(10px)',
         transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
-        backgroundColor: 'var(--geist-background)',
+        backgroundColor: theme.palette.background,
       }}
     >
       <Grid xs={24} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

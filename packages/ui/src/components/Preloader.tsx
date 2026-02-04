@@ -1,4 +1,4 @@
-import { Grid, Loading, Text } from '@geist-ui/core';
+import { Grid, Loading, Text, useTheme } from '@geist-ui/core';
 import { Activity as ActivityIcon } from '@geist-ui/icons';
 
 export interface PreloaderProps {
@@ -18,7 +18,10 @@ const Preloader = ({
   message = undefined, 
   showIcon = true,
   fullHeight = true 
-}: PreloaderProps): JSX.Element => (
+}: PreloaderProps): JSX.Element => {
+  const theme = useTheme();
+
+  return (
     <>
       <Grid.Container
         gap={2}
@@ -30,7 +33,7 @@ const Preloader = ({
           opacity: 1,
           transition: 'opacity 0.3s ease-out',
           position: 'relative',
-          backgroundColor: 'var(--geist-background)',
+          backgroundColor: theme.palette.background,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -112,5 +115,6 @@ const Preloader = ({
       `}</style>
     </>
   );
+};
 
 export default Preloader;
