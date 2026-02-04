@@ -8,6 +8,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See the [Changelog Manual](https://kb.epam.com/display/VCTXDSE/14.+Frontastic+Development+-+Changelog) for more details.
 
+## [1.5.0] - 2026-02-04
+
+### Comprehensive UI Refactoring and Enhanced Component Architecture
+
+### Added
+- Interactive `ActivityEmoji` component with animated sport emojis cycling through 100+ activity variations with skin tone support
+- Footer component displaying project credits, powered-by services, and external links
+- Custom `useTheme` hook for centralized theme state management and persistence
+- Constants file consolidating all external links (GitHub, blog, services)
+- Dedicated error and guest view components for ActivitiesPage
+- Warning message in image generation drawer about AI limitations
+- TypeScript type definitions file for shared types across the application
+
+### Changed
+- Refactored ActivitiesPage from monolithic 400+ line component into modular architecture with separate concerns (Activities, ActivitiesList, ImageGenerationDrawer)
+- Restructured Header component into dedicated folder with ActivityEmoji integration in logo
+- Updated App component to use Geist UI's Page component for proper layout structure with Header, Content, and Footer sections
+- Enhanced ImageGenerationDrawer with improved component composition and user warnings about AI-generated content
+- Migrated theme management from inline logic to centralized `useTheme` hook
+- Simplified main.tsx entry point by extracting theme initialization logic
+- Improved Preloader component API by renaming `fullHeight` prop to `withFullHeight` for clarity
+- Reorganized HomePage components to use Grid layout for better responsive design
+
+### Removed
+- External link buttons from Header (moved to Footer for cleaner navigation)
+- Inline theme management code from main.tsx (replaced with useTheme hook)
+- Redundant activity type formatting logic (centralized to formatActivityType utility)
+
 ## [1.4.0] - 2026-02-03
 
 ### Enhanced Home Page Component Architecture and User Experience
