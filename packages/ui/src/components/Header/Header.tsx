@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Text, Button, useTheme, Page } from '@geist-ui/core';
 import { useLocation } from 'wouter';
 import { LogOut } from '@geist-ui/icons';
@@ -5,7 +6,7 @@ import { LogOut } from '@geist-ui/icons';
 import { logout } from '../../utils/auth';
 import { useAuth } from '../../hooks/useAuth';
 import ThemeSwitcher from '../ThemeSwitcher';
-import { useCallback } from 'react';
+import ActivityEmoji from '../ActivityEmoji';
 
 interface HeaderProps {
   onThemeChange: (theme: 'light' | 'dark') => void;
@@ -51,8 +52,11 @@ export default function Header({ onThemeChange }: HeaderProps) {
         h3
         style={{
           margin: 0,
-          fontWeight: 600,
-          cursor: location === '/' ? 'default' : 'pointer',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
         }}
         onClick={() => {
           if (location !== '/') {
@@ -60,6 +64,8 @@ export default function Header({ onThemeChange }: HeaderProps) {
           }
         }}
       >
+        <ActivityEmoji />
+        {'\u00A0'}
         PACE
       </Text>
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
