@@ -30,7 +30,7 @@ const App = ({ onThemeChange }: AppProps) => (
       gap: '32px',
       minHeight: '100vh',
       width: '100%',
-      maxWidth: '900px',
+      maxWidth: '1000px',
       margin: '0 auto',
       padding: '0 16px',
       boxSizing: 'border-box',
@@ -42,7 +42,7 @@ const App = ({ onThemeChange }: AppProps) => (
       role='main'
       style={{
         width: '100%',
-        minHeight: 'calc(100vh - 70px)',
+        minHeight: 'calc(100vh - 170px)', // Adjust for header and footer height
         margin: '70px 0',
       }}
     >

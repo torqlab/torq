@@ -111,7 +111,7 @@ const Header = ({ onThemeChange }: HeaderProps) => {
           justifyContent: 'space-between',
           width: '100%',
           height: '100%',
-          maxWidth: '900px',
+          maxWidth: '1000px',
           borderBottom: `1px solid ${theme.palette.border}`,
         }}>
         <Logo />
