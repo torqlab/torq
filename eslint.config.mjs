@@ -80,7 +80,7 @@ export default tseslint.config(
 
       // Code style
       'no-console': [
-        'warn',
+        'error',
         {
           allow: ['info', 'warn', 'error'],
         },

@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/blockDangerousCommands.js"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "description": "Formats the edited file. Runs linter and tests to make sure changes are correct.",
+            "command": "sh \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/verifyCode.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

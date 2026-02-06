@@ -1,3 +1,5 @@
+console.info("hello world");
+
 /**
  * Timeout duration for the emoji animation in milliseconds.
  */
