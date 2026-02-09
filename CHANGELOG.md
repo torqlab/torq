@@ -10,7 +10,7 @@ See the [Changelog Manual](https://kb.epam.com/display/VCTXDSE/14.+Frontastic+De
 
 ## [1.6.0] - 2026-02-09
 
-### Added Claude Code Development Hooks and Cleanup
+### [28 Added Claude Code Development Hooks and Cleanup](https://github.com/mrbalov/pace/issues/28)
 
 ### Added
 - Claude Code development hooks for enhanced workflow automation:
