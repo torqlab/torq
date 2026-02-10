@@ -24,8 +24,9 @@ CURRENT_LINES=$(cat "$COUNTER_FILE" 2>/dev/null || echo "0")
 
 # Count lines added/modified and update session counter.
 if [ -f "$CHANGED_FILE_PATH" ]; then
-  # Get lines changed in this file.
-  LINES_CHANGED=$(git diff --stat HEAD "$CHANGED_FILE_PATH" 2>/dev/null | tail -1 | grep -o '[0-9]* insertion' | grep -o '[0-9]*' | head -1 || echo "0")
+  # Get lines added in this file using numstat (format: added<tab>deleted<tab>filename).
+  LINES_CHANGED=$(git diff --numstat HEAD -- "$CHANGED_FILE_PATH" 2>/dev/null | awk '{print $1}' || echo "0")
+  if [ "$LINES_CHANGED" = "" ] || [ "$LINES_CHANGED" = "-" ]; then LINES_CHANGED=0; fi
   NEW_TOTAL=$((CURRENT_LINES + LINES_CHANGED))
   
   # Check session line budget (1000 lines).
