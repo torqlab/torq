@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Initializes an AI TDD session.
+# Resets line count and outputs a TDD reminder.
+
 # Read hook input from stdin.
 INPUT=$(cat)
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id')

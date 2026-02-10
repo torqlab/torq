@@ -29,7 +29,7 @@ This project enforces strict Test-Driven Development (TDD) practices with automa
 - Failed tests block further changes until fixed
 - Use `bun test` (not Jest) as per project conventions
 
-## Test Patterns
+## Testing Principles
 
 Follow [project.md](../../../openspec/project.md).
 
@@ -131,9 +131,9 @@ Add validation, error handling, and additional test cases while keeping tests gr
 import { test, expect } from 'bun:test';
 import { validateEmail } from './validation.js';
 
-type ValidationCase = [string, { input: string; isValid: boolean }];
+type Case = [string, { input: string; isValid: boolean }];
 
-test.each<ValidationCase>([
+test.each<Case>([
   ['accepts valid email format', { input: 'user@domain.com', isValid: true }],
   ['rejects missing @ symbol', { input: 'userdomain.com', isValid: false }],
   ['rejects empty string', { input: '', isValid: false }],

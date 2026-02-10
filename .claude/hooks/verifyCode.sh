@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Verifies code quality and runs corresponding tests for changed files.
+# Reads the changed file path from stdin, checks if it's a code file,
+# runs eslint and prettier, then finds and runs the corresponding test file if it exists.
+# Blocks the session if tests fail.
+
 # Read entire stdin once.
 INPUT=$(cat)
 CHANGED_FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path')

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Tracks lines added/modified in a session and blocks if over 1000 lines.
+# Reads the changed file path and session ID from stdin,
+# counts lines changed using git diff, updates a session counter,
+# and blocks if the total exceeds 1000 lines.
+
 # Read entire stdin once.
 INPUT=$(cat)
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id')
