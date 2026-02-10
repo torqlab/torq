@@ -18,16 +18,32 @@
  * ```
  */
 
-// Read hook input from stdin.
-let input, filePath;
-try {
-  const stdinData = require('fs').readFileSync(0, 'utf8');
+/**
+ * Reads hook input from stdin and extracts the file path.
+ * Expects JSON input with a `tool_input.file_path` field indicating the file being processed.
+ * If the input is malformed or missing, it defaults to allowing the action.
+ * @returns {string} The file path being processed, or null if not found.
+ */
+function getFilePath() {
+  try {
+    const stdinData = require('fs').readFileSync(0, 'utf8');
+    const input = JSON.parse(stdinData);
+    const filePath = input.tool_input?.file_path;
 
-  input = JSON.parse(stdinData);
-  filePath = input.tool_input?.file_path;
-  
-  // Validate we have a file path.
-  if (!filePath) {
+    // Validate we have a file path.
+    if (!filePath) {
+      process.stdout.write(
+        JSON.stringify({
+          hookSpecificOutput: {
+            hookEventName: 'PreToolUse',
+            permissionDecision: 'allow'
+          }
+        })
+      );
+      process.exit(0);
+    }
+  } catch (error) {
+    // If we can't parse input, allow by default.
     process.stdout.write(
       JSON.stringify({
         hookSpecificOutput: {
@@ -38,17 +54,8 @@ try {
     );
     process.exit(0);
   }
-} catch (error) {
-  // If we can't parse input, allow by default.
-  process.stdout.write(
-    JSON.stringify({
-      hookSpecificOutput: {
-        hookEventName: 'PreToolUse',
-        permissionDecision: 'allow'
-      }
-    })
-  );
-  process.exit(0);
+
+  return filePath;
 }
 
 /**
@@ -145,7 +152,9 @@ function isNewFile(path) {
  * ```
  */
 function main() {
-  try {    
+  try {
+    const filePath = getFilePath();
+
     if (!isImplementationFile(filePath)) {
       // Allow non-implementation files.
       process.stdout.write(
