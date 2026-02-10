@@ -1,15 +1,15 @@
 ## Project Rules
 
-- ./AGENTS.md
-- ./openspec/AGENTS.md
-- ./openspec/project.md
-- ./openspec/CODE_STYLE.md
-- ./openspec/LINTING.md
-- ./openspec/TESTING.md
+- [AGENTS.md](./AGENTS.md)
+- [AGENTS.md](./openspec/AGENTS.md)
+- [project.md](./openspec/project.md)
+- [CODE_STYLE.md](./openspec/CODE_STYLE.md)
+- [LINTING.md](./openspec/LINTING.md)
+- [TESTING.md](./openspec/TESTING.md)
 
 ## Test-Driven Development
 
-1. Write tests FIRST before any implementation
+1. Write tests FIRST before any implementation, follow [TESTING.md](./openspec/TESTING.md)
 2. Present tests to the user with: "Please review and approve tests"
 3. WAIT for explicit user approval before proceeding
 4. NEVER write implementation code until tests are approved
