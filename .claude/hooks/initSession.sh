@@ -3,6 +3,10 @@
 # Initializes an AI TDD session.
 # Resets line count and outputs a TDD reminder.
 
+# Debug logging
+exec 2>/tmp/claude-hook-debug.log
+set -x
+
 # Read hook input from stdin.
 INPUT=$(cat)
 SESSION_ID=$(echo "$INPUT" | jq -r '.session_id')
@@ -24,7 +28,7 @@ fi
 
 # Output TDD workflow reminder.
 echo "You are a senior software engineer.
-Strictly follow AGENTS.md and project.md.
+Strictly follow project requirements from AGENTS.md and project.md files.
 Act in the TDD mode: Test file is required before the implementation.
 Line budget: 1000 lines/session.
 Current: $(cat "$COUNTER_FILE" 2>/dev/null || echo "0") lines used."

@@ -19,8 +19,41 @@
  */
 
 // Read hook input from stdin.
-const input = JSON.parse(require('fs').readFileSync(0, 'utf8'));
-const filePath = input.tool_input?.file_path;
+let input, filePath;
+try {
+  const stdinData = require('fs').readFileSync(0, 'utf8');
+  input = JSON.parse(stdinData);
+  filePath = input.tool_input?.file_path;
+  
+  // Debug logging to stderr (won't interfere with stdout JSON)
+  console.error(`TDD Hook Debug: filePath=${filePath}`);
+  
+  // Validate we have a file path
+  if (!filePath) {
+    console.error('TDD Hook: No file_path found in input, allowing by default');
+    process.stdout.write(
+      JSON.stringify({
+        hookSpecificOutput: {
+          hookEventName: 'PreToolUse',
+          permissionDecision: 'allow'
+        }
+      })
+    );
+    process.exit(0);
+  }
+} catch (error) {
+  // If we can't parse input, allow by default
+  console.error(`TDD Hook Error: ${error.message}`);
+  process.stdout.write(
+    JSON.stringify({
+      hookSpecificOutput: {
+        hookEventName: 'PreToolUse',
+        permissionDecision: 'allow'
+      }
+    })
+  );
+  process.exit(0);
+}
 
 /**
  * Only process implementation files (not test files, not config files)
@@ -116,56 +149,74 @@ function isNewFile(path) {
  * ```
  */
 function main() {
-  if (!isImplementationFile(filePath)) {
-    // Allow non-implementation files.
-    process.stdout.write(
-      JSON.stringify({
-        hookSpecificOutput: {
-          hookEventName: 'PreToolUse',
-          permissionDecision: 'allow'
-        }
-      }),
-    );
-    process.exit(0);
-  }
+  try {
+    console.error(`TDD Hook: Processing ${filePath}, isImplementationFile=${isImplementationFile(filePath)}`);
+    
+    if (!isImplementationFile(filePath)) {
+      // Allow non-implementation files.
+      process.stdout.write(
+        JSON.stringify({
+          hookSpecificOutput: {
+            hookEventName: 'PreToolUse',
+            permissionDecision: 'allow'
+          }
+        })
+      );
+      process.exit(0);
+    }
 
-  const testFilePath = getTestFilePath(filePath);
-  const testFileExists = fileExists(testFilePath);
-  
-  if (isNewFile(filePath) && !testFileExists) {
-    // Strict enforcement: new implementation files require test files first.
-    process.stdout.write(
-      JSON.stringify({
-        hookSpecificOutput: {
-          hookEventName: 'PreToolUse',
-          permissionDecision: 'deny',
-          permissionDecisionReason: `TDD violation: Test file ${testFilePath} must be created before implementing ${filePath}`
-        }
-      }),
-    );
-    process.exit(0);
-  } else if (!testFileExists) {
-    // Legacy file: warn but allow (gradual adoption).
-    process.stdout.write(
-      JSON.stringify({
-        systemMessage: `WARNING: No test file found for ${filePath}. Consider creating ${testFilePath}`,
-        hookSpecificOutput: {
-          hookEventName: 'PreToolUse',
-          permissionDecision: 'allow',
-          additionalContext: `WARNING: No test file found for ${filePath}. TDD best practice: create ${testFilePath}`
-        }
-      }),
-    );
-    process.exit(0);
-  } else {
-    // Test file exists - allow.
+    const testFilePath = getTestFilePath(filePath);
+    const testFileExists = fileExists(testFilePath);
+    
+    console.error(`TDD Hook: testFilePath=${testFilePath}, testFileExists=${testFileExists}, isNewFile=${isNewFile(filePath)}`);
+    
+    if (isNewFile(filePath) && !testFileExists) {
+      // Strict enforcement: new implementation files require test files first.
+      process.stdout.write(
+        JSON.stringify({
+          hookSpecificOutput: {
+            hookEventName: 'PreToolUse',
+            permissionDecision: 'deny',
+            permissionDecisionReason: `TDD violation: Test file ${testFilePath} must be created before implementing ${filePath}`
+          }
+        })
+      );
+      process.exit(0);
+    } else if (!testFileExists) {
+      // Legacy file: warn but allow (gradual adoption).
+      process.stdout.write(
+        JSON.stringify({
+          systemMessage: `WARNING: No test file found for ${filePath}. Consider creating ${testFilePath}`,
+          hookSpecificOutput: {
+            hookEventName: 'PreToolUse',
+            permissionDecision: 'allow',
+            additionalContext: `WARNING: No test file found for ${filePath}. TDD best practice: create ${testFilePath}`
+          }
+        })
+      );
+      process.exit(0);
+    } else {
+      // Test file exists - allow.
+      process.stdout.write(
+        JSON.stringify({
+          hookSpecificOutput: {
+            hookEventName: 'PreToolUse',
+            permissionDecision: 'allow'
+          }
+        })
+      );
+      process.exit(0);
+    }
+  } catch (error) {
+    console.error(`TDD Hook Main Error: ${error.message}`);
+    // On any error, allow by default
     process.stdout.write(
       JSON.stringify({
         hookSpecificOutput: {
           hookEventName: 'PreToolUse',
           permissionDecision: 'allow'
         }
-      }),
+      })
     );
     process.exit(0);
   }
