@@ -11,6 +11,13 @@ This project enforces strict Test-Driven Development (TDD) practices with automa
 
 Follow principles stated in `AGENTS.md` and `project.md`. Carefully review requirements before writing the code.
 
+## References
+
+- [project.md](../../../openspec/project.md)
+- [CODE_STYLE.md](../../../openspec/CODE_STYLE.md)
+- [LINTING.md](../../../openspec/LINTING.md)
+- [TESTING.md](../../../openspec/TESTING.md)
+
 ## TDD Requirements
 
 ### 1. Test-First Approach (Mandatory)
@@ -31,10 +38,6 @@ Follow principles stated in `AGENTS.md` and `project.md`. Carefully review requi
 - All tests must pass before edits are considered complete
 - Failed tests block further changes until fixed
 - Use `bun test` (not Jest) as per project conventions
-
-## Testing Principles
-
-Follow [project.md](../../../openspec/project.md).
 
 ## Red-Green-Refactor Cycle
 
