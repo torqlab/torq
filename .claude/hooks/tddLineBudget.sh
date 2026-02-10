@@ -20,14 +20,23 @@ mkdir -p "$CLAUDE_PROJECT_DIR/tmp"
 
 # Session line tracking.
 COUNTER_FILE="$CLAUDE_PROJECT_DIR/tmp/claude-session-$SESSION_ID-lines"
+PROCESSED_FILES="$CLAUDE_PROJECT_DIR/tmp/claude-session-$SESSION_ID-files"
 CURRENT_LINES=$(cat "$COUNTER_FILE" 2>/dev/null || echo "0")
 
 # Count lines added/modified and update session counter.
 if [ -f "$CHANGED_FILE_PATH" ]; then
-  # Get lines added in this file using numstat (format: added<tab>deleted<tab>filename).
-  LINES_CHANGED=$(git diff --numstat HEAD -- "$CHANGED_FILE_PATH" 2>/dev/null | awk '{print $1}' || echo "0")
-  if [ "$LINES_CHANGED" = "" ] || [ "$LINES_CHANGED" = "-" ]; then LINES_CHANGED=0; fi
-  NEW_TOTAL=$((CURRENT_LINES + LINES_CHANGED))
+  # Check if we've already counted this file in this session to avoid double-counting.
+  if ! grep -Fxq "$CHANGED_FILE_PATH" "$PROCESSED_FILES" 2>/dev/null; then
+    # Count total lines in the file directly (works for new/untracked files).
+    LINES_IN_FILE=$(wc -l < "$CHANGED_FILE_PATH" 2>/dev/null | tr -d ' ' || echo "0")
+    NEW_TOTAL=$((CURRENT_LINES + LINES_IN_FILE))
+    
+    # Mark file as processed.
+    echo "$CHANGED_FILE_PATH" >> "$PROCESSED_FILES"
+  else
+    # File already counted, no additional lines.
+    NEW_TOTAL=$CURRENT_LINES
+  fi
   
   # Check session line budget (1000 lines).
   if [ "$NEW_TOTAL" -gt 1000 ]; then
@@ -35,8 +44,10 @@ if [ -f "$CHANGED_FILE_PATH" ]; then
     exit 2
   fi
   
-  # Update counter.
-  echo "$NEW_TOTAL" > "$COUNTER_FILE"
+  # Update counter only if we added new lines.
+  if [ "$NEW_TOTAL" -gt "$CURRENT_LINES" ]; then
+    echo "$NEW_TOTAL" > "$COUNTER_FILE"
+  fi
 fi
 
 # Success.
