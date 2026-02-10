@@ -9,6 +9,8 @@ description: TODO
 
 This project enforces strict Test-Driven Development (TDD) practices with automated hooks that ensure tests are written before implementation and maintain quality standards.
 
+Follow principles stated in `AGENTS.md` and `project.md`. Carefully review requirements before writing the code.
+
 ## TDD Requirements
 
 ### 1. Test-First Approach (Mandatory)
