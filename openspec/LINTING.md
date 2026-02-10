@@ -16,7 +16,6 @@ This project uses ESLint to enforce code quality and consistency rules.
   - Type annotations required
   - Prefer arrow functions
   - Node.js built-ins must use `node:` prefix
-- **Limitations**: Some rules from project.md require manual review (see `LINTING.md` for details)
 - **Code Quality Requirements**: See "Code Quality Requirements" section below for requirements about running tests and linter together after code changes
 
 ## Quick Start

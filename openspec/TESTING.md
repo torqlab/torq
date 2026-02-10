@@ -41,7 +41,7 @@
 - **Linter commands**:
   - Run linter: Use `bun run lint` from the root directory to check for linting errors
   - Fix linter issues: Prefer using `bun run lint:fix` command to auto-fix linting issues where possible
-  - Manual fixes: For issues that cannot be auto-fixed, manually fix them according to the rules in `LINTING.md`
+  - Manual fixes: For issues that cannot be auto-fixed, manually fix them according to the rules in [LINTING.md](./LINTING.md)
 - **Review results**: Always review both test results and linting results to ensure code quality
 - **Fix all issues**: All failing tests and linting errors MUST be fixed before the changes are considered complete
 - **Before committing**: Ensure both all tests pass AND linting passes before committing code changes
