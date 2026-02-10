@@ -38,48 +38,9 @@ Follow [project.md](../../../openspec/project.md).
 
 ## Red-Green-Refactor Cycle
 
-### Step 1: Red (Failing Test)
-
-```typescript
-// user.test.ts
-import { test, expect } from 'bun:test';
-import { createUser } from './user.js';
-
-test('creates user with valid email', () => {
-  const result = createUser({ email: 'test@example.com', name: 'Test' });
-  expect(result).toStrictEqual({
-    id: expect.any(String),
-    email: 'test@example.com',
-    name: 'Test',
-    createdAt: expect.any(Date)
-  });
-});
-```
-
-### Step 2: Green (Minimal Implementation)
-
-```typescript
-// user.ts
-export type User = {
-  id: string;
-  email: string;
-  name: string;
-  createdAt: Date;
-};
-
-export const createUser = (input: { email: string; name: string }): User => {
-  return {
-    id: crypto.randomUUID(),
-    email: input.email,
-    name: input.name,
-    createdAt: new Date()
-  };
-};
-```
-
-### Step 3: Refactor (Improve Code)
-
-Add validation, error handling, and additional test cases while keeping tests green.
+- Step 1: Red (Failing Test).
+- Step 2: Green (Minimal Implementation).
+- Step 3: Refactor (Improve Code). Add validation, error handling, and additional test cases while keeping tests green.
 
 ## Hook Behavior
 
