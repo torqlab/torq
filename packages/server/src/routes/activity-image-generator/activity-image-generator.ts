@@ -1,10 +1,7 @@
 import { fetchStravaActivity, type StravaApiConfig } from '@pace/strava-api';
 import getStravaActivitySignals from '@pace/get-strava-activity-signals';
 
-import {
-  createActivityImageGenerationPrompt,
-  generateImage,
-} from '@pace/activity-image-generator';
+import { createActivityImageGenerationPrompt, generateImage } from '@pace/activity-image-generator';
 
 import { getTokens } from '../../cookies';
 import type { ServerConfig, ServerTokenResult } from '../../types';

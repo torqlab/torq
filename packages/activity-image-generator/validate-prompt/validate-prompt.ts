@@ -1,10 +1,7 @@
 import checkForbiddenContent from '@pace/check-forbidden-content';
 
 import { CONFIG } from '../constants';
-import {
-  StravaActivityImagePrompt,
-  StravaActivityImagePromptValidationResult,
-} from '../types';
+import { StravaActivityImagePrompt, StravaActivityImagePromptValidationResult } from '../types';
 
 /**
  * Validates activity image prompt according to guardrails specification.
