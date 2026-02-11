@@ -6,6 +6,24 @@ Please, document here only changes visible to the client app.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-02-11
+
+### [23 Added Strava Activity Signals Extraction Package](https://github.com/mrbalov/pace/issues/23)
+
+### Added
+- New `@pace/strava-activity-signals` package for extracting semantic signals from Strava activity data
+- Activity validation module to ensure data integrity before processing
+- Intensity classification based on activity pace (Easy, Moderate, Hard, Threshold, Max Effort)
+- Elevation classification based on total elevation gain (Flat, Rolling, Hilly, Mountainous)
+- Time of day signal extraction from activity timestamps (Early Morning, Morning, Midday, Afternoon, Evening, Night)
+- Tag extraction and normalization from activity metadata
+- Semantic context extraction from activity name and description using NER techniques
+- Forbidden content checking to filter inappropriate language
+- Pace calculation utility converting speed to seconds per kilometer
+- Text sanitization utility for cleaning and normalizing user input
+- Comprehensive signal validation with sanitization fallbacks
+- Full test coverage for all signal extraction modules (3689 lines of tests and implementation)
+
 ## [1.7.0] - 2026-02-10
 
 ### [28 Introduced Test-Driven Development (TDD) Enforcement and Enhanced Development Workflow](https://github.com/mrbalov/pace/issues/28)
