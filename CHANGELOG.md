@@ -6,6 +6,24 @@ Please, document here only changes visible to the client app.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.1] - 2026-02-11
+
+### [23 Refactored Activity Signals Usage and Extracted Shared Validation Components](https://github.com/mrbalov/pace/issues/23)
+
+### Added
+- New `@pace/check-forbidden-content` shared package for content validation across multiple packages
+- Simplified `validate-prompt` module in activity-image-generator package
+
+### Changed
+- Refactored `activity-image-generator` package to use `@pace/get-strava-activity-signals` for signal extraction instead of internal implementation
+- Moved forbidden content checking from multiple packages to shared `@pace/check-forbidden-content` package
+- Improved separation of concerns with activity-image-generator now focused solely on prompt creation and image generation
+
+### Removed
+- Signal extraction modules from activity-image-generator package (moved to get-strava-activity-signals)
+- Complex guardrails system from activity-image-generator package (replaced with simpler validation)
+- Duplicate forbidden content checking implementations across packages
+
 ## [1.9.0] - 2026-02-11
 
 ### [23 Refactored Strava Activity Signals Package Structure and Added New Signal Extractors](https://github.com/mrbalov/pace/issues/23)

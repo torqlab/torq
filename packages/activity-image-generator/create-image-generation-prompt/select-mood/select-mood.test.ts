@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'bun:test';
+import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
+
 import selectMood from './select-mood';
-import { StravaActivitySignals } from '../../types';
 
 type Case = [
   string,
@@ -75,20 +76,6 @@ describe('select-mood', () => {
           tags: [],
         },
         expectedMood: 'focused',
-      },
-    ],
-    [
-      'sunny weather selects energetic mood',
-      {
-        signals: {
-          activityType: 'Run',
-          intensity: 'medium',
-          elevation: 'flat',
-          timeOfDay: 'day',
-          tags: [],
-          weather: 'sunny',
-        },
-        expectedMood: 'energetic',
       },
     ],
   ])('%s', (_name, { signals, expectedMood }) => {

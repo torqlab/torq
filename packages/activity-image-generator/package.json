@@ -3,5 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "index.ts"
+  "main": "index.ts",
+  "dependencies": {
+    "@pace/check-forbidden-content": "workspace:*"
+  },
+  "devDependencies": {
+    "@pace/get-strava-activity-signals": "workspace:*"
+  }
 }

@@ -1,4 +1,4 @@
-import checkForbiddenContent from '../check-forbidden-content';
+import checkForbiddenContent from '@pace/check-forbidden-content';
 
 /**
  * Sanitizes user-provided text by removing forbidden content.

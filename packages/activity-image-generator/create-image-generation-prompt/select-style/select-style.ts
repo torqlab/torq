@@ -1,4 +1,4 @@
-import { StravaActivitySignals } from '../../types';
+import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
 
 /**
  * Selects visual style for image generation based on activity signals.
@@ -10,7 +10,6 @@ import { StravaActivitySignals } from '../../types';
  * - High intensity + (Run|Ride|Trail Run) → illustrated
  * - Recovery/easy tags → minimal
  * - High elevation → illustrated
- * - Foggy weather → abstract
  * - Default → cartoon
  *
  * @param {StravaActivitySignals} signals - Activity signals to base style selection on
@@ -19,8 +18,7 @@ import { StravaActivitySignals } from '../../types';
 const selectStyle = (
   signals: StravaActivitySignals,
 ): 'cartoon' | 'minimal' | 'abstract' | 'illustrated' => {
-  const hasRecoveryTag = signals.tags.includes('recovery') || signals.tags.includes('easy');
-  const isFoggy = signals.weather === 'foggy';
+  const hasRecoveryTag = signals.tags?.includes('recovery') || signals.tags?.includes('easy');
   const isMountainous = signals.elevation === 'mountainous';
   const isHighIntensity = signals.intensity === 'high';
   const highIntensityActivities = ['Run', 'Ride', 'TrailRun'];
@@ -29,8 +27,6 @@ const selectStyle = (
   const result = (() => {
     if (hasRecoveryTag) {
       return 'minimal';
-    } else if (isFoggy) {
-      return 'abstract';
     } else if (isMountainous) {
       return 'illustrated';
     } else if (isHighIntensity && isHighIntensityActivity) {

@@ -1,5 +1,7 @@
-import { StravaActivitySignals, StravaActivityImagePrompt } from '../types';
-import { validateActivityImagePrompt } from '../guardrails';
+import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
+
+import { StravaActivityImagePrompt } from '../types';
+import validatePrompt from '../validate-prompt';
 import selectStyle from './select-style';
 import selectMood from './select-mood';
 import composeScene from './compose-scene';
@@ -52,7 +54,7 @@ const createImageGenerationPrompt = (signals: StravaActivitySignals): StravaActi
   };
 
   // Validate prompt
-  const validation = validateActivityImagePrompt(prompt);
+  const validation = validatePrompt(prompt);
 
   const result = (() => {
     if (!validation.valid) {

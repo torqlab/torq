@@ -1,9 +1,8 @@
 import { fetchStravaActivity, type StravaApiConfig } from '@pace/strava-api';
-import {
-  getActivitySignals,
-  createActivityImageGenerationPrompt,
-  generateImage,
-} from '@pace/activity-image-generator';
+import getStravaActivitySignals from '@pace/get-strava-activity-signals';
+
+import { createActivityImageGenerationPrompt, generateImage } from '@pace/activity-image-generator';
+
 import { getTokens } from '../../cookies';
 import type { ServerConfig, ServerTokenResult } from '../../types';
 import { ERROR_CODES, ERROR_MESSAGES, STATUS_CODES } from './constants';
@@ -142,7 +141,7 @@ const processActivityAndCreateResponse = async (
   const provider = 'pollinations';
   const activityConfig = createActivityConfig(tokens, config);
   const activity = await fetchStravaActivity(activityId, activityConfig);
-  const signals = activity ? getActivitySignals(activity) : null;
+  const signals = activity ? getStravaActivitySignals(activity) : null;
   const prompt = signals ? createActivityImageGenerationPrompt(signals) : null;
   const image = await (async () => {
     if (prompt) {

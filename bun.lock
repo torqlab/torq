@@ -22,6 +22,15 @@
       "name": "@pace/activity-image-generator",
       "version": "0.1.0",
     },
+    "packages/check-forbidden-content": {
+      "name": "@pace/check-forbidden-content",
+    },
+    "packages/get-strava-activity-signals": {
+      "name": "@pace/get-strava-activity-signals",
+      "dependencies": {
+        "@pace/check-forbidden-content": "workspace:*",
+      },
+    },
     "packages/server": {
       "name": "@pace/server",
       "version": "1.0.0",
@@ -263,6 +272,10 @@
     "@oven/bun-windows-x64-baseline": ["@oven/bun-windows-x64-baseline@1.3.6", "", { "os": "win32", "cpu": "x64" }, "sha512-PFUa7JL4lGoyyppeS4zqfuoXXih+gSE0XxhDMrCPVEUev0yhGNd/tbWBvcdpYnUth80owENoGjc8s5Knopv9wA=="],
 
     "@pace/activity-image-generator": ["@pace/activity-image-generator@workspace:packages/activity-image-generator"],
+
+    "@pace/check-forbidden-content": ["@pace/check-forbidden-content@workspace:packages/check-forbidden-content"],
+
+    "@pace/get-strava-activity-signals": ["@pace/get-strava-activity-signals@workspace:packages/get-strava-activity-signals"],
 
     "@pace/server": ["@pace/server@workspace:packages/server"],
 

@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'bun:test';
+
 import validateActivityImagePrompt from './validate-prompt';
-import { StravaActivityImagePrompt } from '../../types';
+import { StravaActivityImagePrompt } from '../types';
 
 type Case = [
   string,

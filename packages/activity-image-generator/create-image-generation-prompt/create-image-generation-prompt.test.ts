@@ -1,7 +1,8 @@
 import { describe, test, expect } from 'bun:test';
+import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
+
 import generatePrompt from './create-image-generation-prompt';
-import { StravaActivitySignals } from '../types';
-import { validateActivityImagePrompt } from '../guardrails';
+import validatePrompt from '../validate-prompt';
 
 describe('generate-prompt', () => {
   test('generates valid prompt from signals', () => {
@@ -22,7 +23,7 @@ describe('generate-prompt', () => {
     expect(prompt.text.length).toBeLessThanOrEqual(600);
 
     // Validate the prompt
-    const validation = validateActivityImagePrompt(prompt);
+    const validation = validatePrompt(prompt);
     expect(validation.valid).toBe(true);
   });
 

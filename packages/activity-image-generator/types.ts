@@ -17,28 +17,6 @@ export interface ValidationResult<T = unknown> {
 }
 
 /**
- * Activity signals extracted from activity data.
- */
-export interface StravaActivitySignals {
-  /** Activity type from sport_type field. */
-  activityType: string;
-  /** Intensity classification. */
-  intensity: 'low' | 'medium' | 'high';
-  /** Elevation classification. */
-  elevation: 'flat' | 'rolling' | 'mountainous';
-  /** Time of day classification. */
-  timeOfDay: 'morning' | 'day' | 'evening' | 'night';
-  /** Weather condition if available. */
-  weather?: 'sunny' | 'rainy' | 'cloudy' | 'foggy';
-  /** Normalized tags from activity. */
-  tags: string[];
-  /** Extracted brand names from gear/description (if compliant). */
-  brands?: string[];
-  /** Safe semantic signals extracted from user text. */
-  semanticContext?: string[];
-}
-
-/**
  * Image generation prompt structure.
  */
 export interface StravaActivityImagePrompt {
@@ -53,3 +31,5 @@ export interface StravaActivityImagePrompt {
   /** Full assembled prompt text (max 600 characters). */
   text: string;
 }
+
+export type StravaActivityImagePromptValidationResult = ValidationResult<StravaActivityImagePrompt>;

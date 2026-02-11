@@ -1,4 +1,4 @@
-import { StravaActivitySignals } from '../../types';
+import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
 
 /**
  * Activity type to subject mapping.
@@ -18,8 +18,8 @@ const ACTIVITY_SUBJECTS: Record<string, string> = {
  * Composes scene description from activity signals.
  *
  * Builds environment description based on activity type, elevation,
- * time of day, and weather. Scene composition follows priority order:
- * base environment → terrain → weather → lighting → atmosphere.
+ * and time of day. Scene composition follows priority order:
+ * base environment → terrain → lighting → atmosphere.
  *
  * Scene composition priority:
  * 1. Base environment (from activity type)
@@ -51,17 +51,6 @@ const composeScene = (signals: StravaActivitySignals): { subject: string; scene:
     sceneParts.push('rolling hills');
   } else {
     sceneParts.push('flat terrain');
-  }
-
-  // Weather elements
-  if (signals.weather === 'sunny') {
-    sceneParts.push('bright clear sky');
-  } else if (signals.weather === 'rainy') {
-    sceneParts.push('rainy atmosphere');
-  } else if (signals.weather === 'cloudy') {
-    sceneParts.push('cloudy sky');
-  } else if (signals.weather === 'foggy') {
-    sceneParts.push('misty fog');
   }
 
   // Lighting from time of day

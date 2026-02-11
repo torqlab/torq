@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'bun:test';
+import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
+
 import selectStyle from './select-style';
-import { StravaActivitySignals } from '../../types';
 
 type Case = [
   string,
@@ -23,20 +24,6 @@ describe('select-style', () => {
           tags: ['recovery'],
         },
         expectedStyle: 'minimal',
-      },
-    ],
-    [
-      'foggy weather selects abstract style',
-      {
-        signals: {
-          activityType: 'Run',
-          intensity: 'medium',
-          elevation: 'flat',
-          timeOfDay: 'day',
-          tags: [],
-          weather: 'foggy',
-        },
-        expectedStyle: 'abstract',
       },
     ],
     [

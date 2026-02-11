@@ -1,5 +1,6 @@
+import checkForbiddenContent from '@pace/check-forbidden-content';
+
 import { StravaActivitySignals, StravaActivitySignalsValidationResult } from '../types';
-import checkForbiddenContent from '../check-forbidden-content';
 import { ELEVATIONS, INTENSITIES, TIMES_OF_DAY } from '../constants';
 
 /**

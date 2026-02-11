@@ -1,0 +1,5 @@
+{
+  "name": "@pace/check-forbidden-content",
+  "private": true,
+  "type": "module"
+}
