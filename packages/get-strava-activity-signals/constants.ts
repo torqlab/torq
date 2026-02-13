@@ -100,4 +100,82 @@ export const CLASSIFICATIONS = {
     /** Night start hour (0-23). */
     NIGHT_START: 20,
   },
+
+  SUBJECTS: {
+    Run: 'runner',
+    Ride: 'cyclist',
+    TrailRun: 'trail runner',
+    Walk: 'walker',
+    Hike: 'hiker',
+    Swim: 'swimmer',
+    VirtualRide: 'cyclist',
+    VirtualRun: 'runner',
+    Other: 'athlete',
+  } as const,
+
+  STYLES: [
+    'cartoon',
+    'minimal',
+    'abstract',
+    'illustrated',
+  ] as const,
+
+  MOODS: [
+    'calm',
+    'intense',
+    'routine',
+    'playful',
+    'calm',
+    'intense',
+    'focused',
+    'focused',
+  ] as const,
+
+  TERRAINS: [
+    'mountainous terrain',
+    'rolling hills',
+    'flat terrain',
+  ] as const,
+
+  ENVIRONMENTS: [
+    'indoor training space',
+    'outdoor training space',
+  ] as const,
+
+  ATMOSPHERES: [
+    'soft morning light',
+    'bright daylight',
+    'warm evening glow',
+    'dark night atmosphere',
+    'soft neutral light',
+  ] as const,
 };
+
+export const CLASSIFICATION_SUBJECTS = [
+  'runner',
+  'cyclist',
+  'trail runner',
+  'walker',
+  'hiker',
+  'swimmer',
+  'cyclist',
+  'runner',
+  'athlete',
+] as const;
+
+export const ACTIVITY_TYPES_TO_CLASSIFICATION_SUBJECTS: Record<
+string,
+typeof CLASSIFICATION_SUBJECTS[number]
+> = {
+  Run: 'runner',
+  Ride: 'cyclist',
+  TrailRun: 'trail runner',
+  Walk: 'walker',
+  Hike: 'hiker',
+  Swim: 'swimmer',
+  VirtualRide: 'cyclist',
+  VirtualRun: 'runner',
+  Other: 'athlete',
+};
+
+export const CLASSIFICATION_SUBJECT_DEFAULT: typeof CLASSIFICATION_SUBJECTS[number] = 'athlete';

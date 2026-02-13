@@ -1,7 +1,6 @@
-import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
-
-import { StravaActivityImageGenerationPromptStyle } from '../types';
+import { StravaActivitySignalsStyle } from '../types';
 import { HIGH_INTENSITY_ACTIVITIES } from './constants';
+import { Input } from './types';
 
 /**
  * Selects visual style for image generation based on activity signals.
@@ -18,18 +17,21 @@ import { HIGH_INTENSITY_ACTIVITIES } from './constants';
  * @param {StravaActivitySignals} signals - Activity signals to base style selection on.
  * @returns {StravaActivityImageGenerationPromptStyle} Selected visual style.
  */
-const selectStyle = (
-  signals: StravaActivitySignals,
-): StravaActivityImageGenerationPromptStyle => {
+const classifyStyle = ({
+  tags,
+  elevation,
+  intensity,
+  activityType,
+}: Input): StravaActivitySignalsStyle => {
   const hasRecoveryTag = (
-    signals.tags?.includes('recovery')
-    || signals.tags?.includes('easy')
+    tags?.includes('recovery')
+    || tags?.includes('easy')
   );
-  const isMountainous = signals.elevation === 'mountainous';
-  const isHighIntensity = signals.intensity === 'high';
-  const isHighIntensityActivity = HIGH_INTENSITY_ACTIVITIES.includes(
-    signals.activityType,
-  );
+  const isMountainous = elevation === 'mountainous';
+  const isHighIntensity = intensity === 'high';
+  const isHighIntensityActivity = activityType
+    ? HIGH_INTENSITY_ACTIVITIES.includes(activityType)
+    : false;
 
   if (hasRecoveryTag) {
     return 'minimal';
@@ -42,4 +44,4 @@ const selectStyle = (
   }
 };
 
-export default selectStyle;
+export default classifyStyle;

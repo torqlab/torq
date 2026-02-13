@@ -1,13 +1,12 @@
 import { describe, test, expect } from 'bun:test';
 import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
 
-import { StravaActivityImageGenerationPrompt } from './types';
 import getStravaActivityImageGenerationPrompt from './get-strava-activity-image-generation-prompt';
 
 type Case = [
   string,
   StravaActivitySignals,
-  StravaActivityImageGenerationPrompt,
+  string,
 ];
 
 describe('generate-prompt', () => {
@@ -21,7 +20,7 @@ describe('generate-prompt', () => {
         timeOfDay: 'day',
         tags: [],
       },
-      {},
+      '',
     ],
     [
       'generates prompt with recovery tag',
@@ -32,7 +31,7 @@ describe('generate-prompt', () => {
         timeOfDay: 'day',
         tags: ['recovery'],
       },
-      {},
+      '',
     ],
     [
       'generates prompt with high intensity',
@@ -43,7 +42,7 @@ describe('generate-prompt', () => {
         timeOfDay: 'day',
         tags: [],
       },
-      {},
+      '',
     ],
   ])(
     '%#. %s',

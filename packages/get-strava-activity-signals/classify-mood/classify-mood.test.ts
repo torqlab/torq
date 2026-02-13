@@ -1,24 +1,21 @@
 import { describe, test, expect } from 'bun:test';
-import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
 
-import selectMood from './select-mood';
-import { StravaActivityImageGenerationPromptMood } from '../types';
+import classifyMood from './classify-mood';
+import { StravaActivitySignalsMood } from '../types';
+import { Input } from './types';
 
 type Case = [
   string,
-  StravaActivitySignals,
-  StravaActivityImageGenerationPromptMood,
+  Input,
+  StravaActivitySignalsMood,
 ];
 
-describe('select-mood', () => {
+describe('classify-mood', () => {
   test.each<Case>([
     [
       'recovery tag selects calm mood',
       {
-        activityType: 'Run',
         intensity: 'medium',
-        elevation: 'flat',
-        timeOfDay: 'day',
         tags: ['recovery'],
       },
       'calm',
@@ -26,10 +23,7 @@ describe('select-mood', () => {
     [
       'race tag selects intense mood',
       {
-        activityType: 'Run',
         intensity: 'medium',
-        elevation: 'flat',
-        timeOfDay: 'day',
         tags: ['race'],
       },
       'intense',
@@ -37,10 +31,7 @@ describe('select-mood', () => {
     [
       'low intensity selects calm mood',
       {
-        activityType: 'Run',
         intensity: 'low',
-        elevation: 'flat',
-        timeOfDay: 'day',
         tags: [],
       },
       'calm',
@@ -48,10 +39,7 @@ describe('select-mood', () => {
     [
       'high intensity selects intense mood',
       {
-        activityType: 'Run',
         intensity: 'high',
-        elevation: 'flat',
-        timeOfDay: 'day',
         tags: [],
       },
       'intense',
@@ -59,16 +47,13 @@ describe('select-mood', () => {
     [
       'medium intensity selects focused mood',
       {
-        activityType: 'Run',
         intensity: 'medium',
-        elevation: 'flat',
-        timeOfDay: 'day',
         tags: [],
       },
       'focused',
     ],
   ])('%#. %s', (_name, signals, expected) => {
-    const result = selectMood(signals);
+    const result = classifyMood(signals);
 
     expect(result).toBe(expected);
   });

@@ -1,4 +1,10 @@
-import { ELEVATIONS, INTENSITIES, TIMES_OF_DAY } from './constants';
+import {
+  CLASSIFICATION_SUBJECTS,
+  CLASSIFICATIONS,
+  ELEVATIONS,
+  INTENSITIES,
+  TIMES_OF_DAY,
+} from './constants';
 
 /**
  * Strava Activity type.
@@ -66,23 +72,34 @@ export type StravaActivitySignalsIntensity = (typeof INTENSITIES)[number];
 
 export type StravaActivitySignalsTimeOfDay = (typeof TIMES_OF_DAY)[number];
 
+export type StravaActivitySignalsStyle = (typeof CLASSIFICATIONS.STYLES)[number];
+
+export type StravaActivitySignalsMood = (typeof CLASSIFICATIONS.MOODS)[number];
+
+export type StravaActivitySignalsTerrain = (typeof CLASSIFICATIONS.TERRAINS)[number];
+
+export type StravaActivitySignalsEnvironment = (typeof CLASSIFICATIONS.ENVIRONMENTS)[number];
+
+export type StravaActivitySignalsAtmosphere = (typeof CLASSIFICATIONS.ATMOSPHERES)[number];
+
+export type StravaActivitySignalsSubject = typeof CLASSIFICATION_SUBJECTS[number];
+
 /**
  * Strava activity signals extracted from the Strava activity data.
  */
 export interface StravaActivitySignals {
-  /** Activity type from sport_type field. */
   activityType: string;
-  /** Intensity classification. */
-  intensity?: StravaActivitySignalsIntensity;
-  /** Elevation classification. */
-  elevation?: StravaActivitySignalsElevation;
-  /** Time of day classification. */
-  timeOfDay?: StravaActivitySignalsTimeOfDay;
-  /** Normalized tags from activity. */
+  mood: StravaActivitySignalsMood;
+  style: StravaActivitySignalsStyle;
+  subject: StravaActivitySignalsSubject;
+  terrain: StravaActivitySignalsTerrain;
+  environment: StravaActivitySignalsEnvironment;
+  atmosphere: StravaActivitySignalsAtmosphere;
+  intensity: StravaActivitySignalsIntensity;
+  elevation: StravaActivitySignalsElevation;
+  timeOfDay: StravaActivitySignalsTimeOfDay;
   tags?: string[];
-  /** Extracted brand names from gear/description (if compliant). */
   brands?: string[];
-  /** Safe semantic signals extracted from user text. */
   semanticContext?: string[];
 }
 

@@ -1,10 +1,6 @@
 import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
 
-import { StravaActivityImageGenerationPrompt } from './types';
 import validatePrompt from './validate-prompt';
-import selectStyle from './select-style';
-import selectMood from './select-mood';
-import composeScene from './compose-scene';
 import assemblePrompt from './assemble-prompt';
 import { DEFAULT_PROMPT } from './constants';
 
@@ -29,33 +25,16 @@ import { DEFAULT_PROMPT } from './constants';
  */
 const getStravaActivityImageGenerationPrompt = (
   signals: StravaActivitySignals,
-): StravaActivityImageGenerationPrompt => {
-  const style = selectStyle(signals);
-  const mood = selectMood(signals);
-  const { subject, scene } = composeScene(signals);
-  const text = assemblePrompt({
-    style,
-    mood,
-    subject,
-    scene,
-  });
-  const prompt: StravaActivityImageGenerationPrompt = {
-    style,
-    mood,
-    subject,
-    scene,
-    text,
-  };
-  const validation = validatePrompt(prompt);
+): string => {
+  const prompt = assemblePrompt(signals);
+  const { valid, errors } = validatePrompt(prompt);
 
-  if (!validation.valid) {
-    if (validation.sanitized) {
-      return validation.sanitized;
-    } else {
-      return DEFAULT_PROMPT;
-    }
-  } else {
+  if (valid) {
     return prompt;
+  } else {
+    console.error('Prompt validation failed:', errors);
+
+    return DEFAULT_PROMPT;
   }
 };
 

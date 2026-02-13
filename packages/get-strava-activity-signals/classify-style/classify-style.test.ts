@@ -1,16 +1,16 @@
 import { describe, test, expect } from 'bun:test';
-import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
 
-import selectStyle from './select-style';
-import { StravaActivityImageGenerationPromptStyle } from '../types';
+import { Input } from './types';
+import classifyStyle from './classify-style';
+import { StravaActivitySignalsStyle } from '../types';
 
 type Case = [
   string,
-  StravaActivitySignals,
-  StravaActivityImageGenerationPromptStyle,
+  Input,
+  StravaActivitySignalsStyle,
 ];
 
-describe('select-style', () => {
+describe('classify-style', () => {
   test.each<Case>([
     [
       'recovery tag selects minimal style',
@@ -18,7 +18,6 @@ describe('select-style', () => {
         activityType: 'Run',
         intensity: 'medium',
         elevation: 'flat',
-        timeOfDay: 'day',
         tags: ['recovery'],
       },
       'minimal',
@@ -29,7 +28,6 @@ describe('select-style', () => {
         activityType: 'Run',
         intensity: 'medium',
         elevation: 'mountainous',
-        timeOfDay: 'day',
         tags: [],
       },
       'illustrated',
@@ -40,7 +38,6 @@ describe('select-style', () => {
         activityType: 'Run',
         intensity: 'high',
         elevation: 'flat',
-        timeOfDay: 'day',
         tags: [],
       },
       'illustrated',
@@ -51,13 +48,12 @@ describe('select-style', () => {
         activityType: 'Swim',
         intensity: 'medium',
         elevation: 'flat',
-        timeOfDay: 'day',
         tags: [],
       },
       'cartoon',
     ],
   ])('%#. %s', (_name, signals, expected) => {
-    const result = selectStyle(signals);
+    const result = classifyStyle(signals);
 
     expect(result).toBe(expected);
   });

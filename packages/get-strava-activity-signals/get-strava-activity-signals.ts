@@ -7,6 +7,12 @@ import extractTimeSignals from './extract-time-of-day-signals';
 import extractTagSignals from './extract-tag-signals';
 import extractSemanticContext from './extract-semantic-context';
 import extractBrandSignals from './extract-brand-signals';
+import classifyMood from './classify-mood';
+import classifyStyle from './classify-style';
+import classifySubject from './classify-subject';
+import classifyTerrain from './classify-terrain';
+import classifyEnvironment from './classify-environment';
+import classifyAtmosphere from './classify-atmosphere';
 
 /**
  * Extracts semantic signals from Strava activity data.
@@ -33,14 +39,25 @@ const getStravaActivitySignals = (activity: StravaActivity): StravaActivitySigna
   const activityValidation = validateActivity(activity);
 
   if (activityValidation.valid) {
+    const activityType = activity.sport_type ?? activity.type ?? 'Unknown';
+    const intensity = classifyIntensity(activity);
+    const elevation = classifyElevation(activity);
+    const timeOfDay = extractTimeSignals(activity);
+    const tags = extractTagSignals(activity);
     const signals: StravaActivitySignals = {
-      activityType: activity.sport_type ?? activity.type ?? 'Unknown',
-      intensity: classifyIntensity(activity),
-      elevation: classifyElevation(activity),
-      timeOfDay: extractTimeSignals(activity),
-      tags: extractTagSignals(activity),
       semanticContext: extractSemanticContext(activity),
       brands: extractBrandSignals(activity),
+      mood: classifyMood({ tags, intensity }),
+      subject: classifySubject(activityType),
+      terrain: classifyTerrain(elevation),
+      environment: classifyEnvironment(activityType),
+      atmosphere: classifyAtmosphere(timeOfDay),
+      style: classifyStyle({ tags, elevation, intensity, activityType }),
+      activityType,
+      intensity,
+      elevation,
+      timeOfDay,
+      tags,
     };
     const signalsValidation = validateSignals(signals);
 
