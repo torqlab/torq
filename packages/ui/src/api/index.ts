@@ -1,4 +1,1 @@
-export {
-  useStravaActivitySignalsData,
-  fetchStravaActivitySignals,
-} from './stravaActivitySignals';
+export { useStravaActivitySignalsData, fetchStravaActivitySignals } from './stravaActivitySignals';

@@ -192,7 +192,12 @@ const matchesActivityRoute = (pathname: string): boolean => {
  */
 const matchesActivitySignalsRoute = (pathname: string): boolean => {
   const pathParts = pathname.split('/').filter((part) => part !== '');
-  return pathParts.length === 4 && pathParts[0] === 'strava' && pathParts[1] === 'activity' && pathParts[3] === 'signals';
+  return (
+    pathParts.length === 4 &&
+    pathParts[0] === 'strava' &&
+    pathParts[1] === 'activity' &&
+    pathParts[3] === 'signals'
+  );
 };
 
 /**

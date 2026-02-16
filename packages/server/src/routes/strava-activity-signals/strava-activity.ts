@@ -91,21 +91,17 @@ const stravaActivity = async (request: Request, config: ServerConfig): Promise<R
     } else {
       const activityConfig = createActivityConfig(tokens, config);
       const activity = await fetchStravaActivity(activityId, activityConfig);
-      const signals = activity ? await getStravaActivitySignals(
-        activity,
-        checkForbiddenContent,
-      ) : null;
+      const signals = activity
+        ? await getStravaActivitySignals(activity, checkForbiddenContent)
+        : null;
 
       if (signals) {
-        return new Response(
-          JSON.stringify(signals),
-          {
-            status: 200,
-            headers: {
-              'Content-Type': 'application/json',
-            },
+        return new Response(JSON.stringify(signals), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
+        });
       } else {
         return new Response(
           JSON.stringify({

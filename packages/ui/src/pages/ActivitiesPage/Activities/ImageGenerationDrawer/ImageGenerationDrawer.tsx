@@ -201,11 +201,11 @@ const Content = ({
     <Drawer.Content>
       <Grid.Container gap={2} justify="center">
         <Grid xs={24}>
-          <Card >
+          <Card>
             <Text small type="warning">
               The activity image is being generated using an external AI service.{' '}
-              <strong>AI is not a human, so it makes mistakes.</strong> Please make sure the generated
-              image is appropriate before publishing it to your Strava profile.
+              <strong>AI is not a human, so it makes mistakes.</strong> Please make sure the
+              generated image is appropriate before publishing it to your Strava profile.
             </Text>
           </Card>
         </Grid>

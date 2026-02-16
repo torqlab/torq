@@ -29,13 +29,13 @@ const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
       return Object.entries(signalsAll)
         .map(([key, value]) => {
           if (value) {
-            const keyPretty = key.split(/(?=[A-Z])/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            const keyPretty = key
+              .split(/(?=[A-Z])/)
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
             const valueJoined = Array.isArray(value) ? value.join(', ') : value;
 
-            return [
-              keyPretty,
-              valueJoined,
-            ];
+            return [keyPretty, valueJoined];
           } else {
             return null;
           }
@@ -56,11 +56,8 @@ const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
     >
       <Card.Content>
         {isLoading ? (
-          <Preloader
-            message="Extracting signals from your activity..."
-            withFullHeight={false}
-          />
-        ) : (isLoaded && signals) ? (
+          <Preloader message="Extracting signals from your activity..." withFullHeight={false} />
+        ) : isLoaded && signals ? (
           <>
             <Text h5 type="secondary">
               Signals extracted from your activity:
@@ -68,17 +65,15 @@ const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
             <Text p type="secondary" small>
               {signalsFlat.map(([key, value]) => (
                 <Fragment key={key}>
-                  <strong>{key}:</strong>
-                  {' '}
-                  {value}
-                  ;
-                  {' '}
+                  <strong>{key}:</strong> {value};{' '}
                 </Fragment>
               ))}
             </Text>
           </>
         ) : (
-          <Text p type="error">No activity signals available... Let's cry together.</Text>
+          <Text p type="error">
+            No activity signals available... Let's cry together.
+          </Text>
         )}
       </Card.Content>
     </Card>

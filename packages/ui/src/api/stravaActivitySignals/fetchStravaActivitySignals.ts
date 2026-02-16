@@ -7,8 +7,7 @@ import { apiRequest } from '../client';
  * @param {string} activityId - Activity ID.
  * @returns {Promise<StravaActivitySignals>} Activity signals.
  */
-const fetchActivitySignals = (activityId: string): Promise<StravaActivitySignals> => (
-  apiRequest<StravaActivitySignals>(`/strava/activity/${activityId}/signals`)
-);
+const fetchActivitySignals = (activityId: string): Promise<StravaActivitySignals> =>
+  apiRequest<StravaActivitySignals>(`/strava/activity/${activityId}/signals`);
 
 export default fetchActivitySignals;
