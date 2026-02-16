@@ -6,6 +6,30 @@ Please, document here only changes visible to the client app.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-02-16
+
+### [27 Added AI Image Generation Prompt Module and Enhanced Activity Signal Classification](https://github.com/mrbalov/pace/issues/27)
+
+### Added
+- New `@pace/get-strava-activity-image-generation-prompt` package for generating AI image prompts from Strava activity signals
+- Prompt assembly module with style-specific quality keywords and character limit truncation
+- Prompt validation module to ensure safe and appropriate content generation
+- Mood classification for activities (Energetic, Contemplative, Triumphant, Peaceful, Focused)
+- Style classification for image generation (Illustrated, Photographic, Cartoon, Abstract, Minimalist)
+- Atmosphere classification based on activity context (Vibrant, Serene, Dramatic, Dynamic, Ethereal)
+- Terrain classification (flat, rolling, hilly, mountainous) based on elevation data
+- Environment classification (Urban, Rural, Trail, Indoor, Coastal, Mountain)
+- Subject classification for image composition (athlete, landscape, activity-specific subjects)
+
+### Changed
+- Enhanced signal extraction in `@pace/get-strava-activity-signals` package with new classification modules
+- Improved signal validation with expanded field validation for new classifiers
+- Updated type definitions to include new signal classifications and derived signals
+- Refactored signal extraction to support richer contextual data for image generation
+
+### Fixed
+- Renamed test file from `extract-tag.signals.test.ts` to `extract-tag-signals.test.ts` for consistency
+
 ## [1.9.1] - 2026-02-11
 
 ### [23 Refactored Activity Signals Usage and Extracted Shared Validation Components](https://github.com/mrbalov/pace/issues/23)
