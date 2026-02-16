@@ -1,5 +1,6 @@
 {
   "name": "@pace/strava-api",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "main": "index.ts"
 }

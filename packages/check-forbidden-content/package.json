@@ -1,5 +1,6 @@
 {
   "name": "@pace/check-forbidden-content",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "main": "index.ts"
 }
