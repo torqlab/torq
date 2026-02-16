@@ -14,13 +14,13 @@ import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
  * @returns {string} Mood descriptor (e.g., "calm", "intense", "focused")
  */
 const selectMood = (signals: StravaActivitySignals): string => {
-  const hasRecoveryTag = signals.tags?.includes('recovery');
-  const hasRaceTag = signals.tags?.includes('race');
-  const hasCommuteTag = signals.tags?.includes('commute');
-  const hasWithKidTag = signals.tags?.includes('with kid');
-  const isLowIntensity = signals.intensity === 'low';
-  const isHighIntensity = signals.intensity === 'high';
-  const isMediumIntensity = signals.intensity === 'medium';
+  const hasRecoveryTag = signals.core.tags?.includes('recovery');
+  const hasRaceTag = signals.core.tags?.includes('race');
+  const hasCommuteTag = signals.core.tags?.includes('commute');
+  const hasWithKidTag = signals.core.tags?.includes('with kid');
+  const isLowIntensity = signals.core.intensity === 'low';
+  const isHighIntensity = signals.core.intensity === 'high';
+  const isMediumIntensity = signals.core.intensity === 'medium';
 
   // Priority 1: Tag-based mood
   if (hasRecoveryTag) {

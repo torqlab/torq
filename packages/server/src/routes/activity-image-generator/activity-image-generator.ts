@@ -1,5 +1,6 @@
 import { fetchStravaActivity, type StravaApiConfig } from '@pace/strava-api';
 import getStravaActivitySignals from '@pace/get-strava-activity-signals';
+import checkForbiddenContent from '@pace/check-forbidden-content';
 
 import { createActivityImageGenerationPrompt, generateImage } from '@pace/activity-image-generator';
 
@@ -141,7 +142,9 @@ const processActivityAndCreateResponse = async (
   const provider = 'pollinations';
   const activityConfig = createActivityConfig(tokens, config);
   const activity = await fetchStravaActivity(activityId, activityConfig);
-  const signals = activity ? getStravaActivitySignals(activity) : null;
+  const signals = activity
+    ? getStravaActivitySignals(activity, checkForbiddenContent)
+    : null;
   const prompt = signals ? createActivityImageGenerationPrompt(signals) : null;
   const image = await (async () => {
     if (prompt) {

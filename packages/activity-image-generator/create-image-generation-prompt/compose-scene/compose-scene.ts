@@ -33,34 +33,34 @@ const ACTIVITY_SUBJECTS: Record<string, string> = {
  */
 const composeScene = (signals: StravaActivitySignals): { subject: string; scene: string } => {
   // Determine subject from activity type
-  const subject = ACTIVITY_SUBJECTS[signals.activityType] ?? 'athlete';
+  const subject = ACTIVITY_SUBJECTS[signals.core.activityType] ?? 'athlete';
 
   // Build scene components
   const sceneParts: string[] = [];
 
   // Base environment
-  const baseEnvironment = signals.activityType.includes('Virtual')
+  const baseEnvironment = signals.core.activityType.includes('Virtual')
     ? 'indoor training space'
     : 'outdoor setting';
   sceneParts.push(baseEnvironment);
 
   // Terrain features
-  if (signals.elevation === 'mountainous') {
+  if (signals.core.elevation === 'mountainous') {
     sceneParts.push('mountainous terrain');
-  } else if (signals.elevation === 'rolling') {
+  } else if (signals.core.elevation === 'rolling') {
     sceneParts.push('rolling hills');
   } else {
     sceneParts.push('flat terrain');
   }
 
   // Lighting from time of day
-  if (signals.timeOfDay === 'morning') {
+  if (signals.core.timeOfDay === 'morning') {
     sceneParts.push('soft morning light');
-  } else if (signals.timeOfDay === 'day') {
+  } else if (signals.core.timeOfDay === 'day') {
     sceneParts.push('bright daylight');
-  } else if (signals.timeOfDay === 'evening') {
+  } else if (signals.core.timeOfDay === 'evening') {
     sceneParts.push('warm evening glow');
-  } else if (signals.timeOfDay === 'night') {
+  } else if (signals.core.timeOfDay === 'night') {
     sceneParts.push('dark night atmosphere');
   }
 

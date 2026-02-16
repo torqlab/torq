@@ -21,15 +21,21 @@
     "packages/activity-image-generator": {
       "name": "@pace/activity-image-generator",
       "version": "0.1.0",
+      "dependencies": {
+        "@pace/check-forbidden-content": "workspace:*",
+      },
+      "devDependencies": {
+        "@pace/get-strava-activity-signals": "workspace:*",
+      },
     },
     "packages/check-forbidden-content": {
       "name": "@pace/check-forbidden-content",
     },
+    "packages/get-strava-activity-image-generation-prompt": {
+      "name": "@pace/get-strava-activity-image-generation-prompt",
+    },
     "packages/get-strava-activity-signals": {
       "name": "@pace/get-strava-activity-signals",
-      "dependencies": {
-        "@pace/check-forbidden-content": "workspace:*",
-      },
     },
     "packages/server": {
       "name": "@pace/server",
@@ -38,6 +44,8 @@
         "@netlify/blobs": "^8.1.0",
         "@netlify/functions": "^2.8.2",
         "@pace/activity-image-generator": "workspace:*",
+        "@pace/check-forbidden-content": "workspace:*",
+        "@pace/get-strava-activity-signals": "workspace:*",
         "@pace/strava-api": "workspace:*",
       },
     },
@@ -274,6 +282,8 @@
     "@pace/activity-image-generator": ["@pace/activity-image-generator@workspace:packages/activity-image-generator"],
 
     "@pace/check-forbidden-content": ["@pace/check-forbidden-content@workspace:packages/check-forbidden-content"],
+
+    "@pace/get-strava-activity-image-generation-prompt": ["@pace/get-strava-activity-image-generation-prompt@workspace:packages/get-strava-activity-image-generation-prompt"],
 
     "@pace/get-strava-activity-signals": ["@pace/get-strava-activity-signals@workspace:packages/get-strava-activity-signals"],
 
