@@ -4,11 +4,7 @@ import { Input } from './types';
 import classifyStyle from './classify-style';
 import { StravaActivitySignalsStyle } from '../types';
 
-type Case = [
-  string,
-  Input,
-  StravaActivitySignalsStyle,
-];
+type Case = [string, Input, StravaActivitySignalsStyle];
 
 describe('classify-style', () => {
   test.each<Case>([

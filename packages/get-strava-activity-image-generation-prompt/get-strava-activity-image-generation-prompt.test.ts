@@ -3,11 +3,7 @@ import { describe, test, expect } from 'bun:test';
 import { StravaActivitySignals } from './types';
 import getStravaActivityImageGenerationPrompt from './get-strava-activity-image-generation-prompt';
 
-type Case = [
-  string,
-  StravaActivitySignals,
-  string,
-];
+type Case = [string, StravaActivitySignals, string];
 
 describe('generate-prompt', () => {
   test.each<Case>([
@@ -74,15 +70,11 @@ describe('generate-prompt', () => {
       },
       'professional editorial illustration, digital art, concept art style; illustrated style; runner, well-proportioned figure, professional anatomy; intense mood; bright daylight atmosphere; outdoor training space; flat terrain; , high quality, sharp, beautiful',
     ],
-  ])(
-    '%#. %s',
-    (_name, signals, expected) => {
-      const result = getStravaActivityImageGenerationPrompt(
-        signals,
-        (input) => input.includes('forbidden'),
-      );
+  ])('%#. %s', (_name, signals, expected) => {
+    const result = getStravaActivityImageGenerationPrompt(signals, (input) =>
+      input.includes('forbidden'),
+    );
 
-      expect(result).toStrictEqual(expected);
-    },
-  );
+    expect(result).toStrictEqual(expected);
+  });
 });

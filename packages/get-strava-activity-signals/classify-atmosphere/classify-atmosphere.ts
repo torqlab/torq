@@ -1,7 +1,4 @@
-import {
-  StravaActivitySignalsAtmosphere,
-  StravaActivitySignalsTimeOfDay,
-} from '../types';
+import { StravaActivitySignalsAtmosphere, StravaActivitySignalsTimeOfDay } from '../types';
 
 /**
  * Extracts atmosphere details.

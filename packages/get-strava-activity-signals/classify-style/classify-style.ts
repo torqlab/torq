@@ -23,10 +23,7 @@ const classifyStyle = ({
   intensity,
   activityType,
 }: Input): StravaActivitySignalsStyle => {
-  const hasRecoveryTag = (
-    tags?.includes('recovery')
-    || tags?.includes('easy')
-  );
+  const hasRecoveryTag = tags?.includes('recovery') || tags?.includes('easy');
   const isMountainous = elevation === 'mountainous';
   const isHighIntensity = intensity === 'high';
   const isHighIntensityActivity = activityType

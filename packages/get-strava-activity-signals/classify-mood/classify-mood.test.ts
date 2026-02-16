@@ -4,11 +4,7 @@ import classifyMood from './classify-mood';
 import { StravaActivitySignalsMood } from '../types';
 import { Input } from './types';
 
-type Case = [
-  string,
-  Input,
-  StravaActivitySignalsMood,
-];
+type Case = [string, Input, StravaActivitySignalsMood];
 
 describe('classify-mood', () => {
   test.each<Case>([

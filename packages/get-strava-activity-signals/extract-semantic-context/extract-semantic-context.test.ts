@@ -79,10 +79,7 @@ describe('extract-semantic-context', () => {
         ['trail', 'park'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -161,10 +158,7 @@ describe('extract-semantic-context', () => {
         ['outdoor', 'trail', 'mountain'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -221,10 +215,7 @@ describe('extract-semantic-context', () => {
         ['park'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -299,10 +290,7 @@ describe('extract-semantic-context', () => {
         undefined,
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -340,10 +328,7 @@ describe('extract-semantic-context', () => {
         undefined,
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -388,10 +373,7 @@ describe('extract-semantic-context', () => {
         ['trail', 'park'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -402,22 +384,22 @@ describe('extract-semantic-context', () => {
       [
         'returns undefined when name contains forbidden content',
         {
-          name: 'Run with people',
+          name: 'forbidden trail run with people',
         },
         undefined,
       ],
       [
         'returns undefined when description contains forbidden content',
         {
-          description: 'Government building trail',
+          description: 'forbidden Government building trail',
         },
         undefined,
       ],
       [
         'returns undefined when both contain forbidden content',
         {
-          name: 'Running with people',
-          description: 'Near government building',
+          name: 'forbidden Running with people',
+          description: 'Near forbidden government building',
         },
         undefined,
       ],
@@ -425,23 +407,20 @@ describe('extract-semantic-context', () => {
         'returns keywords from name when description has forbidden content',
         {
           name: 'Trail run',
-          description: 'With people today',
+          description: 'With forbidden people today',
         },
         ['trail'],
       ],
       [
         'returns keywords from description when name has forbidden content',
         {
-          name: 'Run with people',
+          name: 'forbidden Run with people',
           description: 'Trail conditions',
         },
         ['trail'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -499,10 +478,7 @@ describe('extract-semantic-context', () => {
         ['trail'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -548,10 +524,7 @@ describe('extract-semantic-context', () => {
         ['indoor', 'outdoor', 'trail', 'road', 'track', 'park', 'beach', 'mountain', 'hill'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -582,10 +555,7 @@ describe('extract-semantic-context', () => {
         ['mountain', 'hill', 'trail', 'park'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractSemanticContext(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractSemanticContext(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });

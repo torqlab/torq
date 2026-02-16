@@ -1,6 +1,4 @@
-import {
-  StravaActivitySignalsEnvironment,
-} from '../types';
+import { StravaActivitySignalsEnvironment } from '../types';
 
 /**
  * Extracts environment details.
@@ -8,12 +6,7 @@ import {
  * @returns {StravaActivityImageGeneraionPromptEnvironment} Activity environment details.
  * @internal
  */
-const classifyEnvironment = (
-  activityType?: string,
-): StravaActivitySignalsEnvironment => (
-  activityType?.includes('Virtual')
-    ? 'indoor training space'
-    : 'outdoor training space'
-);
+const classifyEnvironment = (activityType?: string): StravaActivitySignalsEnvironment =>
+  activityType?.includes('Virtual') ? 'indoor training space' : 'outdoor training space';
 
 export default classifyEnvironment;

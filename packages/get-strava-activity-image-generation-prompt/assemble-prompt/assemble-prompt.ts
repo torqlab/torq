@@ -1,10 +1,6 @@
 import { StravaActivitySignals } from '../types';
 import truncatePrompt from './truncate-prompt';
-import {
-  QUALITY_KEYWORDS,
-  HUMAN_QUALITY_BY_STYLE,
-  GENERAL_QUALITY,
-} from './constants';
+import { QUALITY_KEYWORDS, HUMAN_QUALITY_BY_STYLE, GENERAL_QUALITY } from './constants';
 
 /**
  * Assembles final prompt text from prompt components with quality-enhancing keywords.
@@ -36,8 +32,8 @@ const assemblePrompt = (signals: StravaActivitySignals): string => {
     `${derived.atmosphere} atmosphere`,
     derived.environment,
     derived.terrain,
-    ...core.brands ?? [],
-    ...core.semanticContext ?? [],
+    ...(core.brands ?? []),
+    ...(core.semanticContext ?? []),
     GENERAL_QUALITY,
   ].join('; ');
 

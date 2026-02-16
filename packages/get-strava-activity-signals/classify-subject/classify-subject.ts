@@ -9,9 +9,8 @@ import { StravaActivitySignalsSubject } from '../types';
  * @param {string} activityType - Strava activity type.
  * @returns {StravaActivitySignalsSubject} Activity subjest classifications.
  */
-const classifySubject = (activityType: string): StravaActivitySignalsSubject => (
-  ACTIVITY_TYPES_TO_CLASSIFICATION_SUBJECTS[activityType ?? 'Run']
-  ?? CLASSIFICATION_SUBJECT_DEFAULT
-);
+const classifySubject = (activityType: string): StravaActivitySignalsSubject =>
+  ACTIVITY_TYPES_TO_CLASSIFICATION_SUBJECTS[activityType ?? 'Run'] ??
+  CLASSIFICATION_SUBJECT_DEFAULT;
 
 export default classifySubject;

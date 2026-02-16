@@ -67,10 +67,7 @@ const getStravaActivitySignals = (
         style: classifyStyle({ tags, elevation, intensity, activityType }),
       },
     };
-    const signalsValidation = validateSignals(
-      signals,
-      checkForbiddenContent,
-    );
+    const signalsValidation = validateSignals(signals, checkForbiddenContent);
 
     if (signalsValidation.valid) {
       return signals;

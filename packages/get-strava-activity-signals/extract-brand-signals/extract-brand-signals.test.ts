@@ -90,10 +90,7 @@ describe('extract-brand-signals', () => {
         ['hoka one one'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractBrandSignals(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractBrandSignals(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -147,10 +144,7 @@ describe('extract-brand-signals', () => {
         ['Road Bike 2024'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractBrandSignals(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractBrandSignals(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -209,10 +203,7 @@ describe('extract-brand-signals', () => {
         ['Saucony Endorphin'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractBrandSignals(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractBrandSignals(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -261,10 +252,7 @@ describe('extract-brand-signals', () => {
         ['Carbon Racer'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractBrandSignals(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractBrandSignals(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -357,10 +345,7 @@ describe('extract-brand-signals', () => {
         undefined,
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractBrandSignals(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractBrandSignals(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -479,10 +464,7 @@ describe('extract-brand-signals', () => {
         ['My    Favorite    Shoes'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractBrandSignals(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractBrandSignals(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -545,10 +527,7 @@ describe('extract-brand-signals', () => {
         ['Salomon Quest 4D'],
       ],
     ])('%#. %s', (_name, input, expected) => {
-      const result = extractBrandSignals(
-        input,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractBrandSignals(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });

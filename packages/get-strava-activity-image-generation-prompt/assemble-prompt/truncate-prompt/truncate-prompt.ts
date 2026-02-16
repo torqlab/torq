@@ -1,10 +1,6 @@
 import { StravaActivitySignals } from '../../types';
 import { MAX_PROMPT_LENGTH } from '../../constants';
-import {
-  QUALITY_KEYWORDS,
-  HUMAN_QUALITY_BY_STYLE,
-  GENERAL_QUALITY,
-} from '../constants';
+import { QUALITY_KEYWORDS, HUMAN_QUALITY_BY_STYLE, GENERAL_QUALITY } from '../constants';
 
 /**
  * Truncates prompt while preserving quality keywords and core components.
@@ -18,10 +14,7 @@ import {
  * @param {StravaActivitySignals} signals - Strava activity signals.
  * @returns {string} Truncated prompt within character limit.
  */
-const truncatePrompt = (
-  prompt: string,
-  signals: StravaActivitySignals,
-): string => {
+const truncatePrompt = (prompt: string, signals: StravaActivitySignals): string => {
   if (prompt.length <= MAX_PROMPT_LENGTH) {
     return prompt;
   } else {
@@ -44,8 +37,8 @@ const truncatePrompt = (
         `${derived.atmosphere} atmosphere`,
         derived.environment,
         derived.terrain,
-        ...core.brands ?? [],
-        ...core.semanticContext ?? [],
+        ...(core.brands ?? []),
+        ...(core.semanticContext ?? []),
       ].join('; ');
       const truncatedRestPrompt =
         restPrompt.length > remainingLength

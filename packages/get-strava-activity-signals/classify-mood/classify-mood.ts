@@ -14,10 +14,7 @@ import { Input } from './types';
  * @param {Input} input - Strava activity details to base mood selection on.
  * @returns {StravaActivitySignalsMood} Mood descriptor (e.g., "calm", "intense", "focused").
  */
-const classifyMood = ({
-  tags,
-  intensity,
-}: Input): StravaActivitySignalsMood => {
+const classifyMood = ({ tags, intensity }: Input): StravaActivitySignalsMood => {
   const hasRecoveryTag = tags?.includes('recovery');
   const hasRaceTag = tags?.includes('race');
   const hasCommuteTag = tags?.includes('commute');

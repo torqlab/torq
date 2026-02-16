@@ -1,7 +1,4 @@
-import {
-  StravaActivitySignalsElevation,
-  StravaActivitySignalsTerrain,
-} from '../types';
+import { StravaActivitySignalsElevation, StravaActivitySignalsTerrain } from '../types';
 
 /**
  * Extracts terrain information from the elevation.

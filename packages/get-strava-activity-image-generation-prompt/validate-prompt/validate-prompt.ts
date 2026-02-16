@@ -29,11 +29,9 @@ const validateActivityImagePrompt = (
   }
 
   if (promptLength > MAX_PROMPT_LENGTH) {
-    errors.push(
-      `Prompt length (${promptLength}) exceeds maximum (${MAX_PROMPT_LENGTH})`,
-    );
+    errors.push(`Prompt length (${promptLength}) exceeds maximum (${MAX_PROMPT_LENGTH})`);
   }
-  
+
   if (hasForbiddenContent) {
     errors.push('Prompt contains forbidden content');
   }

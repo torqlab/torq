@@ -82,7 +82,7 @@ export type StravaActivitySignalsEnvironment = (typeof CLASSIFICATIONS.ENVIRONME
 
 export type StravaActivitySignalsAtmosphere = (typeof CLASSIFICATIONS.ATMOSPHERES)[number];
 
-export type StravaActivitySignalsSubject = typeof CLASSIFICATION_SUBJECTS[number];
+export type StravaActivitySignalsSubject = (typeof CLASSIFICATION_SUBJECTS)[number];
 
 export interface StravaActivitySignals {
   core: {

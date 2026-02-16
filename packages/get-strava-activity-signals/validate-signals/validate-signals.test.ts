@@ -292,7 +292,7 @@ describe('validate-signals', () => {
           intensity: 'medium',
           elevation: 'flat',
           timeOfDay: 'day',
-          semanticContext: ['morning', 'political rally'],
+          semanticContext: ['morning', 'forbidden political rally'],
         },
         derived: {
           mood: 'focused',
@@ -326,10 +326,7 @@ describe('validate-signals', () => {
       },
     ],
   ])('%#. %s', (_name, signals, expected) => {
-    const result = validateActivitySignals(
-      signals,
-      (input) => input.includes('forbidden'),
-    );
+    const result = validateActivitySignals(signals, (input) => input.includes('forbidden'));
 
     expect(result).toStrictEqual(expected);
   });

@@ -113,12 +113,7 @@ export const CLASSIFICATIONS = {
     Other: 'athlete',
   } as const,
 
-  STYLES: [
-    'cartoon',
-    'minimal',
-    'abstract',
-    'illustrated',
-  ] as const,
+  STYLES: ['cartoon', 'minimal', 'abstract', 'illustrated'] as const,
 
   MOODS: [
     'calm',
@@ -131,16 +126,9 @@ export const CLASSIFICATIONS = {
     'focused',
   ] as const,
 
-  TERRAINS: [
-    'mountainous terrain',
-    'rolling hills',
-    'flat terrain',
-  ] as const,
+  TERRAINS: ['mountainous terrain', 'rolling hills', 'flat terrain'] as const,
 
-  ENVIRONMENTS: [
-    'indoor training space',
-    'outdoor training space',
-  ] as const,
+  ENVIRONMENTS: ['indoor training space', 'outdoor training space'] as const,
 
   ATMOSPHERES: [
     'soft morning light',
@@ -164,8 +152,8 @@ export const CLASSIFICATION_SUBJECTS = [
 ] as const;
 
 export const ACTIVITY_TYPES_TO_CLASSIFICATION_SUBJECTS: Record<
-string,
-typeof CLASSIFICATION_SUBJECTS[number]
+  string,
+  (typeof CLASSIFICATION_SUBJECTS)[number]
 > = {
   Run: 'runner',
   Ride: 'cyclist',
@@ -178,4 +166,4 @@ typeof CLASSIFICATION_SUBJECTS[number]
   Other: 'athlete',
 };
 
-export const CLASSIFICATION_SUBJECT_DEFAULT: typeof CLASSIFICATION_SUBJECTS[number] = 'athlete';
+export const CLASSIFICATION_SUBJECT_DEFAULT: (typeof CLASSIFICATION_SUBJECTS)[number] = 'athlete';

@@ -1,16 +1,9 @@
 import { describe, test, expect } from 'bun:test';
 
 import classifyTerrain from './classify-terrain';
-import {
-  StravaActivitySignalsElevation,
-  StravaActivitySignalsTerrain,
-} from '../types';
+import { StravaActivitySignalsElevation, StravaActivitySignalsTerrain } from '../types';
 
-type Case = [
-  string,
-  StravaActivitySignalsElevation | undefined,
-  StravaActivitySignalsTerrain,
-];
+type Case = [string, StravaActivitySignalsElevation | undefined, StravaActivitySignalsTerrain];
 
 describe('classify-terrain', () => {
   test.each<Case>([
@@ -19,21 +12,9 @@ describe('classify-terrain', () => {
       'mountainous',
       'mountainous terrain',
     ],
-    [
-      'rolling elevation classifies as rolling hills',
-      'rolling',
-      'rolling hills',
-    ],
-    [
-      'flat elevation classifies as flat terrain',
-      'flat',
-      'flat terrain',
-    ],
-    [
-      'undefined elevation defaults to flat terrain',
-      undefined,
-      'flat terrain',
-    ],
+    ['rolling elevation classifies as rolling hills', 'rolling', 'rolling hills'],
+    ['flat elevation classifies as flat terrain', 'flat', 'flat terrain'],
+    ['undefined elevation defaults to flat terrain', undefined, 'flat terrain'],
   ])('%#. %s', (_name, elevation, expected) => {
     const result = classifyTerrain(elevation);
 

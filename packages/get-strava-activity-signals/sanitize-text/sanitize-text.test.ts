@@ -44,7 +44,7 @@ describe('sanitize-text', () => {
       ['preserves uppercase letters', 'MORNING RUN', 'MORNING RUN'],
       ['preserves mixed case', 'MoRnInG RuN', 'MoRnInG RuN'],
     ])('%#. %s', (_name, input, expected) => {
-      const result = sanitizeText(input);
+      const result = sanitizeText(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -59,7 +59,7 @@ describe('sanitize-text', () => {
       ['returns empty string for mixed whitespace only', ' \t\n ', ''],
       ['returns empty string for carriage returns only', '\r\n\r\n', ''],
     ])('%#. %s', (_name, input, expected) => {
-      const result = sanitizeText(input);
+      const result = sanitizeText(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -67,36 +67,76 @@ describe('sanitize-text', () => {
 
   describe('removes forbidden content', () => {
     test.each<Case>([
-      ['returns empty string for text with person keywords', 'Running with people in the park', ''],
-      ['returns empty string for text with face keywords', 'Morning run with portrait photo', ''],
+      [
+        'returns empty string for text with person keywords',
+        'Running with forbidden people in the park',
+        '',
+      ],
+      [
+        'returns empty string for text with face keywords',
+        'Morning run with forbidden portrait photo',
+        '',
+      ],
       [
         'returns empty string for text with political keywords',
-        'Run to the government building',
+        'Run to the forbidden government building',
         '',
       ],
-      ['returns empty string for text with violence keywords', 'Running with weapon training', ''],
-      ['returns empty string for text with combat keywords', 'Military training run', ''],
-      ['returns empty string for text with sexual keywords', 'Explicit content in description', ''],
-      ['returns empty string for text with typography keywords', 'Display text on screen', ''],
-      ['returns empty string for text with write instruction', 'Write something here', ''],
+      [
+        'returns empty string for text with violence keywords',
+        'Running with forbidden weapon training',
+        '',
+      ],
+      ['returns empty string for text with combat keywords', 'forbidden Military training run', ''],
+      [
+        'returns empty string for text with sexual keywords',
+        'forbidden Explicit content in description',
+        '',
+      ],
+      [
+        'returns empty string for text with typography keywords',
+        'forbidden Display text on screen',
+        '',
+      ],
+      [
+        'returns empty string for text with write instruction',
+        'forbidden Write something here',
+        '',
+      ],
       [
         'returns empty string for text with multiple forbidden keywords',
-        'Government people with weapons',
+        'forbidden Government people with weapons',
         '',
       ],
-      ['returns empty string for uppercase forbidden keywords', 'PEOPLE RUNNING', ''],
-      ['returns empty string for mixed case forbidden keywords', 'PeOpLe running', ''],
-      ['returns empty string for forbidden keyword at start', 'Government building run', ''],
-      ['returns empty string for forbidden keyword at end', 'Morning run with people', ''],
-      ['returns empty string for forbidden keyword in middle', 'Great people filled run', ''],
-      ['returns empty string for text with man keyword', 'Man running marathon', ''],
-      ['returns empty string for text with woman keyword', 'Woman jogging', ''],
-      ['returns empty string for text with child keyword', 'Child playing', ''],
-      ['returns empty string for text with battle keyword', 'Battle training session', ''],
-      ['returns empty string for text with flag keyword', 'Running past the flag', ''],
-      ['returns empty string for text with army keyword', 'Army base run', ''],
+      ['returns empty string for uppercase forbidden keywords', 'forbidden PEOPLE RUNNING', ''],
+      ['returns empty string for mixed case forbidden keywords', 'forbidden PeOpLe running', ''],
+      [
+        'returns empty string for forbidden keyword at start',
+        'forbidden Government building run',
+        '',
+      ],
+      [
+        'returns empty string for forbidden keyword at end',
+        'Morning run with forbidden people',
+        '',
+      ],
+      [
+        'returns empty string for forbidden keyword in middle',
+        'Great forbidden people filled run',
+        '',
+      ],
+      ['returns empty string for text with man keyword', 'forbidden Man running marathon', ''],
+      ['returns empty string for text with woman keyword', 'forbidden Woman jogging', ''],
+      ['returns empty string for text with child keyword', 'forbidden Child playing', ''],
+      [
+        'returns empty string for text with battle keyword',
+        'forbidden Battle training session',
+        '',
+      ],
+      ['returns empty string for text with flag keyword', 'Running past the forbidden flag', ''],
+      ['returns empty string for text with army keyword', 'forbidden Army base run', ''],
     ])('%#. %s', (_name, input, expected) => {
-      const result = sanitizeText(input);
+      const result = sanitizeText(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -119,7 +159,7 @@ describe('sanitize-text', () => {
       ['handles text with leading tabs and trailing spaces', '\t\tRun   ', 'Run'],
       ['handles empty string with special characters removed', '', ''],
     ])('%#. %s', (_name, input, expected) => {
-      const result = sanitizeText(input);
+      const result = sanitizeText(input, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });

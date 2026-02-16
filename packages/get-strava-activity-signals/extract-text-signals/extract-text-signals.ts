@@ -22,10 +22,7 @@ const extractTextSignals = (
   text: string,
   checkForbiddenContent: (input: string) => boolean,
 ): string[] | undefined => {
-  const textSanitized = sanitizeText(
-    text.trim().toLowerCase(),
-    checkForbiddenContent,
-  );
+  const textSanitized = sanitizeText(text.trim().toLowerCase(), checkForbiddenContent);
   const hasTextSanitized = textSanitized.length > 0;
 
   if (hasTextSanitized) {

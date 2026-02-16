@@ -3,11 +3,7 @@ import { describe, test, expect } from 'bun:test';
 import validateActivityImagePrompt from './validate-prompt';
 import { PromptValidationResult } from './types';
 
-type Case = [
-  string,
-  string,
-  PromptValidationResult,
-];
+type Case = [string, string, PromptValidationResult];
 
 describe('validate-prompt', () => {
   test.each<Case>([
@@ -52,10 +48,7 @@ describe('validate-prompt', () => {
       },
     ],
   ])('%#. %s', (_name, prompt, expected) => {
-    const result = validateActivityImagePrompt(
-      prompt,
-      (input) => input.includes('forbidden'),
-    );
+    const result = validateActivityImagePrompt(prompt, (input) => input.includes('forbidden'));
 
     expect(result).toStrictEqual(expected);
   });

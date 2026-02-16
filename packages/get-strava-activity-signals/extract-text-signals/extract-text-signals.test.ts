@@ -24,8 +24,29 @@ describe('extract-text-signals', () => {
       ['finds keywords in mixed case text', 'Trail Run', ['trail']],
       [
         'finds all keywords when present',
-        'trail road track indoor outdoor park beach mountain hill',
-        ['indoor', 'outdoor', 'trail', 'road', 'track', 'park', 'beach', 'mountain', 'hill'],
+        'indoor outdoor virtual trail road track park beach mountain hill morning afternoon evening night spring summer fall autumn winter kettlebells',
+        [
+          'indoor',
+          'outdoor',
+          'virtual',
+          'trail',
+          'road',
+          'track',
+          'park',
+          'beach',
+          'mountain',
+          'hill',
+          'morning',
+          'afternoon',
+          'evening',
+          'night',
+          'spring',
+          'summer',
+          'fall',
+          'autumn',
+          'winter',
+          'kettlebells',
+        ],
       ],
       [
         'finds keywords in longer descriptive text',
@@ -132,26 +153,35 @@ describe('extract-text-signals', () => {
       ['finds evening in compound words', 'This evening was great', ['evening']],
       ['finds winter in compound words', 'Wintertime running', ['winter']],
       ['finds summer in compound words', 'Summertime vibes', ['summer']],
+      ['finds virtual keyword in simple text', 'Virtual cycling session', ['virtual']],
+      ['finds kettlebells keyword in simple text', 'Kettlebells strength workout', ['kettlebells']],
+      [
+        'finds virtual and kettlebells together',
+        'Virtual kettlebells workout',
+        ['virtual', 'kettlebells'],
+      ],
+      [
+        'finds keywords as substrings in longer words',
+        'roadway pathway tracking',
+        ['road', 'track'],
+      ],
+      [
+        'finds keywords when part of similar words',
+        'trails roads tracks',
+        ['trail', 'road', 'track'],
+      ],
     ])('%#. %s', (_name, text, expected) => {
-      const result = extractTextSignals(
-        text,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractTextSignals(text, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
   });
 
-  describe('returns undefined when no keywords found', () => {
+  describe('returns empty results when no keywords match', () => {
     test.each<Case>([
       ['returns undefined for empty string', '', undefined],
       ['returns undefined for whitespace only', '   ', undefined],
       ['returns empty array for text with no keywords', 'Running workout session', []],
-      [
-        'finds keywords that are part of similar words',
-        'roadway pathway tracking',
-        ['road', 'track'],
-      ],
       ['returns empty array for numeric text', '12345', []],
       ['returns empty array for special characters only', '!@#$%^&*()', []],
       [
@@ -160,16 +190,8 @@ describe('extract-text-signals', () => {
         [],
       ],
       ['returns empty array for gibberish text', 'xyzabc defghi', []],
-      [
-        'returns undefined when keywords are partial',
-        'trails roads tracks',
-        ['trail', 'road', 'track'],
-      ],
     ])('%#. %s', (_name, text, expected) => {
-      const result = extractTextSignals(
-        text,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractTextSignals(text, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -179,34 +201,31 @@ describe('extract-text-signals', () => {
     test.each<Case>([
       [
         'returns undefined when text contains violence keywords',
-        'trail run with weapon training',
+        'trail run with forbidden weapon training',
         undefined,
       ],
       [
         'returns undefined when text contains political keywords',
-        'outdoor run to the government building',
+        'outdoor run to the forbidden government building',
         undefined,
       ],
       [
         'returns undefined when text contains explicit content keywords',
-        'mountain climb with explicit adult content',
+        'mountain climb with forbidden explicit content',
         undefined,
       ],
       [
         'returns undefined when text contains person identifiers',
-        'trail run with portrait photo',
+        'trail run with forbidden portrait photo',
         undefined,
       ],
       [
         'returns undefined when text contains typography instructions',
-        'beach run display text on screen',
+        'beach run forbidden display text on screen',
         undefined,
       ],
     ])('%#. %s', (_name, text, expected) => {
-      const result = extractTextSignals(
-        text,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractTextSignals(text, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
@@ -241,10 +260,7 @@ describe('extract-text-signals', () => {
         ['trail', 'road', 'park'],
       ],
     ])('%#. %s', (_name, text, expected) => {
-      const result = extractTextSignals(
-        text,
-        (input: string) => input.includes('forbidden'),
-      );
+      const result = extractTextSignals(text, (input: string) => input.includes('forbidden'));
 
       expect(result).toStrictEqual(expected);
     });
