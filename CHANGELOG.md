@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.12.0] - 2026-02-17
 
-### Added Docker Configuration for Local Development and Production Deployment
+### [Added Docker Configuration for Local Development and Production Deployment]](https://github.com/mrbalov/pace/issues/27)
 
 ### Added
 - Multi-stage Dockerfile with optimized builds for both UI and server components using Node.js 24
