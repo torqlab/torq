@@ -3,6 +3,8 @@ export const ERROR_CODES = {
   UNAUTHORIZED: 'UNAUTHORIZED',
   FORBIDDEN: 'FORBIDDEN',
   INVALID_ID: 'INVALID_ID',
+  PROMPT_REQUIRED: 'PROMPT_REQUIRED',
+  FORBIDDEN_CONTENT: 'FORBIDDEN_CONTENT',
 };
 
 export const ERROR_MESSAGES = {
@@ -12,6 +14,8 @@ export const ERROR_MESSAGES = {
   INVALID_ACTIVITY_ID: 'Invalid activity ID',
   ACTIVITY_PROCESSING_FAILED: 'Failed to process activity',
   ACTIVITY_ID_REQUIRED: 'Activity ID is required',
+  PROMPT_REQUIRED: 'Prompt parameter is required',
+  FORBIDDEN_CONTENT: 'Prompt contains forbidden content',
 };
 
 export const STATUS_CODES = {
