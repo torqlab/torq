@@ -1,48 +1,25 @@
-import { fetchStravaActivity, type StravaApiConfig } from '@pace/strava-api';
-import getStravaActivitySignals from '@pace/get-strava-activity-signals';
 import generateStravaActivityImage from '@pace/generate-strava-activity-image';
+import type { GenerateImageOutput } from '@pace/generate-strava-activity-image/types';
 import checkForbiddenContent from '@pace/check-forbidden-content';
-import getStavaActivityImageGenerationPrompt, {
-  STRAVA_ACTIVITY_IMAGE_GENERATION_PROMPT_DEFAULT,
-} from '@pace/get-strava-activity-image-generation-prompt';
+import { STRAVA_ACTIVITY_IMAGE_GENERATION_PROMPT_DEFAULT } from '@pace/get-strava-activity-image-generation-prompt';
 
 import env from '../../env';
-import { getTokens } from '../../cookies';
-import type { ServerConfig, ServerTokenResult } from '../../types';
-import { ERROR_CODES, ERROR_MESSAGES, STATUS_CODES } from './constants';
+import { ERROR_MESSAGES, STATUS_CODES } from './constants';
 
 /**
- * Creates StravaApiConfig from server tokens and config.
+ * Creates error response for missing prompt parameter.
  *
- * @param {ServerTokenResult} tokens - OAuth tokens from cookies.
- * @param {ServerConfig} config - Server configuration.
- * @returns {StravaApiConfig} Strava API configuration.
+ * @returns {Response} 400 Bad Request response.
  * @internal
  */
-const createActivityConfig = (
-  tokens: ServerTokenResult,
-  config: ServerConfig,
-): StravaApiConfig => ({
-  accessToken: tokens.accessToken,
-  refreshToken: tokens.refreshToken,
-  clientId: config.strava.clientId,
-  clientSecret: config.strava.clientSecret,
-});
-
-/**
- * Creates error response for unauthorized requests.
- *
- * @returns {Response} 401 Unauthorized response.
- * @internal
- */
-const createUnauthorizedResponse = (): Response =>
+const createPromptRequiredResponse = (): Response =>
   new Response(
     JSON.stringify({
-      error: 'Unauthorized',
-      message: 'Authentication required. Please authenticate with Strava.',
+      error: 'Bad Request',
+      message: ERROR_MESSAGES.PROMPT_REQUIRED,
     }),
     {
-      status: 401,
+      status: STATUS_CODES.BAD_REQUEST,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -50,155 +27,29 @@ const createUnauthorizedResponse = (): Response =>
   );
 
 /**
- * Determines status code and error message from activity error code.
+ * Creates error response for forbidden content in prompt.
  *
- * @param {string | undefined} code - Activity error code.
- * @param {string | undefined} message - Error message from activity error.
- * @returns {{ statusCode: number; errorMessage: string }} Status code and error message.
+ * @returns {Response} 400 Bad Request response.
  * @internal
  */
-const determineErrorDetails = (
-  code: string | undefined,
-  message: string | undefined,
-): { statusCode: number; errorMessage: string } => {
-  switch (code) {
-    case ERROR_CODES.NOT_FOUND:
-      return {
-        statusCode: STATUS_CODES.NOT_FOUND,
-        errorMessage: message ?? ERROR_MESSAGES.ACTIVITY_NOT_FOUND,
-      };
-    case ERROR_CODES.UNAUTHORIZED:
-      return {
-        statusCode: STATUS_CODES.UNAUTHORIZED,
-        errorMessage: message ?? ERROR_MESSAGES.AUTHENTICATION_FAILED,
-      };
-    case ERROR_CODES.FORBIDDEN:
-      return {
-        statusCode: STATUS_CODES.FORBIDDEN,
-        errorMessage: message ?? ERROR_MESSAGES.INSUFFICIENT_PERMISSIONS,
-      };
-    case ERROR_CODES.INVALID_ID:
-      return {
-        statusCode: STATUS_CODES.BAD_REQUEST,
-        errorMessage: message ?? ERROR_MESSAGES.INVALID_ACTIVITY_ID,
-      };
-    default:
-      return {
-        statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
-        errorMessage: message ?? ERROR_MESSAGES.ACTIVITY_PROCESSING_FAILED,
-      };
-  }
-};
-
-/**
- * Creates error response for activity processing failures.
- *
- * @param {Error} error - Error object.
- * @returns {Response} Error response with appropriate status code.
- * @internal
- */
-const createErrorResponse = (error: Error): Response => {
-  const details = (() => {
-    try {
-      const activityError = JSON.parse(error.message) as {
-        code?: string;
-        message?: string;
-      };
-
-      return determineErrorDetails(activityError.code, activityError.message);
-    } catch {
-      return {
-        statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
-        errorMessage: error.message ?? ERROR_MESSAGES.ACTIVITY_PROCESSING_FAILED,
-      };
-    }
-  })();
-
-  return new Response(
+const createForbiddenContentResponse = (): Response =>
+  new Response(
     JSON.stringify({
-      error: details.errorMessage,
+      error: 'Bad Request',
+      message: ERROR_MESSAGES.FORBIDDEN_CONTENT,
     }),
     {
-      status: details.statusCode,
+      status: STATUS_CODES.BAD_REQUEST,
       headers: {
         'Content-Type': 'application/json',
       },
     },
   );
-};
 
 /**
- * Generates image for a Strava activity.
+ * Creates error response for missing activity ID.
  *
- * @param {string} provider - Image generation provider.
- * @param {string} prompt - Prompt for image generation.
- * @returns {Promise<Response>} Success response with activity, signals, prompt, and image data.
- * @internal
- */
-const generateImage = async (provider: 'pollinations', prompt: string) => {
-  if (prompt) {
-    try {
-      return await generateStravaActivityImage({
-        defaultPrompt: STRAVA_ACTIVITY_IMAGE_GENERATION_PROMPT_DEFAULT,
-        providerApiKeys: env.imageGenerationProviderApiKeys,
-        provider,
-        prompt,
-      });
-    } catch (error) {
-      console.error('Image generation failed:', error);
-      return null;
-    }
-  } else {
-    return null;
-  }
-};
-
-/**
- * Fetches activity, extracts signals, generates prompt, generates image and creates success response.
- *
- * @param {string} activityId - Activity ID from URL.
- * @param {ServerTokenResult} tokens - OAuth tokens from cookies.
- * @param {ServerConfig} config - Server configuration.
- * @returns {Promise<Response>} Success response with activity, signals, prompt, and image data.
- * @internal
- */
-const processActivityAndCreateResponse = async (
-  activityId: string,
-  tokens: ServerTokenResult,
-  config: ServerConfig,
-): Promise<Response> => {
-  const provider = 'pollinations';
-  const activityConfig = createActivityConfig(tokens, config);
-  const activity = await fetchStravaActivity(activityId, activityConfig);
-  const signals = activity ? getStravaActivitySignals(activity, checkForbiddenContent) : null;
-  const prompt = signals
-    ? getStavaActivityImageGenerationPrompt(signals, checkForbiddenContent)
-    : null;
-  const image = prompt
-    ? await generateImage(provider, prompt)
-    : await generateImage(provider, STRAVA_ACTIVITY_IMAGE_GENERATION_PROMPT_DEFAULT);
-
-  return new Response(
-    JSON.stringify({
-      activity,
-      signals,
-      prompt,
-      image,
-      provider,
-    }),
-    {
-      status: STATUS_CODES.OK,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-  );
-};
-
-/**
- * Creates bad request response for missing activity ID.
- *
- * @returns {Response} 400 Bad Request response
+ * @returns {Response} 400 Bad Request response.
  * @internal
  */
 const createBadRequestResponse = (): Response =>
@@ -215,59 +66,100 @@ const createBadRequestResponse = (): Response =>
     },
   );
 
+
+
 /**
- * Handles activity processing with error handling.
+ * Generates image using provided prompt.
  *
- * @param {string} activityId - Activity ID from URL
- * @param {ServerTokenResult} tokens - OAuth tokens from cookies
- * @param {ServerConfig} config - Server configuration
- * @returns {Promise<Response>} Success or error response
+ * @param {string} prompt - Prompt for image generation.
+ * @returns {Promise<GenerateImageOutput | null>} Generated image data or null on failure.
  * @internal
  */
-const handleActivityProcessing = async (
-  activityId: string,
-  tokens: ServerTokenResult,
-  config: ServerConfig,
-): Promise<Response> => {
+const generateImage = async (prompt: string): Promise<GenerateImageOutput | null> => {
   try {
-    return await processActivityAndCreateResponse(activityId, tokens, config);
+    return await generateStravaActivityImage({
+      defaultPrompt: STRAVA_ACTIVITY_IMAGE_GENERATION_PROMPT_DEFAULT,
+      providerApiKeys: env.imageGenerationProviderApiKeys,
+      provider: 'pollinations',
+      prompt,
+    });
   } catch (error) {
-    return createErrorResponse(error as Error);
+    console.error('Image generation failed:', error);
+    return null;
   }
 };
 
 /**
- * Handles GET /activity-image-generator/:activityId - Fetches activity, extracts signals, generates prompt, and generates image.
+ * Generates image with provided prompt and creates success response.
  *
- * Retrieves activity data from Strava API, extracts semantic signals, generates
- * an image generation prompt, and generates an image using Pollinations.ai. Returns activity data,
- * extracted signals, the generated prompt, and the generated image as base64 data.
- * Requires authentication via cookies containing Strava OAuth tokens.
- *
- * @param {Request} request - HTTP request with activity ID in path.
- * @param {ServerConfig} config - Server configuration.
- * @returns {Promise<Response>} JSON response with activity, signals, prompt, and image data or error.
+ * @param {string} prompt - Image generation prompt.
+ * @returns {Promise<Response>} Success response with image data.
+ * @internal
  */
-const activityImageGenerator = async (
-  request: Request,
-  config: ServerConfig,
+const processImageGenerationAndCreateResponse = async (
+  prompt: string,
 ): Promise<Response> => {
+  const image = await generateImage(prompt);
+  const provider = 'pollinations';
+
+  return new Response(
+    JSON.stringify({
+      image,
+      provider,
+      prompt,
+    }),
+    {
+      status: STATUS_CODES.OK,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+};
+
+/**
+ * Handles GET /strava/activities/:activityId/image-generator?prompt=:prompt - Generates image with custom prompt.
+ *
+ * Generates an image using the provided prompt parameter via Pollinations.ai.
+ * Returns the generated image as base64 data. Validates prompt for forbidden content.
+ * Prompt parameter is required.
+ *
+ * @param {Request} request - HTTP request with activity ID in path and prompt in query.
+ * @returns {Promise<Response>} JSON response with image data or error.
+ */
+const activityImageGenerator = async (request: Request): Promise<Response> => {
   const url = new URL(request.url);
   const pathname = url.pathname;
   const pathParts = pathname.split('/').filter((part) => part !== '');
-  const activityIdIndex = pathParts.indexOf('activity-image-generator');
-  const hasActivityId = activityIdIndex !== -1 && activityIdIndex < pathParts.length - 1;
+  
+  const stravaIndex = pathParts.indexOf('strava');
+  const activitiesIndex = stravaIndex !== -1 ? stravaIndex + 1 : -1;
+  const activityIdIndex = activitiesIndex !== -1 && pathParts[activitiesIndex] === 'activities' ? activitiesIndex + 1 : -1;
+  const imageGeneratorIndex = activityIdIndex !== -1 ? activityIdIndex + 1 : -1;
+  
+  const hasValidPath = 
+    stravaIndex !== -1 &&
+    activitiesIndex !== -1 &&
+    activityIdIndex !== -1 &&
+    imageGeneratorIndex !== -1 &&
+    pathParts[activitiesIndex] === 'activities' &&
+    pathParts[imageGeneratorIndex] === 'image-generator';
 
-  if (!hasActivityId) {
+  if (!hasValidPath) {
     return createBadRequestResponse();
   } else {
-    const activityId = pathParts[activityIdIndex + 1];
-    const tokens = getTokens(request);
+    const prompt = url.searchParams.get('prompt');
 
-    if (tokens) {
-      return await handleActivityProcessing(activityId, tokens, config);
+    if (!prompt) {
+      return createPromptRequiredResponse();
     } else {
-      return createUnauthorizedResponse();
+      const hasForbiddenContent = checkForbiddenContent(prompt);
+
+      if (hasForbiddenContent) {
+        return createForbiddenContentResponse();
+      } else {
+        return await processImageGenerationAndCreateResponse(prompt);
+      }
     }
   }
 };

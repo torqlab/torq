@@ -15,7 +15,10 @@ const useGenerateImage = (activityId?: string) => {
     activitySignals: signalsData.data ?? undefined,
     activityId: activityId ?? undefined,
   });
-  const imageData = useGenerateStravaActivityImage(activityId);
+  const imageData = useGenerateStravaActivityImage({
+    activityId: activityId ?? undefined,
+    prompt: promptData.data ?? undefined,
+  });
 
   return {
     isLoading: signalsData.isLoading || promptData.isLoading || imageData.isLoading,

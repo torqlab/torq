@@ -220,7 +220,7 @@ const matchesActivitySignalsRoute = (pathname: string): boolean => {
 };
 
 /**
- * Checks if pathname matches /activity-image-generator/:id pattern.
+ * Checks if pathname matches /strava/activities/:id/image-generator pattern.
  *
  * @param {string} pathname - Request pathname
  * @returns {boolean} True if pathname matches the pattern
@@ -228,7 +228,12 @@ const matchesActivitySignalsRoute = (pathname: string): boolean => {
  */
 const matchesActivityImageGeneratorRoute = (pathname: string): boolean => {
   const pathParts = pathname.split('/').filter((part) => part !== '');
-  return pathParts.length === 2 && pathParts[0] === 'activity-image-generator';
+  return (
+    pathParts.length === 4 &&
+    pathParts[0] === 'strava' &&
+    pathParts[1] === 'activities' &&
+    pathParts[3] === 'image-generator'
+  );
 };
 
 /**
@@ -258,7 +263,7 @@ const handleRoute = async (request: Request): Promise<Response> => {
   } else if (matchesActivityRoute(pathname)) {
     return stravaActivity(request, config);
   } else if (matchesActivityImageGeneratorRoute(pathname)) {
-    return activityImageGenerator(request, config);
+    return activityImageGenerator(request);
   } else {
     return Promise.resolve(new Response('Not Found', { status: 404 }));
   }
