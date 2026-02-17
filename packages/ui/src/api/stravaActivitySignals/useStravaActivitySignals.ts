@@ -7,7 +7,7 @@ import fetchStravaActivitySignals from './fetchStravaActivitySignals';
  * @param {string} [activityId] - Strava activity ID to fetch signals for.
  * @returns {object} Object containing loading state and activity signals data.
  */
-const useStravaActivitySignalsData = (activityId?: string) => {
+const useStravaActivitySignals = (activityId?: string | null) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [data, setData] = useState<StravaActivitySignals | null>(null);
@@ -39,4 +39,4 @@ const useStravaActivitySignalsData = (activityId?: string) => {
   };
 };
 
-export default useStravaActivitySignalsData;
+export default useStravaActivitySignals;

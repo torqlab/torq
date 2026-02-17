@@ -1,16 +1,6 @@
-import { apiRequest } from './client';
+import { StravaActivity } from '@pace/strava-api';
 
-export interface Activity {
-  id: number;
-  type: string;
-  sport_type: string;
-  name: string;
-  distance: number;
-  moving_time: number;
-  elapsed_time: number;
-  start_date: string;
-  total_elevation_gain: number | null;
-}
+import { apiRequest } from './client';
 
 /**
  * Initiate OAuth flow by redirecting to backend auth endpoint.
@@ -24,26 +14,26 @@ export function authorizeStrava(): void {
 
 /**
  * Fetch list of activities for authenticated user.
- * @returns {Promise<Activity[]>} Array of user activities
+ * @returns {Promise<StravaActivity[]>} Array of user activities
  */
-export async function fetchActivities(): Promise<Activity[]> {
-  return apiRequest<Activity[]>('/strava/activities');
+export async function fetchActivities(): Promise<StravaActivity[]> {
+  return apiRequest<StravaActivity[]>('/strava/activities');
 }
 
 /**
  * Fetch specific activity by ID.
  * @param {number} id - Activity ID
- * @returns {Promise<Activity>} Activity data
+ * @returns {Promise<StravaActivity>} Activity data
  */
-export async function fetchActivity(id: number): Promise<Activity> {
-  return apiRequest<Activity>(`/strava/activity/${id}`);
+export async function fetchActivity(id: number): Promise<StravaActivity> {
+  return apiRequest<StravaActivity>(`/strava/activity/${id}`);
 }
 
 /**
  * Fetch specific activity signals by activity ID.
  * @param {number} id - Activity ID.
- * @returns {Promise<Activity>} Activity signals.
+ * @returns {Promise<StravaActivity>} Activity signals.
  */
-export async function fetchActivitySignals(id: number): Promise<Activity> {
-  return apiRequest<Activity>(`/strava/activities/${id}/signals`);
+export async function fetchActivitySignals(id: number): Promise<StravaActivity> {
+  return apiRequest<StravaActivity>(`/strava/activities/${id}/signals`);
 }

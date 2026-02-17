@@ -15,6 +15,7 @@ import {
   stravaAuthStatus,
   stravaActivity,
   stravaActivitySignals,
+  stravaActivityImageGenerationPrompt,
   stravaActivities,
   stravaLogout,
   activityImageGenerator,
@@ -184,6 +185,24 @@ const matchesActivityRoute = (pathname: string): boolean => {
 };
 
 /**
+ * Checks if pathname matches /strava/activities/:id/image-generator/prompt pattern.
+ *
+ * @param {string} pathname - Request pathname
+ * @returns {boolean} True if pathname matches the pattern
+ * @internal
+ */
+const matchesActivityImageGenerationPromptRoute = (pathname: string): boolean => {
+  const pathParts = pathname.split('/').filter((part) => part !== '');
+  return (
+    pathParts.length === 5 &&
+    pathParts[0] === 'strava' &&
+    pathParts[1] === 'activities' &&
+    pathParts[3] === 'image-generator' &&
+    pathParts[4] === 'prompt'
+  );
+};
+
+/**
  * Checks if pathname matches /strava/activities/:id/signals pattern.
  *
  * @param {string} pathname - Request pathname
@@ -230,6 +249,8 @@ const handleRoute = async (request: Request): Promise<Response> => {
     return Promise.resolve(stravaAuthStatus(request, config));
   } else if (pathname === '/strava/logout') {
     return Promise.resolve(stravaLogout(request, config));
+  } else if (matchesActivityImageGenerationPromptRoute(pathname)) {
+    return stravaActivityImageGenerationPrompt(request, config);
   } else if (matchesActivitySignalsRoute(pathname)) {
     return stravaActivitySignals(request, config);
   } else if (pathname === '/strava/activities') {
