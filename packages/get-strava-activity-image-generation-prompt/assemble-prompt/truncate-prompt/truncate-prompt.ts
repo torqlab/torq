@@ -31,7 +31,7 @@ const truncatePrompt = (prompt: string, signals: StravaActivitySignals): string 
     const remainingLength = MAX_PROMPT_LENGTH - essentialLength;
 
     if (remainingLength <= 0) {
-      return `${essentialPrompt}${GENERAL_QUALITY}`;
+      return `${essentialPrompt}; ${GENERAL_QUALITY}`;
     } else {
       const restPrompt = [
         `${derived.atmosphere} atmosphere`,

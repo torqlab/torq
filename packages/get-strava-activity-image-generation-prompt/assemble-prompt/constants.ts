@@ -1,7 +1,7 @@
 /**
  * General quality keywords to guide model toward better output.
  */
-export const GENERAL_QUALITY = ', high quality, sharp, beautiful';
+export const GENERAL_QUALITY = 'high quality, sharp, beautiful';
 
 /**
  * Style-specific quality keywords to enhance image generation.

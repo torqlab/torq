@@ -26,7 +26,7 @@ describe('generate-prompt', () => {
           atmosphere: 'bright daylight',
         },
       },
-      'modern animation style, studio quality, vibrant character design; cartoon style; runner, appealing character design, expressive pose; focused mood; bright daylight atmosphere; outdoor training space; flat terrain; , high quality, sharp, beautiful',
+      'modern animation style, studio quality, vibrant character design; cartoon style; runner, appealing character design, expressive pose; focused mood; bright daylight atmosphere; outdoor training space; flat terrain; high quality, sharp, beautiful',
     ],
     [
       'generates prompt with recovery tag',
@@ -47,7 +47,7 @@ describe('generate-prompt', () => {
           atmosphere: 'bright daylight',
         },
       },
-      'minimalist graphic design, clean vector art, simple shapes; minimal style; runner, simplified silhouette, clean form; calm mood; bright daylight atmosphere; outdoor training space; flat terrain; , high quality, sharp, beautiful',
+      'minimalist graphic design, clean vector art, simple shapes; minimal style; runner, simplified silhouette, clean form; calm mood; bright daylight atmosphere; outdoor training space; flat terrain; high quality, sharp, beautiful',
     ],
     [
       'generates prompt with high intensity',
@@ -68,7 +68,7 @@ describe('generate-prompt', () => {
           atmosphere: 'bright daylight',
         },
       },
-      'professional editorial illustration, digital art, concept art style; illustrated style; runner, well-proportioned figure, professional anatomy; intense mood; bright daylight atmosphere; outdoor training space; flat terrain; , high quality, sharp, beautiful',
+      'professional editorial illustration, digital art, concept art style; illustrated style; runner, well-proportioned figure, professional anatomy; intense mood; bright daylight atmosphere; outdoor training space; flat terrain; high quality, sharp, beautiful',
     ],
   ])('%#. %s', (_name, signals, expected) => {
     const result = getStravaActivityImageGenerationPrompt(signals, (input) =>

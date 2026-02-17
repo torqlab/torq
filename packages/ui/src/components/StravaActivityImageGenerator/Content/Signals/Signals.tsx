@@ -2,7 +2,7 @@ import { Fragment, useMemo } from 'react';
 import { Card, Text } from '@geist-ui/core';
 import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
 
-import Preloader from '../../../../../components/Preloader';
+import Preloader from '../../../Preloader';
 import prettifySignals from './prettify-signals';
 
 interface SignalsProps {
@@ -31,11 +31,13 @@ const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
   return (
     <Card style={{ width: '100%' }}>
       {isLoading ? (
-        <Preloader message="Extracting signals from your activity..." withFullHeight={false} />
+        <Preloader
+          message="Extracting AI signals from your activity..."
+          withFullHeight={false} />
       ) : (isLoaded && signals) ? (
         <>
           <Text h5 type="secondary">
-            Signals extracted from your activity:
+            AI signals from your activity:
           </Text>
           <Text p type="secondary" small>
             {prettySignals.map(([key, value]) => (
@@ -45,11 +47,11 @@ const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
             ))}
           </Text>
         </>
-      ) : (
-        <Text p type="error">
+      ) : isLoaded ? (
+        <Text p small type="error">
           No activity signals available... Let's cry together.
         </Text>
-      )}
+      ) : null}
     </Card>
   );
 };
