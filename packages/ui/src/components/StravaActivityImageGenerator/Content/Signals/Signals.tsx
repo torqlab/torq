@@ -32,7 +32,7 @@ const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
     <Card style={{ width: '100%' }}>
       {isLoading ? (
         <Preloader
-          message="Extracting AI signals from your activity..."
+          message="⚙️ Extracting AI signals from your activity..."
           withFullHeight={false} />
       ) : (isLoaded && signals) ? (
         <>
@@ -51,7 +51,11 @@ const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
         <Text p small type="error">
           No activity signals available... Let's cry together.
         </Text>
-      ) : null}
+      ) : (
+        <Preloader
+          message="⏳ Pending AI signals extraction from your activity..."
+          withFullHeight={false} />
+      )}
     </Card>
   );
 };

@@ -80,7 +80,10 @@ const Image = ({
 }: ImageProps) => (
   <Card style={{ width: '100%' }}>
     {isLoading ? (
-      <Preloader message="Creating your activity image..." withFullHeight={false} />
+      <Preloader
+        message="🤖 Creating your activity image with AI..."
+        withFullHeight={false}
+      />
     ) : (isLoaded && image) ? (
       <ImageContent image={image} />
     ) : isLoaded ? (
@@ -89,7 +92,11 @@ const Image = ({
           <Text>Failed to generate image for your activity... Let's cry together.</Text>
         </Note>
       </Grid>
-    ) : null}
+    ) : (
+      <Preloader
+        message="⏳ Pending AI image generation for your activity..."
+        withFullHeight={false} />
+    )}
   </Card>
 );
 

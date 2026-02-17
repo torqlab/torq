@@ -24,7 +24,7 @@ const Prompt = ({
   <Card style={{ width: '100%' }}>
     {isLoading ? (
       <Preloader
-        message="Preparing AI image generation prompt for your activity..."
+        message="⚙️ Preparing AI image generation prompt for your activity..."
         withFullHeight={false} />
     ) : (isLoaded && prompt) ? (
       <>
@@ -37,9 +37,13 @@ const Prompt = ({
       </>
     ) : isLoaded ? (
       <Text p small type="error">
-        No activity signals available... Let's cry together.
+        No AI image generation prompt available... Let's cry together.
       </Text>
-    ) : null}
+    ) : (
+      <Preloader
+        message="⏳ Pending AI prompt preparation for your activity..."
+        withFullHeight={false} />
+    )}
   </Card>
 );
 

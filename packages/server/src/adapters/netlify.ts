@@ -638,9 +638,8 @@ const activityImageGeneratorSuccess = async (event: NetlifyEvent): Promise<Netli
     return handleOptionsRequest(event);
   }
 
-  const config = getConfig();
   const request = netlifyEventToRequest(event);
-  const response = await activityImageGenerator(request, config);
+  const response = await activityImageGenerator(request);
   return await webResponseToNetlify(response);
 };
 
