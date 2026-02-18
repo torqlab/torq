@@ -1,4 +1,4 @@
-import { Status } from '../../types';
+import { Status } from '../../../types';
 import { EMOJIS } from '../constants';
 import { Output } from './types';
 
@@ -22,7 +22,7 @@ const getStatusEmoji = (status: Status): Output => {
     }
     case 'error': {
       return {
-        emoji: EMOJIS.PENDING,
+        emoji: EMOJIS.ERROR,
       };
     }
     case 'pending': {

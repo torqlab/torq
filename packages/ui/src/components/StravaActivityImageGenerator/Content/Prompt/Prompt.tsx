@@ -24,6 +24,7 @@ const Prompt = ({
   <ExpandableCard
     isLoading={isLoading}
     isLoaded={isLoaded}
+    hasContent={Boolean(prompt)}
     loadingMessage="Preparing AI image generation prompt for your activity..."
     errorMessage="No AI image generation prompt available... Let's cry together."
     pendingMessage="Pending AI image generation prompt preparation for your activity..."

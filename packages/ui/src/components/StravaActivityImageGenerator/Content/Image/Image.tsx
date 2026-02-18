@@ -1,67 +1,11 @@
-import { Download } from '@geist-ui/icons';
-import { Button, Grid } from '@geist-ui/core';
-
+import Content from './Content';
 import ExpandableCard from '../ExpandableCard';
-import downloadBase64Image from './downloadBase64Image';
 
 interface ImageProps {
   isLoading: boolean;
   isLoaded: boolean;
   image?: string | null;
 }
-
-interface ImageContentProps {
-  image: string;
-}
-
-/**
- * Image generation result.
- * @param {ImageContentProps} props - Component props.
- * @param {string} props.image - Generated image data URL.
- * @param {Function} props.downloadImage - Function to download the generated image.
- * @returns {JSX.Element} Image generation result component.
- */
-const ImageContent = ({
-  image,
-}: ImageContentProps) => (
-  <>
-    <Grid xs={24}>
-      <img
-        src={image}
-        alt="Generated activity image"
-        style={{
-          width: '100%',
-          height: 'auto',
-          maxWidth: '100%',
-          borderRadius: '8px',
-          display: 'block',
-          aspectRatio: '1/1',
-        }}
-        onLoad={() => {
-          console.info('Image loaded successfully');
-        }}
-        onError={(error) => {
-          console.error('Image load error:', error);
-        }}
-      />
-    </Grid>
-    <Grid xs={24}>
-      <Button
-        onClick={() => {
-          downloadBase64Image(image).catch(console.error);
-        }}
-        type="default"
-        width="100%"
-        icon={<Download />}
-        placeholder="Download Image"
-        onPointerEnterCapture={() => undefined}
-        onPointerLeaveCapture={() => undefined}
-      >
-        Download Image
-      </Button>
-    </Grid>
-  </>
-);
 
 /**
  * Image generation progress.
@@ -82,14 +26,14 @@ const Image = ({
   <ExpandableCard
     isLoading={isLoading}
     isLoaded={isLoaded}
+    hasContent={Boolean(image)}
     minHeight="auto"
     title="Step 3: Creating your activity image with AI"
     pendingMessage="Pending AI image generation for your activity..."
     loadingMessage="Creating your activity image with AI..."
     errorMessage="Failed to generate image for your activity... Let's cry together."
-    withPreloader
   >
-    {image && <ImageContent image={image} />}
+    <Content image={image} />
   </ExpandableCard>
 );
 

@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'bun:test';
 
 import getStatusEmoji from './getStatusEmoji';
-import { Status } from '../../types';
+import { Status } from '../../../types';
 import { EMOJIS } from '../constants';
 import { Output } from './types';
 
@@ -29,10 +29,10 @@ describe('getStatusEmoji', () => {
       },
     ],
     [
-      'error status showing hourglass',
+      'error status showing dizzy face',
       'error',
       {
-        emoji: EMOJIS.PENDING,
+        emoji: EMOJIS.ERROR,
       },
     ],
     [

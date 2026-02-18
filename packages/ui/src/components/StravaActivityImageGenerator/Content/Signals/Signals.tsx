@@ -28,10 +28,11 @@ const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
     <ExpandableCard
       isLoading={isLoading}
       isLoaded={isLoaded}
-      loadingMessage="Extracting AI signals from your activity..."
-      errorMessage="No activity signals available... Let's cry together."
-      pendingMessage="Pending AI signals extraction from your activity..."
+      hasContent={(prettySignals?.length ?? 0) > 0}
       title="Step 1: Extracting AI signals from your activity"
+      pendingMessage="Pending AI signals extraction..."
+      loadingMessage="Extracting AI signals..."
+      errorMessage="No activity signals available..."
       withExpander
     >
       {prettySignals && (
