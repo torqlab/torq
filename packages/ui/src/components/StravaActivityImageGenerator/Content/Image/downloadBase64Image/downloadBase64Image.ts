@@ -5,22 +5,28 @@
  * @returns {Promise<void>} Promise that resolves when download is triggered.
  */
 const downloadBase64Image = async (image: string): Promise<void> => {
-  try {
-    // Convert data URL to blob.
-    const response = await fetch(image);
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
+  const hasImage = image && image.trim().length > 0;
 
-    link.href = url;
-    link.download = 'activity-image.png';
+  if (hasImage) {
+    try {
+      // Convert data URL to blob.
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error('Failed to download image:', error);
+      link.href = url;
+      link.download = 'activity-image.png';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download image:', error);
+    }
+  } else {
+    console.error('Failed to download image: Empty or invalid image data');
   }
 };
 

@@ -1,7 +1,7 @@
 import { Download } from '@geist-ui/icons';
-import { Button, Text, Note, Grid, Card } from '@geist-ui/core';
+import { Button, Grid } from '@geist-ui/core';
 
-import Preloader from '../../../Preloader';
+import ExpandableCard from '../ExpandableCard';
 import downloadBase64Image from './downloadBase64Image';
 
 interface ImageProps {
@@ -35,6 +35,7 @@ const ImageContent = ({
           maxWidth: '100%',
           borderRadius: '8px',
           display: 'block',
+          aspectRatio: '1/1',
         }}
         onLoad={() => {
           console.info('Image loaded successfully');
@@ -78,26 +79,18 @@ const Image = ({
   isLoaded,
   image,
 }: ImageProps) => (
-  <Card style={{ width: '100%' }}>
-    {isLoading ? (
-      <Preloader
-        message="🤖 Creating your activity image with AI..."
-        withFullHeight={false}
-      />
-    ) : (isLoaded && image) ? (
-      <ImageContent image={image} />
-    ) : isLoaded ? (
-      <Grid xs={24}>
-        <Note type="error" label="Error">
-          <Text>Failed to generate image for your activity... Let's cry together.</Text>
-        </Note>
-      </Grid>
-    ) : (
-      <Preloader
-        message="⏳ Pending AI image generation for your activity..."
-        withFullHeight={false} />
-    )}
-  </Card>
+  <ExpandableCard
+    isLoading={isLoading}
+    isLoaded={isLoaded}
+    minHeight="auto"
+    title="Step 3: Creating your activity image with AI"
+    pendingMessage="Pending AI image generation for your activity..."
+    loadingMessage="Creating your activity image with AI..."
+    errorMessage="Failed to generate image for your activity... Let's cry together."
+    withPreloader
+  >
+    {image && <ImageContent image={image} />}
+  </ExpandableCard>
 );
 
 export default Image;

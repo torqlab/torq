@@ -1,9 +1,9 @@
 import { Fragment, useMemo } from 'react';
-import { Card, Text } from '@geist-ui/core';
+import { Text } from '@geist-ui/core';
 import { StravaActivitySignals } from '@pace/get-strava-activity-signals';
 
-import Preloader from '../../../Preloader';
-import prettifySignals from './prettify-signals';
+import prettifySignals from './prettifySignals';
+import ExpandableCard from '../ExpandableCard';
 
 interface SignalsProps {
   isLoading: boolean;
@@ -20,43 +20,30 @@ interface SignalsProps {
  * @returns {JSX.Element} The signals component.
  */
 const Signals = ({ isLoading, isLoaded, signals }: SignalsProps) => {
-  const prettySignals = useMemo<[string, string][]>(() => {
-    if (signals) {
-      return prettifySignals(signals);
-    } else {
-      return [];
-    }
-  }, [signals]);
+  const prettySignals = useMemo<[string, string][] | null>(() => (
+    signals ? prettifySignals(signals) : null
+  ), [signals]);
 
   return (
-    <Card style={{ width: '100%' }}>
-      {isLoading ? (
-        <Preloader
-          message="⚙️ Extracting AI signals from your activity..."
-          withFullHeight={false} />
-      ) : (isLoaded && signals) ? (
-        <>
-          <Text h5 type="secondary">
-            AI signals from your activity:
-          </Text>
-          <Text p type="secondary" small>
-            {prettySignals.map(([key, value]) => (
-              <Fragment key={key}>
-                <strong>{key}:</strong> {value};{' '}
-              </Fragment>
-            ))}
-          </Text>
-        </>
-      ) : isLoaded ? (
-        <Text p small type="error">
-          No activity signals available... Let's cry together.
+    <ExpandableCard
+      isLoading={isLoading}
+      isLoaded={isLoaded}
+      loadingMessage="Extracting AI signals from your activity..."
+      errorMessage="No activity signals available... Let's cry together."
+      pendingMessage="Pending AI signals extraction from your activity..."
+      title="Step 1: Extracting AI signals from your activity"
+      withExpander
+    >
+      {prettySignals && (
+        <Text p type="secondary" small>
+          {prettySignals?.map(([key, value]) => (
+            <Fragment key={key}>
+              <strong>{key}:</strong> {value};{' '}
+            </Fragment>
+          ))}
         </Text>
-      ) : (
-        <Preloader
-          message="⏳ Pending AI signals extraction from your activity..."
-          withFullHeight={false} />
       )}
-    </Card>
+    </ExpandableCard>
   );
 };
 
