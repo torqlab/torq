@@ -10,8 +10,6 @@ import Member from './Member';
 
 /**
  * Home page.
- * Shows login button or welcome message based on authentication status.
- * Uses /strava/auth/status endpoint to check auth - does not fetch activities.
  * @returns {JSX.Element} Home page.
  */
 const HomePage = (): JSX.Element => {

@@ -3,7 +3,7 @@
  * Communicates with /packages/server backend.
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+import env from '@/env';
 
 /**
  * Custom error class for API request failures.
@@ -30,7 +30,7 @@ export class APIError extends Error {
  * @returns {Promise<T>} Response data
  */
 export async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(`${env.apiUrl}${endpoint}`, {
     ...options,
     credentials: 'include', // Include cookies
     headers: {

@@ -1,6 +1,6 @@
 ![One athlete is running. Another athlete is riding a road bicycle. Minimalistic style with dark colour tones.](./banner-thin.webp)
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/7b8eb9b4-63e0-43e5-87d4-473958dd27ae/deploy-status)](https://app.netlify.com/projects/torq-ui/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/7b8eb9b4-63e0-43e5-87d4-473958dd27ae/deploy-status)](https://app.netlify.com/projects/torqui/deploys)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/c1078a73-683e-4313-8e7c-2911d555c7f0/deploy-status)](https://app.netlify.com/projects/torqapi/deploys)
 

@@ -9,9 +9,7 @@ import Guest from './Guest';
 import Error from './Error';
 
 /**
- * Activities page component for listing Strava activities.
- * Shows activities with error handling and loading states.
- *
+ * Activities page.
  * @returns {JSX.Element} Activities page component
  */
 const ActivitiesPage = (): JSX.Element => {

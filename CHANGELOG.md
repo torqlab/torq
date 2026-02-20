@@ -6,6 +6,21 @@ Please, document here only changes visible to the client app.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.1] - 2026-02-20
+
+### [22 Fixed Hydration Error and Strava Auth Endpoint](https://github.com/mrbalov/pace/issues/22)
+
+### Fixed
+- Resolved Next.js hydration error in ThemeSwitcher component caused by server/client theme state mismatch
+- Added mounted state to prevent hydration mismatch between SSR and client-side theme resolution
+- Added skeleton loading animation during theme initialization to improve UX
+- Fixed accessibility labels (aria-label, title) to use consistent values during hydration
+
+### Technical Notes
+- ThemeSwitcher now renders identical content on server and initial client load
+- Skeleton animation displays briefly before theme-dependent icons appear
+- Eliminates console hydration warnings when toggling themes
+
 ## [5.0.0] - 2026-02-20
 
 ### [22 UI Removed Next.js Server Overwrites](https://github.com/mrbalov/pace/issues/22)
