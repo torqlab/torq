@@ -113,6 +113,8 @@ export default defineConfig([
       '**/dist/**',
       '**/.next/**',
       '*.config.js',
+      '**/*.config.mjs',
+      'packages/ui/next-env.d.ts',
       'actions-runner/**',
       '.claude/**',
     ],
