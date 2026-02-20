@@ -1,8 +1,7 @@
-import HomePage from '../views/HomePage';
+import HomePage from '@/components/pages/HomePage';
 
 /**
- * Home route — delegates to the HomePage client component.
- *
+ * Home page.
  * @returns {JSX.Element} Home page.
  */
 const Page = (): JSX.Element => <HomePage />;

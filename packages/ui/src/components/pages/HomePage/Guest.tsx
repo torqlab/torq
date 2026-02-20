@@ -2,8 +2,8 @@
 
 import { Activity } from 'lucide-react';
 
-import { authorizeStrava } from '../../api/strava';
-import { Button } from '../../components/ui/button';
+import { authorizeStrava } from '@/api/strava';
+import { Button } from '@/components/ui/button';
 
 /**
  * Guest view — Client Component.

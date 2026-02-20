@@ -4,7 +4,7 @@ import {
   useGenerateStravaActivityImage,
   useStravaActivityImageGenerationPrompt,
   useStravaActivitySignals,
-} from '../../../api';
+} from '@/api';
 
 /**
  * Generates Strava activity image.

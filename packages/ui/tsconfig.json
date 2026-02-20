@@ -8,9 +8,8 @@
     ],
     "allowJs": false,
     "skipLibCheck": true,
-    "types": [
-      "bun"
-    ],
+    "types": ["bun"],
+    "typeRoots": ["./node_modules/@types"],
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -23,11 +22,6 @@
       }
     ],
     "paths": {
-      "@/components/*": ["./src/components/*"],
-      "@/components/ui/*": ["./src/components/ui/*"],
-      "@/lib/utils": ["./src/lib/utils"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/hooks/*": ["./src/hooks/*"],
       "@/*": ["./src/*"]
     },
     "strict": true,

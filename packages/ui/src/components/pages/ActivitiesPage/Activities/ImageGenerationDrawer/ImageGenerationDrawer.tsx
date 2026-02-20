@@ -1,8 +1,9 @@
 'use client';
 
-import { Sheet, SheetContent } from '../../../../components/ui/sheet';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import StravaActivityImageGenerator from '@/components/organisms/StravaActivityImageGenerator';
+
 import Title from './Title';
-import StravaActivityImageGenerator from '../../../../components/StravaActivityImageGenerator';
 
 interface ImageGenerationDrawerProps {
   activityId?: string | null;

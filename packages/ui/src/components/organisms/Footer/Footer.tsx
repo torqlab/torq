@@ -1,6 +1,6 @@
 import { Github, Globe } from 'lucide-react';
 
-import { LINKS } from '../organisms/Footer/constants';
+import { LINKS } from './constants';
 
 /**
  * Application footer — Server Component.

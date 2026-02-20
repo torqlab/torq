@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
-import './globals.css';
+import Header from '@/components/organisms/Header';
+import Footer from '@/components/organisms/Footer';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
+import './globals.css';
 import Providers from './providers';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
   title: 'TORQ - Strava Activity Image Generator',
@@ -19,6 +14,12 @@ export const metadata: Metadata = {
 interface RootLayoutProps {
   children: React.ReactNode;
 }
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 /**
  * Root HTML layout. Server component — wraps the app with the layout shell
@@ -30,7 +31,7 @@ interface RootLayoutProps {
  * @param {React.ReactNode} props.children - Page content.
  * @returns {JSX.Element} Root layout.
  */
-const RootLayout = ({ children }: RootLayoutProps): JSX.Element => (
+const Layout = ({ children }: RootLayoutProps): JSX.Element => (
   <html lang="en" suppressHydrationWarning className={inter.variable}>
     <body className="font-sans">
       <Providers>
@@ -50,4 +51,4 @@ const RootLayout = ({ children }: RootLayoutProps): JSX.Element => (
   </html>
 );
 
-export default RootLayout;
+export default Layout;

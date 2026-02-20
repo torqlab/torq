@@ -3,8 +3,8 @@
 import { useMemo } from 'react';
 import { X } from 'lucide-react';
 
-import { SheetHeader, SheetTitle } from '../../../../../components/ui/sheet';
-import { Button } from '../../../../../components/ui/button';
+import { SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 
 interface TitleProps {
   isLoading: boolean;

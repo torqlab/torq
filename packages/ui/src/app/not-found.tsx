@@ -1,6 +1,5 @@
 /**
- * 404 not-found page rendered by Next.js for unmatched routes.
- *
+ * Not-found page.
  * @returns {JSX.Element} Not-found page.
  */
 const NotFound = (): JSX.Element => (

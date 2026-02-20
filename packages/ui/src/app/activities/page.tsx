@@ -1,8 +1,7 @@
-import ActivitiesPage from '../../views/ActivitiesPage';
+import ActivitiesPage from '@/components/pages/ActivitiesPage';
 
 /**
- * Activities route — delegates to the ActivitiesPage client component.
- *
+ * Activities page.
  * @returns {JSX.Element} Activities page.
  */
 const Page = (): JSX.Element => <ActivitiesPage />;

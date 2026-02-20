@@ -2,7 +2,7 @@
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-import { Button } from '../../../../../components/ui/button';
+import { Button } from '@/components/ui/button';
 
 interface ExpanderProps {
   isExpanded: boolean;

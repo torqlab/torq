@@ -6,8 +6,7 @@ import { LogOut } from 'lucide-react';
 import { logout } from '@/utils/auth';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-
-import ThemeSwitcher from '../ThemeSwitcher';
+import ThemeSwitcher from '@/components/molecules/ThemeSwitcher';
 
 /**
  * Header actions.

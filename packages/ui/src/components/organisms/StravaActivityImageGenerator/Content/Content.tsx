@@ -19,7 +19,7 @@ interface ContentProps {
 }
 
 /**
- * Image generation content — Client Component.
+ * Image generation content.
  * Replaced Geist Drawer.Content/Grid/Card with a scrollable div + Tailwind grid.
  * @param {ContentProps} props - Component props.
  * @returns {JSX.Element} Image generation content component.

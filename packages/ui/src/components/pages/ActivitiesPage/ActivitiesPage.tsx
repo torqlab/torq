@@ -1,8 +1,8 @@
 'use client';
 
 import { useActivities } from '@/api/hooks';
-import Preloader from '@/components/Preloader';
-import Deferred from '@/components/Deferred';
+import Preloader from '@/components/atoms/Preloader';
+import Deferred from '@/components/atoms/Deferred';
 
 import Activities from './Activities';
 import Guest from './Guest';
