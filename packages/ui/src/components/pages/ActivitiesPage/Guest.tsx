@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 /**
- * Guest view — Server Component.
+ * Guest view.
  * No hooks or browser APIs — pure presentational content.
  * @returns {JSX.Element} Guest view.
  */

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Activity } from 'lucide-react';
 
 /**
- * Member view — Server Component.
+ * Member view.
  * No hooks or browser APIs — pure presentational content.
  * @returns {JSX.Element} Member view.
  */

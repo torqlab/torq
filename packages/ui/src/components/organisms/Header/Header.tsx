@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
-import ActivityEmoji from '../../molecules/ActivityEmoji';
+import ActivityEmoji from '@/components/molecules/ActivityEmoji';
+
 import HeaderActions from './HeaderActions';
 
 /**

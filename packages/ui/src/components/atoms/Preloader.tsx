@@ -6,7 +6,7 @@ export interface PreloaderProps {
 }
 
 /**
- * Preloader component — Server Component.
+ * Preloader component.
  * Shows a pulsing activity icon with an optional message.
  * Keyframe animations are defined in globals.css.
  *

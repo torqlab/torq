@@ -3,7 +3,7 @@ import { Github, Globe } from 'lucide-react';
 import { LINKS } from './constants';
 
 /**
- * Application footer — Server Component.
+ * Application footer.
  * Renders copyright notice, social links, and powered-by credits.
  * @returns {JSX.Element} Footer component.
  */
@@ -43,7 +43,7 @@ const Footer = () => (
           href={LINKS.POLLINATIONS_AI}
           target="_blank"
           rel="noreferrer"
-          className="text-xs text-muted-foreground underline decoration-dotted hover:text-foreground transition-colors w-fit"
+          className="text-xs text-muted-foreground underline hover:text-foreground transition-colors w-fit"
         >
           Pollinations.AI
         </a>
@@ -51,7 +51,7 @@ const Footer = () => (
           href={LINKS.NETLIFY}
           target="_blank"
           rel="noreferrer"
-          className="text-xs text-muted-foreground underline decoration-dotted hover:text-foreground transition-colors w-fit"
+          className="text-xs text-muted-foreground underline hover:text-foreground transition-colors w-fit"
         >
           Netlify
         </a>
@@ -59,7 +59,7 @@ const Footer = () => (
           href={LINKS.CODEMIE}
           target="_blank"
           rel="noreferrer"
-          className="text-xs text-muted-foreground underline decoration-dotted hover:text-foreground transition-colors w-fit"
+          className="text-xs text-muted-foreground underline hover:text-foreground transition-colors w-fit"
         >
           EPAM CodeMie
         </a>
